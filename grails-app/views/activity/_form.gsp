@@ -7,7 +7,16 @@
         placeholder="Nombre de la actividad"/>
 </div>
 
-<div class="events">
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active">
+        <a href="#">1</a>
+    </li>
+    <li role="presentation">
+        <a href="#" id="cloner">+</a>
+    </li>
+</ul>
+
+<div id="e1" style="margin-top: 10px;">
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -103,37 +112,11 @@
                 </label>
             </div>
 
-            <div class="form-group">
-                <label for="coffee">Cafe</label>
-                <input
-                    type="number"
-                    name="coffee"
-                    id="coffee"
-                    value="${event?.coffee}"
-                    class="form-control"
-                    min="1">
-            </div>
-
-            <div class="form-group">
-                <label for="tea">Te</label>
-                <input
-                    type="number"
-                    name="tea"
-                    id="tea"
-                    value="${event?.tea}"
-                    class="form-control"
-                    min="1">
-            </div>
-
-            <div class="form-group">
-                <label for="cakeShop">Resposteria</label>
-                <input
-                    type="number"
-                    name="cakeShop"
-                    id="cakeShop"
-                    value="${event?.cakeShop}"
-                    class="form-control"
-                    min="1">
+            <div class="checkbox">
+                <label>
+                    <g:checkBox name="coffee" value=""/>
+                    Cafe
+                </label>
             </div>
 
             <div class="form-group">
@@ -190,6 +173,17 @@
                     <g:checkBox name="tablecloths" value=""/>
                     Manteles
                 </label>
+            </div>
+
+            <div class="form-group">
+                <label for="presidiumTable">Meza presidium</label>
+                    <input
+                        type="number"
+                        id="presidiumTable"
+                        name="presidiumTable"
+                        min=1
+                        max="7"
+                        class="form-control">
             </div>
         </div>
 

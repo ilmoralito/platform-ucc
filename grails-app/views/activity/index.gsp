@@ -44,6 +44,8 @@
         </div>
         <br>
 
+        ${activities}
+
         <g:if test="${params?.calendarType == 'schedule'}">
             Feature to be implemented...
         </g:if>

@@ -35,9 +35,22 @@ class ActivityController {
     }
 
     def create() {
+
     }
 
     def addToEvent() {
+        
+
+        session.events << event
+    }
+
+    def save() {
+        
+        Activity activity = new Activity(
+            name: params?.name,
+            createdBy: springSecurityService.currentUser
+        )
+
         Event event = new Event(
             dateOfTheEvent: params.date("dateOfTheEvent", "yyyy-MM-dd"),
             startTime: params?.startTime,
@@ -67,17 +80,6 @@ class ActivityController {
             observation: params?.observation
         )
 
-        session.events << event
-    }
-
-    def save() {
-        Activity activity = new Activity(
-            name: params?.name,
-            createdBy: springSecurityService.currentUser
-        )
-
-        
-
         activity.addToEvents(event)
 
         if (!activity.save()) {
@@ -85,6 +87,7 @@ class ActivityController {
                 log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
             }
         }
+
 
         redirect action: "create"
     }

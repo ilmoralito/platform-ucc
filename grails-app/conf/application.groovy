@@ -1,5 +1,6 @@
 grails.plugin.springsecurity.userLookup.usernamePropertyName = "email"
 grails.plugin.springsecurity.logout.postOnly = false
+grails.plugin.springsecurity.successHandler.defaultTargetUrl = "/panel"
 
 // Added by the Spring Security Core plugin:
 grails.plugin.springsecurity.userLookup.userDomainClassName = "ni.edu.uccleon.User"
@@ -27,3 +28,18 @@ grails.plugin.springsecurity.filterChain.chainMap = [
     [pattern: "/**/favicon.ico", filters: "none"],
     [pattern: "/**",             filters: "JOINED_FILTERS"]
 ]
+
+ni {
+    edu {
+        uccleon {
+            companyInformation = [
+                name: "UCC Campus Leon",
+                slogan: "Para la gente que trinufa",
+                address: "Frente al campus medico",
+                telephoneNumber: ["23110812", "23110814"],
+                rucNumber: "78458569",
+                logo: ""
+            ]
+        }
+    }
+}

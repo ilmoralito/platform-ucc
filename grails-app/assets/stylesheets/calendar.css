@@ -1,0 +1,10 @@
+.calendar-day {
+    width: 100px;
+    min-width: 10px;
+    max-width: 100px;
+    height: 100px;
+}
+
+.calendar-day > p {
+    font-size: 0.9em;
+}

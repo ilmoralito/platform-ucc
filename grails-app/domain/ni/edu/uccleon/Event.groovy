@@ -20,13 +20,12 @@ class Event {
     Boolean microfone = false
 
     Boolean water = false
-    Integer coffee
-    Integer tea
-    Integer cakeShop
+    Boolean coffee = false
     Integer cookies
     Integer waterBottles
 
     String mountingType
+    Integer presidiumTable
     Boolean flags = false
     Boolean podium = false
     Boolean tableForSpeaker = true
@@ -50,17 +49,15 @@ class Event {
             endingTime > obj.startTime
         }
         numberOfPeople min: 1
-        coffee nullable: true, min: 1
-        tea nullable: true, min: 1
-        cakeShop nullable: true, min: 1
         cookies nullable: true, min: 1
         waterBottles nullable: true, min: 1
         mountingType inList: ["Forma U", "Forma auditorium con mesas", "Forma auditorium sin mesas", "Grupo", "Sala de reunion", "Libre"], maxSize: 255
+        presidiumTable nullable: true, min: 1
         refreshment nullable: true, min: 1
         breakfast nullable: true, min: 1
         lunch nullable: true, min: 1
         dinner nullable: true, min: 1
-        observation nullable: true
+        observation nullable: true, maxSize: 255
     }
 
     static belongsTo = [activity: Activity]

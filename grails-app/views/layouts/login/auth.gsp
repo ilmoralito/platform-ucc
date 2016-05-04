@@ -9,11 +9,13 @@
     <g:layoutHead/>
 </head>
 <body>
+    <g:set var="companyInformation" value="${grailsApplication.config.ni.edu.uccleon.companyInformation}"/>
+
     <div class="container">
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-4">
-                <h4>App Name</h4>
+                <h4>${companyInformation.name}</h4>
                 <g:layoutBody/>
 
                 <g:if test="${flash?.message}">

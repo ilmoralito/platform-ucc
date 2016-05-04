@@ -40,4 +40,22 @@ $(function() {
             }
         })
     });
+
+    $('#cloner').on('click', function() {
+        var $this = $(this);
+        var e1 = $('#e1');
+        var form = $('#form');
+
+        //var b = $('#b').children().length;
+        //console.log(form);
+
+        console.log(e1.children());
+        //$this.parent().clone().appendTo($this.parent().parent());
+    });
+
+    // BIRTHDAY
+    $('#month').datetimepicker({
+        viewMode: 'months',
+        format: 'MM/YYYY'
+    });
 })
