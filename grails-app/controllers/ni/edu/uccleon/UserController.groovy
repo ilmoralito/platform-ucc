@@ -4,12 +4,15 @@ import grails.plugin.springsecurity.annotation.Secured
 
 @Secured(["ROLE_ADMIN"])
 class UserController {
+    def springSecurityService
     def employeeService
 
     static allowedMethods = [
         index: ["GET", "POST"],
         show: "GET",
-        update: "POST"
+        update: "POST",
+        profile: "GET",
+        password: ["GET", "POST"]
     ]
 
     def index() {
@@ -50,5 +53,53 @@ class UserController {
         [user: user, employee: employee]
     }
 
+    @Secured(["ROLE_ADMIN", "ROLE_SUPERVISOR", "ROLE_USER"])
+    def profile() {
+        User user = springSecurityService.currentUser
 
+        [user: user]
+    }
+
+    @Secured(["ROLE_ADMIN", "ROLE_SUPERVISOR", "ROLE_USER"])
+    def password(PasswordCommand command) {
+        if (request.post) {
+            if (command.hasErrors()) {
+                command.errors.allErrors.each { error ->
+                    log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+                }
+
+                flash.message = "Datos incorrectos"
+                return
+            }
+
+            User user = springSecurityService.currentUser
+
+            user.password = command.newPassword
+            user.save()
+
+            flash.message = "Clave actualizada"
+            redirect action: "password"
+            return
+        }
+    }
+}
+
+class PasswordCommand {
+    def springSecurityService
+    def passwordEncoder
+
+    String currentPassword
+    String newPassword
+    String repeatNewPassword
+
+    static constraints = {
+        currentPassword validator: { currentPassword, obj ->
+            String currentUserPassword = obj.springSecurityService.currentUser.password
+
+            obj.passwordEncoder.isPasswordValid(currentUserPassword, currentPassword, null)
+        }
+        repeatNewPassword validator: { repeatNewPassword, obj ->
+            repeatNewPassword == obj.newPassword
+        }
+    }
 }

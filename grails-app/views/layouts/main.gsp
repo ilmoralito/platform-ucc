@@ -19,6 +19,7 @@
         <div class="row">
             <g:layoutBody/>
         </div>
+        <br>
     </div>
     <asset:javascript src="application.js"/>
 </body>

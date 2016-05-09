@@ -1,21 +1,17 @@
 package ni.edu.uccleon
 
 import groovy.transform.ToString
-import org.grails.databinding.BindUsing
 
 @ToString
 class Activity {
-    @BindUsing({
-        obj, source -> source["name"]?.capitalize()
-    })
     String name
-    Boolean enabled = false
     User createdBy
     User approvedBy
     User grantedBy
     Date dateApproved
     Date dateGranted
     ExternalCustomer externalCustomer
+    List<Event> events
 
     Date dateCreated
     Date lastUpdated
@@ -35,6 +31,5 @@ class Activity {
         events cascade: "all-delete-orphan"
     }
 
-    List events
     static hasMany = [events: Event]
 }

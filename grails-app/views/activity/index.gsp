@@ -44,8 +44,6 @@
         </div>
         <br>
 
-        ${activities}
-
         <g:if test="${params?.calendarType == 'schedule'}">
             Feature to be implemented...
         </g:if>
@@ -174,6 +172,6 @@
     </content>
 
     <content tag="right-column">
-        <g:link action="create" class="btn btn-primary btn-block">Crear</g:link>
-        </content>
+        <g:link action="init" class="btn btn-primary btn-block">Crear</g:link>
+    </content>
 </g:applyLayout>

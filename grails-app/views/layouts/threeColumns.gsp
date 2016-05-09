@@ -16,9 +16,8 @@
         <div class="col-md-2">
             <g:pageProperty name="page.right-column"/>
 
-            <g:set var="message" value="${flash.message}"/>
-            <g:if test="${message}">
-                <div class="message">${message}</div>
+            <g:if test="${flash.message}">
+                <p><br>${flash.message}</p>
             </g:if>
         </div>
     </body>

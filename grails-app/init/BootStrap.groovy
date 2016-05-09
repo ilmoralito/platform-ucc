@@ -4,6 +4,9 @@ import grails.util.DomainBuilder
 import static java.util.Calendar.*
 
 class BootStrap {
+    def employeeService
+    def classroomService
+
     def init = { servletContext ->
          if (Environment.DEVELOPMENT) {
             development()
@@ -16,28 +19,80 @@ class BootStrap {
 
     private development() {
         DomainBuilder builder = new DomainBuilder()
-        builder.classNameResolver = "ni.edu.uccleon"
         Date today = new Date()
         List<ExternalCustomer> externalCustomers = []
         List<Activity> activies = []
 
+        builder.classNameResolver = "ni.edu.uccleon"
+
         Role adminRole = new Role("ROLE_ADMIN").save failOnError: true
+        Role supervisorRole = new Role("ROLE_SUPERVISOR").save failOnError: true
         Role userRole = new Role("ROLE_USER").save failOnError: true
 
-        User adminUser = new User("admin", 1, "admin.user@ucc.edu.ni", "password").save failOnError: true
-        User userUser = new User("user", 2, "user.user@ucc.edu.ni", "password").save failOnError: true
+        Map JR = employeeService.getEmployee(1)
+        Map RL = employeeService.getEmployee(2)
+        Map OG = employeeService.getEmployee(3)
+        Map CV = employeeService.getEmployee(4)
+        Map JM = employeeService.getEmployee(5)
+        Map SC = employeeService.getEmployee(6)
 
-        UserRole.create adminUser, adminRole
-        UserRole.create userUser, adminRole
+        User jrUser = new User(
+            JR.fullName,
+            JR.id,
+            JR.institutionalMail,
+            "password"
+        ).save failOnError: true
+
+        User rlUser = new User(
+            RL.fullName,
+            RL.id,
+            RL.institutionalMail,
+            "password"
+        ).save failOnError: true
+
+        User ogUser = new User(
+            OG.fullName,
+            OG.id,
+            OG.institutionalMail,
+            "password"
+        ).save failOnError: true
+
+        User cvUser = new User(
+            CV.fullName,
+            CV.id,
+            CV.institutionalMail,
+            "password"
+        ).save failOnError: true
+
+        User jmUser = new User(
+            JM.fullName,
+            JM.id,
+            JM.institutionalMail,
+            "password"
+        ).save failOnError: true
+
+        User scUser = new User(
+            SC.fullName,
+            SC.id,
+            SC.institutionalMail,
+            "password"
+        ).save failOnError: true
+
+        UserRole.create jrUser, supervisorRole, true
+        UserRole.create rlUser, supervisorRole, true
+        UserRole.create ogUser, userRole, true
+        UserRole.create cvUser, userRole, true
+        UserRole.create jmUser, userRole, true
+        UserRole.create scUser, userRole, true
 
         UserRole.withSession {
             it.flush()
             it.clear()
         }
 
-        assert User.count() == 2
-        assert Role.count() == 2
-        assert UserRole.count() == 2
+        assert User.count() == 6
+        assert Role.count() == 3
+        assert UserRole.count() == 6
 
         externalCustomers << builder.externalCustomer(
             name: "externalCustomer1",
@@ -87,22 +142,6 @@ class BootStrap {
         externalCustomers.each { externalCustomer ->
             externalCustomer.save failOnError: true
         }
-
-        /*
-        activies << builder.activity(
-            name: "Activity number one",
-            activityDate: today + 10,
-        ) {
-            externalCustomer(refId: "externalCustomer1")
-
-            event(
-                dateOfTheEvent: today + 10,
-                startTime: today + 10,
-                endingTime: today + 10,
-                location: ""
-            )
-        }
-        */
     }
 
     private production() {}

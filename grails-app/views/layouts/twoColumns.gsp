@@ -12,6 +12,10 @@
         </div>
         <div class="col-md-10">
             <g:pageProperty name="page.main"/>
+
+            <g:if test="${flash.message}">
+                <p><br>${flash.message}</p>
+            </g:if>
         </div>
     </body>
 </html>

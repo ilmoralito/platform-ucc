@@ -7,13 +7,20 @@
 
 body { padding-top: 70px; }
 
+a:focus { outline: 0; }
+
 label {
     font-size: 0.8em;
     font-weight: normal;
 }
 
-.checkbox label, .radio label { font-size: 1em; }
+textarea {
+    resize: none;
+}
 
-.red { background: orange; }
+.checkbox label,
+.radio label { font-size: 1em; }
 
-.table tbody>tr>td.vert-align{ vertical-align: middle; }
+.nav-tabs {
+    margin-bottom: 10px;
+}

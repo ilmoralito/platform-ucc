@@ -10,7 +10,8 @@ class ActivityController {
 
     static allowedMethods = [
         index: "GET",
-        create: ["GET", "POST"]
+        create: ["GET", "POST"],
+        save: "POST"
     ]
 
     def index(String calendarType) {
@@ -24,8 +25,6 @@ class ActivityController {
             // un usuario del area de academia
             // Si es un usuario con rol user listar sus propias solicitudes
 
-            
-
             Activity.list()
         }
 
@@ -34,18 +33,39 @@ class ActivityController {
         [activities: activities(), dayName: helperService.getDayName(), interval: interval]
     }
 
-    def create() {
+    def init() {
+        session.activity = [:]
+        session.events = []
 
+        redirect action: "create"
     }
 
-    def addToEvent() {
-        
+    def create(ActivityCommand command) {
+        if (request.post) {
+            if (command.hasErrors()) {
+                command.errors.allErrors.each { error ->
+                    log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+                }
 
-        session.events << event
+                flash.message = "Datos necesarios"
+                return [command: command]
+            }
+
+            session.activity.name = command.name
+            session.activity.createdBy = springSecurityService.currentUser
+
+            redirect action: "events"
+        }
+    }
+
+    def events() {
+        if (request.post) {
+            
+        }
     }
 
     def save() {
-        
+        /*
         Activity activity = new Activity(
             name: params?.name,
             createdBy: springSecurityService.currentUser
@@ -88,7 +108,16 @@ class ActivityController {
             }
         }
 
-
+        flash.message = "Actividad creada"
+        */
         redirect action: "create"
+    }
+}
+
+class ActivityCommand {
+    String name
+
+    static constraints = {
+        name blank: false
     }
 }

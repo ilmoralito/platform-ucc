@@ -11,10 +11,51 @@ class AppTagLib {
     static defaultEncodeAs = [taglib: "html"]
     static namespace = "ucc"
     static encodeAsForTags = [
+        profile: "raw",
         getEmployee: "raw",
         classrooms: "raw",
         mountingType: "raw"
     ]
+
+    def profile = {
+        MarkupBuilder mb = new MarkupBuilder(out)
+        User user = springSecurityService.currentUser
+        Map<String, String> employee = employeeService.getEmployee(user.id)
+
+        mb.div {
+            label "Nombre y apellido"
+            p employee.fullName
+
+            label "Correo institucional"
+            p employee.institutionalMail
+
+            label "Cargo"
+            p employee.position
+
+            label "Rol"
+            p employee.authority
+
+            label "Cedula"
+            p employee.identityCard
+
+            label "INSS"
+            p employee.inss
+
+            label "Coordinacion"
+            p employee.coordination.name
+
+            label "Numero de extension"
+            p employee.coordination.extensionNumber
+
+            label "Area"
+            p employee.coordination.location
+
+            if (employee.coordination.color) {
+                label "Color de coordinacion"
+                p employee.coordination.color
+            }
+        }
+    }
 
     def getEmployee = {
         MarkupBuilder mb = new MarkupBuilder(out)
