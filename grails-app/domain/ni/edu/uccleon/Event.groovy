@@ -1,15 +1,16 @@
 package ni.edu.uccleon
 
-import groovy.transform.ToString
+//import groovy.transform.ToString
 import org.grails.databinding.BindingFormat
+import groovy.transform.AutoClone
 
-@ToString
+@AutoClone
+//@ToString(includeNames = true)
 class Event {
-    Date dateOfTheEvent
-    @BindingFormat("hh:mm")
-    Date startTime
-    @BindingFormat("hh:mm")
-    Date endingTime
+    @BindingFormat("yyyy-MM-dd")
+    Date date
+    Integer startTime
+    Integer endingTime
     Integer numberOfPeople
     String location
 
@@ -18,6 +19,7 @@ class Event {
     Boolean sound = false
     Boolean speaker = false
     Boolean microfone = false
+    Boolean pointer = false
 
     Boolean water = false
     Boolean coffee = false
@@ -38,20 +40,31 @@ class Event {
 
     String observation
 
+    List<TableType> tableTypes
+    List<ChairType> chairTypes
+    List<TableclothColor> tableclothColors
+
     static constraints = {
-        dateOfTheEvent validator: { dateOfTheEvent, obj ->
+        date validator: { date, obj ->
             Date today = new Date()
 
-            dateOfTheEvent >= today + 3
+            date >= today + 3
         }
-        startTime blank: false
-        endingTime validator: { endingTime, obj ->
+        startTime blank: false, range: 8..16
+        endingTime blank: false, range: 9..17, validator: { endingTime, obj ->
             endingTime > obj.startTime
         }
         numberOfPeople min: 1
         cookies nullable: true, min: 1
         waterBottles nullable: true, min: 1
-        mountingType inList: ["Forma U", "Forma auditorium con mesas", "Forma auditorium sin mesas", "Grupo", "Sala de reunion", "Libre"], maxSize: 255
+        mountingType inList: [
+            "Libre",
+            "Forma U",
+            "Auditorium con mesas",
+            "Auditorium sin mesas",
+            "Sala de reunion",
+            "Grupo"
+        ], maxSize: 255
         presidiumTable nullable: true, min: 1
         refreshment nullable: true, min: 1
         breakfast nullable: true, min: 1
@@ -62,7 +75,11 @@ class Event {
 
     static belongsTo = [activity: Activity]
 
-    List tables
-    List chairs
-    static hasMany = [tables: Table, chairs: Chair]
+    static mapping = {
+        tableTypes cascade: "all-delete-orphan"
+        chairTypes cascade: "all-delete-orphan"
+        tableclothColors cascade: "all-delete-orphan"
+    }
+
+    static hasMany = [tableTypes: TableType, chairTypes: ChairType, tableclothColors: TableclothColor]
 }

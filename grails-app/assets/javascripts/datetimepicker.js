@@ -1,8 +1,9 @@
 $(function() {
     // EVENT
-    $('#dateOfTheEvent').datetimepicker({
+    $('#date').datetimepicker({
         format: 'YYYY-MM-DD',
         viewMode: 'days',
+        useCurrent: false,
         minDate: moment().add(3, 'days')
     });
 

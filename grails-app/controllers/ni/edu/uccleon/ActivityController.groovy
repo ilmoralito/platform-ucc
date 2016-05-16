@@ -2,115 +2,192 @@ package ni.edu.uccleon
 
 import grails.plugin.springsecurity.annotation.Secured
 
-@Secured(["ROLE_ADMIN", "ROLE_USER"])
+@Secured(["ROLE_ADMIN", "ROLE_USER", "ROLE_SUPERVISOR"])
 class ActivityController {
     def springSecurityService
+    def eventService
     def coordinationService
     def helperService
 
     static allowedMethods = [
         index: "GET",
+        init: "GET",
         create: ["GET", "POST"],
+        events: ["GET", "POST"],
+        cloneEvent: "GET",
         save: "POST"
     ]
 
     def index(String calendarType) {
-        Closure activities = {
-            User user = springSecurityService.currentUser
-            String userLocation = coordinationService.getCoordinations(user.id.toInteger()).location
+        List<Event> events = eventService.getEvents()
+        List data = eventService.presentation(events)
 
-            // Si es jorge listar todas las actividades pendientes de aprovar y las autorizadas por director
-            // de academia
-            // Si es rosa listar todas las actividades pendientes de autorizar que sean creadas por
-            // un usuario del area de academia
-            // Si es un usuario con rol user listar sus propias solicitudes
-
-            Activity.list()
-        }
-
-        List<Date> interval = helperService.getInterval(calendarType)
-
-        [activities: activities(), dayName: helperService.getDayName(), interval: interval]
+        [data: data, calendarType: calendarType]
     }
 
     def init() {
         session.activity = [:]
         session.events = []
 
-        redirect action: "create"
+        redirect action: "activityName"
     }
 
-    def create(ActivityCommand command) {
+    def activityName(ActivityCommand command) {
         if (request.post) {
             if (command.hasErrors()) {
                 command.errors.allErrors.each { error ->
                     log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
                 }
 
-                flash.message = "Datos necesarios"
-                return [command: command]
+                flash.message = "Dato necesario"
+                return [bean: command]
             }
 
             session.activity.name = command.name
-            session.activity.createdBy = springSecurityService.currentUser
+
+            redirect action: "events", params: [index: params?.index]
+        }
+    }
+
+    def events(EventCommand command) {
+        if (request.post) {
+            if (command.hasErrors()) {
+                command.errors.allErrors.each { error ->
+                    log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+                }
+
+                flash.message = "Datos Incorrectos"
+                return [bean: command]
+            }
+
+            Integer position = params.int("index")
+
+            if (position >= 0 && position <= session?.events?.size() - 1) {
+                Event event = session?.events?.getAt(position)
+
+                event.date = command.date
+                event.numberOfPeople = command.numberOfPeople
+                event.startTime = command.startTime
+                event.endingTime = command.endingTime
+                event.location = command.location
+                event.audiovisual = command.audiovisual
+                event.wifi = command.wifi
+                event.sound = command.sound
+                event.speaker = command.speaker
+                event.microfone = command.microfone
+                event.pointer = command.pointer
+                event.water = command.water
+                event.coffee = command.coffee
+                event.cookies = command.cookies
+                event.waterBottles = command.waterBottles
+                event.mountingType = command.mountingType
+                event.presidiumTable = command.presidiumTable
+                event.flags = command.flags
+                event.podium = command.podium
+                event.tableForSpeaker = command.tableForSpeaker
+                event.tablecloths = command.tablecloths
+
+                event.tableTypes.clear()
+                event.tableTypes = command.tableTypes
+
+                event.chairTypes.clear()
+                event.chairTypes = command.chairTypes
+
+                event.tableclothColors.clear()
+                event.tableclothColors = command.tableclothColors
+
+                event.refreshment = command.refreshment
+                event.breakfast = command.breakfast
+                event.lunch = command.lunch
+                event.dinner = command.dinner
+                event.observation = command.observation
+            } else {
+                Event event = new Event(
+                    date: command.date,
+                    startTime: command.startTime,
+                    endingTime: command.endingTime,
+                    numberOfPeople: command.numberOfPeople,
+                    location: command.location,
+                    audiovisual: command.audiovisual,
+                    wifi: command.wifi,
+                    sound: command.sound,
+                    speaker: command.speaker,
+                    microfone: command.microfone,
+                    pointer: command.pointer,
+                    water: command.water,
+                    coffee: command.coffee,
+                    cookies: command.cookies,
+                    waterBottles: command.waterBottles,
+                    mountingType: command.mountingType,
+                    presidiumTable: command.presidiumTable,
+                    flags: command.flags,
+                    podium: command.podium,
+                    tableForSpeaker: command.tableForSpeaker,
+                    tablecloths: command.tablecloths,
+                    tableTypes: command.tableTypes,
+                    chairTypes: command.chairTypes,
+                    tableclothColors: command.tableclothColors,
+                    refreshment: command.refreshment,
+                    breakfast: command.breakfast,
+                    lunch: command.lunch,
+                    dinner: command.dinner,
+                    observation: command.observation
+                )
+
+                session?.events << event
+            }
+
+            redirect action: "events", params: [index: position ?: session?.events?.size() - 1]
+        }
+    }
+
+    def cloneEvent(Integer index) {
+        List<Event> events = session?.events
+        Event event = events?.getAt(index)?.clone()
+
+        events << event
+
+        redirect action: "events", params: [index: events?.size() - 1]
+    }
+
+    def removeEvent(Integer index) {
+        List<Event> events = session?.events
+        Integer eventsSize = events?.size() - 1
+
+        Closure getPosition = {
+            
+        }
+
+        Integer position = getPosition()
+
+
+        if (position) {
+            //events.remove(index)
+            println "removed events index: $index"
+
+            redirect action: "events", params: [index: position]
+        } else {
+            //events = []
+            println "removed all"
 
             redirect action: "events"
         }
     }
 
-    def events() {
-        if (request.post) {
-            
-        }
-    }
-
     def save() {
-        /*
         Activity activity = new Activity(
-            name: params?.name,
+            name: session?.activity.name,
             createdBy: springSecurityService.currentUser
         )
 
-        Event event = new Event(
-            dateOfTheEvent: params.date("dateOfTheEvent", "yyyy-MM-dd"),
-            startTime: params?.startTime,
-            endingTime: params?.endingTime,
-            numberOfPeople: params?.numberOfPeople,
-            location: params?.location,
-            audiovisual: params?.audiovisual ?: false,
-            wifi: params?.wifi ?: false,
-            sound: params?.sound ?: false,
-            speaker: params?.speaker ?: false,
-            microfone: params?.microfone ?: false,
-            water: params?.water ?: false,
-            coffee: params?.coffee,
-            tea: params?.tes,
-            cakeShop: params?.cakeShop,
-            cookies: params?.cookies,
-            waterBottles: params?.waterBottles,
-            mountingType: params?.mountingType,
-            flags: params?.flags ?: false,
-            podium: params?.podium ?: false,
-            tableForSpeaker: params?.tableForSpeaker ?: false,
-            tablecloths: params?.tablecloths ?: false,
-            refreshment: params?.refreshment,
-            breakfast: params?.breakfast,
-            lunch: params?.lunch,
-            dinner: params?.dinner,
-            observation: params?.observation
-        )
-
-        activity.addToEvents(event)
-
-        if (!activity.save()) {
-            activity.errors.allErrors.each { error ->
-                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
-            }
+        session?.events?.each { event ->
+            activity.addToEvents(event)
         }
 
-        flash.message = "Actividad creada"
-        */
-        redirect action: "create"
+        flash.message = "Actividad guardada. Pendiente de ser aprobada"
+        activity.save()
+
+        redirect action: "index"
     }
 }
 
@@ -119,5 +196,41 @@ class ActivityCommand {
 
     static constraints = {
         name blank: false
+    }
+}
+
+class EventCommand {
+    Date date
+    Integer startTime
+    Integer endingTime
+    Integer numberOfPeople
+    String location
+    Boolean audiovisual
+    Boolean wifi
+    Boolean sound
+    Boolean speaker
+    Boolean microfone
+    Boolean pointer
+    Boolean water
+    Boolean coffee
+    Integer cookies
+    Integer waterBottles
+    String mountingType
+    Integer presidiumTable
+    Boolean flags
+    Boolean podium
+    Boolean tableForSpeaker
+    Boolean tablecloths
+    Integer refreshment
+    Integer breakfast
+    Integer lunch
+    Integer dinner
+    String observation
+    List<TableType> tableTypes = []
+    List<ChairType> chairTypes = []
+    List<TableclothColor> tableclothColors = []
+
+    static constraints = {
+        importFrom Event
     }
 }

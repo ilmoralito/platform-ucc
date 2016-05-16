@@ -3,7 +3,7 @@
         <g:link controller="panel">Panel</g:link>
     </li>
     <li role="presentation" class="${controllerName == 'activity' ? 'active' : ''}">
-        <g:link controller="activity">Actividades</g:link>
+        <g:link controller="activity">Protocolo</g:link>
     </li>
     <li role="presentation" class="${controllerName == 'copy' ? 'active' : ''}">
         <g:link controller="copy">Copias</g:link>

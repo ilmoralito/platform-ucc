@@ -1,3 +1,5 @@
+grails.databinding.dateFormats = ["yyyy-MM-dd"]
+
 grails.plugin.springsecurity.userLookup.usernamePropertyName = "email"
 grails.plugin.springsecurity.logout.postOnly = false
 grails.plugin.springsecurity.successHandler.defaultTargetUrl = "/panel"
@@ -39,6 +41,19 @@ ni {
                 telephoneNumber: ["23110812", "23110814"],
                 rucNumber: "78458569",
                 logo: ""
+            ]
+
+            tableTypes = ["Blue", "White", "Folding"]
+
+            chairTypes = ["Desk", "Furnished"]
+
+            mountingTypes = [
+                "Libre",
+                "Forma U",
+                "Auditorium con mesas",
+                "Auditorium sin mesas",
+                "Sala de reunion",
+                "Grupo"
             ]
         }
     }

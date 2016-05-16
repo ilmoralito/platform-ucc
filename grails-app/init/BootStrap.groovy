@@ -26,7 +26,8 @@ class BootStrap {
         builder.classNameResolver = "ni.edu.uccleon"
 
         Role adminRole = new Role("ROLE_ADMIN").save failOnError: true
-        Role supervisorRole = new Role("ROLE_SUPERVISOR").save failOnError: true
+        Role administrativeSupervisorRole = new Role("ROLE_ADMINISTRATIVE_SUPERVISOR").save failOnError: true
+        Role academicSupervisorRole = new Role("ROLE_ACADEMIC_SUPERVISOR").save failOnError: true
         Role userRole = new Role("ROLE_USER").save failOnError: true
 
         Map JR = employeeService.getEmployee(1)
@@ -78,8 +79,8 @@ class BootStrap {
             "password"
         ).save failOnError: true
 
-        UserRole.create jrUser, supervisorRole, true
-        UserRole.create rlUser, supervisorRole, true
+        UserRole.create jrUser, administrativeSupervisorRole, true
+        UserRole.create rlUser, academicSupervisorRole, true
         UserRole.create ogUser, userRole, true
         UserRole.create cvUser, userRole, true
         UserRole.create jmUser, userRole, true
@@ -91,7 +92,7 @@ class BootStrap {
         }
 
         assert User.count() == 6
-        assert Role.count() == 3
+        assert Role.count() == 4
         assert UserRole.count() == 6
 
         externalCustomers << builder.externalCustomer(

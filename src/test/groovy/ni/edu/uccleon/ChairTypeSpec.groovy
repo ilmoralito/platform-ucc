@@ -6,8 +6,8 @@ import spock.lang.Specification
 /**
  * See the API for {@link grails.test.mixin.domain.DomainClassUnitTestMixin} for usage instructions
  */
-@TestFor(Chair)
-class ChairSpec extends Specification {
+@TestFor(ChairType)
+class ChairTypeSpec extends Specification {
 
     def setup() {
     }

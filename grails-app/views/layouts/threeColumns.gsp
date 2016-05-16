@@ -12,13 +12,13 @@
         </div>
         <div class="col-md-8">
             <g:pageProperty name="page.main"/>
-        </div>
-        <div class="col-md-2">
-            <g:pageProperty name="page.right-column"/>
 
             <g:if test="${flash.message}">
                 <p><br>${flash.message}</p>
             </g:if>
+        </div>
+        <div class="col-md-2">
+            <g:pageProperty name="page.right-column"/>
         </div>
     </body>
 </html>

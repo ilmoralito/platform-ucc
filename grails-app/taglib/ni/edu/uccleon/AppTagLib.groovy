@@ -14,13 +14,16 @@ class AppTagLib {
         profile: "raw",
         getEmployee: "raw",
         classrooms: "raw",
-        mountingType: "raw"
+        mountingType: "raw",
+        tableType: "raw",
+        chairs: "raw",
+        tableclothColor: "raw"
     ]
 
     def profile = {
         MarkupBuilder mb = new MarkupBuilder(out)
-        User user = springSecurityService.currentUser
-        Map<String, String> employee = employeeService.getEmployee(user.id)
+        User currentUser = springSecurityService.currentUser
+        Map<String, String> employee = employeeService.getEmployee(currentUser.id)
 
         mb.div {
             label "Nombre y apellido"
@@ -50,9 +53,9 @@ class AppTagLib {
             label "Area"
             p employee.coordination.location
 
-            if (employee.coordination.color) {
-                label "Color de coordinacion"
-                p employee.coordination.color
+            label "Colores de coordinacion"
+            employee.coordination.colors.each { color ->
+                p color.name
             }
         }
     }
@@ -75,7 +78,7 @@ class AppTagLib {
         MarkupBuilder mb = new MarkupBuilder(out)
         List classrooms = classroomService.getClassrooms().sort { it.code }
         Map<String, String> params = [:]
-        Integer id = attrs?.id
+        Integer id = attrs.int("id")
 
         mb.div(class: "form-group") {
             delegate.select(name: "location", class: "form-control") {
@@ -84,6 +87,8 @@ class AppTagLib {
                 classrooms.each { classroom ->
                     if (id == classroom.id) {
                         params.selected = true
+                    } else {
+                        params.remove("selected")
                     }
 
                     params.value = classroom.id
@@ -95,23 +100,33 @@ class AppTagLib {
 
     def mountingType = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
-        List<String> mountingTypes = ["Forma U", "Auditorium con mesas", "Auditorium sin mesas", "Grupo", "Sala de reunion", "Libre"]
-        Map<String, String> params = [type: "radio", name: "mountingType"]
+        String mountingTypeInstance = attrs.mountingTypeInstance
+        Map<String, String> params = [name: "mountingType", type: "radio"]
+        List<String> mountingTypes = [
+            "Libre",
+            "Forma U",
+            "Auditorium con mesas",
+            "Auditorium sin mesas",
+            "Sala de reunion",
+            "Grupo"
+        ]
 
         mb.div {
-            mountingTypes.each { m ->
-                if (m == attrs?.mountingType) {
+            label "Tipo de montaje"
+
+            mountingTypes.each { mountingType ->
+                params.value = mountingType
+
+                if (mountingType == mountingTypeInstance) {
                     params.checked = true
                 } else {
                     params.remove("checked")
                 }
 
-                params.value = m
-
                 div(class: "radio") {
                     label {
                         input(params) {
-                            mkp.yield m
+                            mkp.yield mountingType
                         }
                     }
                 }
@@ -119,20 +134,91 @@ class AppTagLib {
         }
     }
 
-    def getUserInfo = { attrs ->
-        User user = springSecurityService.loadCurrentUser()
-        Integer id = user.id
-        String field = attrs.field
+    def tableType = { attrs ->
+        MarkupBuilder mb = new MarkupBuilder(out)
+        List<String> tableTypes = grailsApplication.config.ni.edu.uccleon.tableTypes
+        List<String> tableTypeList = attrs.list("tableTypeList")
+        Map<String, String> params = [name: "tableTypes", type: "checkbox"]
 
-        Map<String, String> employee = employeeService.getEmployee(id)
+        mb.div {
+            label "Tipo de mesas"
 
-        if (employee.containsKey(field)) {
-            out << employee[field]
+            tableTypes.each { tableType ->
+                if (tableType in tableTypeList) {
+                    params.checked = true
+                } else {
+                    params.remove("checked")
+                }
+
+                params.value = tableType
+
+                div(class: "checkbox") {
+                    label {
+                        input(params)
+                        mkp.yield tableType
+                    }
+                }
+            }
+        }
+    }
+
+    def chairs = { attrs ->
+        MarkupBuilder mb = new MarkupBuilder(out)
+        List<String> chairTypes = grailsApplication.config.ni.edu.uccleon.chairTypes
+        List<String> chairTypeList = attrs.list("chairTypeList")
+        Map<String, String> params = [name: "chairTypes", type: "checkbox"]
+
+        mb.div {
+            label "Tipo de sillas"
+
+            chairTypes.each { chairType ->
+                if (chairType in chairTypeList) {
+                    params.checked = true
+                } else {
+                    params.remove("checked")
+                }
+
+                params.value = chairType
+
+                div(class: "checkbox") {
+                    label {
+                        input(params)
+                        mkp.yield chairType
+                    }
+                }
+            }
+        }
+    }
+
+    def tableclothColor = { attrs ->
+        MarkupBuilder mb = new MarkupBuilder(out)
+        User currentUser = springSecurityService.currentUser
+        List coordinationColors = employeeService.getEmployee(currentUser.id).coordination.colors
+        Map<String, String> params = [name: "tableclothColors", type: "checkbox"]
+
+        if (coordinationColors.size() == 1) {
+            mb.input(type: "hidden", value: coordinationColors[0])
         } else {
-            if (employee.coordination[field]) {
-                out << employee.coordination[field]
-            } else {
-                out << "Insititucional"
+            mb.div {
+                label "Colores de manteles"
+
+                coordinationColors.each { tableclothColor ->
+
+                    div(class: "checkbox") {
+                        label {
+                            params.value = tableclothColor.name
+
+                            if (tableclothColor.name in attrs.list("tableclothColorList")) {
+                                params.checked = true
+                            } else {
+                                params.remove("checked")
+                            }
+
+                            input(params)
+                            mkp.yield tableclothColor.name
+                        }
+                    }
+                }
             }
         }
     }

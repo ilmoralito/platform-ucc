@@ -2,7 +2,7 @@ package ni.edu.uccleon
 
 import groovy.transform.ToString
 
-@ToString
+@ToString(includeNames=true)
 class Activity {
     String name
     User createdBy
@@ -18,7 +18,6 @@ class Activity {
 
     static constraints = {
         name blank: false
-        createdBy()
         approvedBy nullable: true
         grantedBy nullable: true
         dateApproved nullable: true
