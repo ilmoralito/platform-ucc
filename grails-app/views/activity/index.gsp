@@ -47,9 +47,8 @@
         <g:if test="${calendarType == 'schedule' || !calendarType}">
             <g:if test="${data}">
                 <g:each in="${data}" var="d" status="idx">
-
                     <table class="table table-hover">
-                    <caption><g:formatDate format="yyyy-MM-dd" date="${d.date}"/></caption>
+                        <caption><g:formatDate format="yyyy-MM-dd" date="${d.date}"/></caption>
                         <colgroup>
                             <col span="1" style="width: 50%;">
                             <col span="1" style="width: 50%;">
@@ -60,22 +59,22 @@
                                 <th>Estado</th>
                             </thead>
                         </g:if>
-                        <tbody>
-                            <g:each in="${d.activities}" var="a">
-                                <tr>
-                                    <td>
-                                        <g:link action="show" id="${a.id}">
-                                            ${a.name}
-                                        </g:link>
-                                    </td>
-                                    <td>
-                                        <span class="label label-default">
-                                            ${a.status}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </g:each>
-                        </tbody>
+                            <tbody>
+                                <g:each in="${d.activities}" var="a">
+                                    <tr>
+                                        <td>
+                                            <g:link action="show" id="${a.id}">
+                                                ${a.name}
+                                            </g:link>
+                                        </td>
+                                        <td>
+                                            <span class="label label-default">
+                                                ${a.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </g:each>
+                            </tbody>
                     </table>
                 </g:each>
             </g:if>

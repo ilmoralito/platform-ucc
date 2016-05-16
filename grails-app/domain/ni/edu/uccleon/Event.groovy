@@ -1,11 +1,11 @@
 package ni.edu.uccleon
 
-//import groovy.transform.ToString
+import groovy.transform.ToString
 import org.grails.databinding.BindingFormat
 import groovy.transform.AutoClone
 
 @AutoClone
-//@ToString(includeNames = true)
+@ToString(includeNames=true)
 class Event {
     @BindingFormat("yyyy-MM-dd")
     Date date
@@ -48,7 +48,7 @@ class Event {
         date validator: { date, obj ->
             Date today = new Date()
 
-            date >= today + 3
+            date >= today + 2
         }
         startTime blank: false, range: 8..16
         endingTime blank: false, range: 9..17, validator: { endingTime, obj ->

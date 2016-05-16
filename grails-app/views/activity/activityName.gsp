@@ -1,4 +1,4 @@
-<g:applyLayout name="threeColumns">
+<g:applyLayout name="twoColumns">
     <head>
         <title>Actividad</title>
     </head>
@@ -16,9 +16,5 @@
 
             <g:submitButton name="send" value="Confirmar y continuar" class="btn btn-primary"/> 
         </g:form>
-    </content>
-
-    <content tag="right-column">
-        <ucc:profile/>
     </content>
 </g:applyLayout>
