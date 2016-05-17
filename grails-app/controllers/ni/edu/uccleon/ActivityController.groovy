@@ -12,9 +12,10 @@ class ActivityController {
     static allowedMethods = [
         index: "GET",
         init: "GET",
-        create: ["GET", "POST"],
+        activityName: ["GET", "POST"],
         events: ["GET", "POST"],
         cloneEvent: "GET",
+        removeEvent: "GET",
         save: "POST"
     ]
 
@@ -152,26 +153,24 @@ class ActivityController {
 
     def removeEvent(Integer index) {
         List<Event> events = session?.events
-        Integer eventsSize = events?.size() - 1
 
-        Closure getPosition = {
-            
-        }
+        if (events?.size() == 1) {
+            events = []
+            session?.activity = [:]
 
-        Integer position = getPosition()
-
-
-        if (position) {
-            //events.remove(index)
-            println "removed events index: $index"
-
-            redirect action: "events", params: [index: position]
+            redirect action: "index"
+            return
         } else {
-            //events = []
-            println "removed all"
+            events?.remove(index)
 
-            redirect action: "events"
+            if (index == events?.size()) {
+                index--
+            } else {
+                index + 1
+            }
         }
+
+        redirect action: "events", params: [index: index]
     }
 
     def save() {
