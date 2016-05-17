@@ -5,19 +5,12 @@
     <li role="presentation" class="${controllerName == 'activity' ? 'active' : ''}">
         <g:link controller="activity">Protocolo</g:link>
     </li>
+    <sec:ifAnyGranted roles="ROLE_ADMIN, ROLE_PROTOCOL_COORDINATOR">
+        <li role="presentation" class="${controllerName == 'externalCustomer' ? 'active' : ''}">
+            <g:link controller="externalCustomer">Clientes externos</g:link>
+        </li>
+    </sec:ifAnyGranted>
     <li role="presentation" class="${controllerName == 'copy' ? 'active' : ''}">
         <g:link controller="copy">Copias</g:link>
-    </li>
-
-    <hr>
-
-    <li role="presentation" class="${controllerName == 'ext' ? 'active' : ''}">
-        <g:link controller="copy">Extenciones</g:link>
-    </li>
-    <li role="presentation" class="${controllerName == 'birthday' ? 'active' : ''}">
-        <g:link controller="birthday" action="list">Cumpleaneros del mes</g:link>
-    </li>
-    <li role="presentation" class="${controllerName == 'ext' ? 'active' : ''}">
-        <g:link controller="news">Noticias</g:link>
     </li>
 </ul>
