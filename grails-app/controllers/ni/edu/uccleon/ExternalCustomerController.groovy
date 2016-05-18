@@ -4,6 +4,7 @@ import grails.plugin.springsecurity.annotation.Secured
 
 @Secured(["ROLE_ADMIN", "ROLE_PROTOCOL_COORDINATOR"])
 class ExternalCustomerController {
+    def externalCustomerService
 
     def allowedMethods = [
         index: ["GET", "POST"],
@@ -12,7 +13,7 @@ class ExternalCustomerController {
 
     def index() {
         Closure externalCustomers = {
-            ExternalCustomer.list()
+            externalCustomerService.getAll()
         }
 
         if (request.post) {
@@ -33,7 +34,7 @@ class ExternalCustomerController {
     }
 
     def edit(Long id) {
-        ExternalCustomer externalCustomer = ExternalCustomer.get(id)
+        ExternalCustomer externalCustomer = externalCustomerService.get(id)
 
         if (!externalCustomer) {
             response.sendError 404
@@ -43,7 +44,7 @@ class ExternalCustomerController {
     }
 
     def update(Long id) {
-        ExternalCustomer externalCustomer = ExternalCustomer.get(id)
+        ExternalCustomer externalCustomer = externalCustomerService.get(id)
 
         if (!externalCustomer) {
             response.sendError 404

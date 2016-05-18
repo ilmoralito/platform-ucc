@@ -45,6 +45,7 @@ class ActivityController {
             }
 
             session.activity.name = command.name
+            session.activity.externalCustomer = command.externalCustomer
 
             redirect action: "events", params: [index: params?.index]
         }
@@ -176,6 +177,7 @@ class ActivityController {
     def save() {
         Activity activity = new Activity(
             name: session?.activity.name,
+            externalCustomer: session?.activity?.externalCustomer,
             createdBy: springSecurityService.currentUser
         )
 
@@ -184,7 +186,7 @@ class ActivityController {
         }
 
         flash.message = "Actividad guardada. Pendiente de ser aprobada"
-        activity.save()
+        activity.save(flush: true)
 
         redirect action: "index"
     }
@@ -192,9 +194,10 @@ class ActivityController {
 
 class ActivityCommand {
     String name
+    ExternalCustomer externalCustomer
 
     static constraints = {
-        name blank: false
+        importFrom Activity
     }
 }
 

@@ -4,45 +4,47 @@
     </head>
 
     <content tag="main">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="pull-right">
-                    <div class="btn-group">
-                        <g:link
-                            action="index"
-                            params="[calendarType: 'schedule']"
-                            class="btn btn-default ${calendarType == 'schedule'  || !calendarType ? 'active' : ''}">
-                            Programa
-                        </g:link>
-                        <g:link
-                            action="index"
-                            params="[calendarType: 'year']"
-                            class="btn btn-default ${calendarType == 'year' ? 'active' : ''}">
-                            Anio
-                        </g:link>
-                        <g:link
-                            action="index"
-                            params="[calendarType: 'month']"
-                            class="btn btn-default ${calendarType == 'month' ? 'active' : ''}">
-                            Mes
-                        </g:link>
-                        <g:link
-                            action="index"
-                            params="[calendarType: 'week']"
-                            class="btn btn-default ${calendarType == 'week' ? 'active' : ''}">
-                            Semana
-                        </g:link>
-                        <g:link
-                            action="index"
-                            params="[calendarType: 'day']"
-                            class="btn btn-default ${calendarType == 'day' ? 'active' : ''}">
-                            Dia
-                        </g:link>
+        <sec:ifAnyGranted roles="ROLE_PROTOCOL_COORDINATOR">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <g:link
+                                action="index"
+                                params="[calendarType: 'schedule']"
+                                class="btn btn-default ${calendarType == 'schedule'  || !calendarType ? 'active' : ''}">
+                                Programa
+                            </g:link>
+                            <g:link
+                                action="index"
+                                params="[calendarType: 'year']"
+                                class="btn btn-default ${calendarType == 'year' ? 'active' : ''}">
+                                Anio
+                            </g:link>
+                            <g:link
+                                action="index"
+                                params="[calendarType: 'month']"
+                                class="btn btn-default ${calendarType == 'month' ? 'active' : ''}">
+                                Mes
+                            </g:link>
+                            <g:link
+                                action="index"
+                                params="[calendarType: 'week']"
+                                class="btn btn-default ${calendarType == 'week' ? 'active' : ''}">
+                                Semana
+                            </g:link>
+                            <g:link
+                                action="index"
+                                params="[calendarType: 'day']"
+                                class="btn btn-default ${calendarType == 'day' ? 'active' : ''}">
+                                Dia
+                            </g:link>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <br>
+            <br>
+        </sec:ifAnyGranted>
 
         <g:if test="${calendarType == 'schedule' || !calendarType}">
             <g:if test="${data}">
@@ -65,6 +67,7 @@
                                         <td>
                                             <g:link action="show" id="${a.id}">
                                                 ${a.name}
+                                                ${a?.externalCustomer?.name}
                                             </g:link>
                                         </td>
                                         <td>

@@ -38,6 +38,7 @@ class EventService {
                             [
                                 id: b.activity.id,
                                 name: b.activity.name,
+                                externalCustomer: b.activity.externalCustomer,
                                 status: activityService.getStatus(b.activity)
                             ]
                         }

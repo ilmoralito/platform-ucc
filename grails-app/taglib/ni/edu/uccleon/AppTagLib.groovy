@@ -7,6 +7,7 @@ class AppTagLib {
     def springSecurityService
     def employeeService
     def classroomService
+    def externalCustomerService
 
     static defaultEncodeAs = [taglib: "html"]
     static namespace = "ucc"
@@ -17,7 +18,8 @@ class AppTagLib {
         mountingType: "raw",
         tableType: "raw",
         chairs: "raw",
-        tableclothColor: "raw"
+        tableclothColor: "raw",
+        externalCustomers: "raw"
     ]
 
     def profile = {
@@ -221,5 +223,20 @@ class AppTagLib {
                 }
             }
         }
+    }
+
+    def externalCustomers = { attrs ->
+        List<ExternalCustomer> externalCustomers = externalCustomerService.getAll()
+        Integer externalCustomer = attrs.externalCustomer
+
+        out << g.select(
+            name: "externalCustomer",
+            noSelection: ['': '-Selecciona cliente cliente-'],
+            from: externalCustomers,
+            optionKey: "id",
+            optionValue: "name",
+            value: externalCustomer,
+            class: "form-control"
+        )
     }
 }

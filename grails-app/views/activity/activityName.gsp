@@ -14,6 +14,15 @@
                     autofocus="true"/>
             </div>
 
+            <sec:ifAnyGranted roles="ROLE_PROTOCOL_COORDINATOR">
+                <div class="form-group">
+                    <label for="externalCustomer">Cliente externo</label>
+                    <ucc:externalCustomers
+                        customers="${externalCustomers}"
+                        externalCustomer="${session?.activity?.externalCustomer?.attach()?.id}"/>
+                </div>
+            </sec:ifAnyGranted>
+
             <g:submitButton name="send" value="Confirmar y continuar" class="btn btn-primary"/> 
         </g:form>
     </content>
