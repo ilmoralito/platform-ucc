@@ -12,16 +12,7 @@
     </div>
 
     <div class="col-md-6">
-        <div class="form-group">
-            <label for="numberOfPeople">Numero de asistentes</label>
-            <input
-                type="number"
-                name="numberOfPeople"
-                id="numberOfPeople"
-                value="${session?.events?.getAt(index)?.numberOfPeople ?: params?.numberOfPeople}"
-                class="form-control"
-                min="1">
-        </div>
+        <ucc:classrooms id="${session?.events?.getAt(index)?.location ?: params?.location}"/>
     </div>
 </div>
 
@@ -51,7 +42,18 @@
     </div>
 </div>
 
-<ucc:classrooms id="${session?.events?.getAt(index)?.location ?: params?.location}"/>
+<div class="form-group">
+    <label for="numberOfPeople">Numero de asistentes</label>
+    <input
+        type="number"
+        name="numberOfPeople"
+        id="numberOfPeople"
+        value="${session?.events?.getAt(index)?.numberOfPeople ?: params?.numberOfPeople}"
+        class="form-control"
+        min="1">
+</div>
+
+<div id="numberOfPeopleAlert" class="alert alert-danger hide">Fuera de limite</div>
 
 <div class="row">
     <div class="col-md-3">

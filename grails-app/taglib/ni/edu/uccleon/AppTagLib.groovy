@@ -83,8 +83,12 @@ class AppTagLib {
         Integer id = attrs.int("id")
 
         mb.div(class: "form-group") {
-            delegate.select(name: "location", class: "form-control") {
-                option(value: "") { mkp.yield "-Selecciona un lugar-" }
+            label(for: "location") {mkp.yield "Lugar"}
+
+            delegate.select(name: "location", id: "location", class: "form-control") {
+                option(value: "") {
+                    mkp.yield "-Selecciona un lugar-"
+                }
 
                 classrooms.each { classroom ->
                     if (id == classroom.id) {
@@ -93,8 +97,16 @@ class AppTagLib {
                         params.remove("selected")
                     }
 
+                    if (classroom.capacity) {
+                        params["data-capacity"] = classroom.capacity
+                    } else {
+                        params.remove("data-capacity")
+                    }
+
                     params.value = classroom.id
-                    option(params) { mkp.yield classroom?.name ?: classroom.code }
+                    option(params) { 
+                        mkp.yield classroom?.name ?: classroom.code
+                    }
                 }
             }
         }
