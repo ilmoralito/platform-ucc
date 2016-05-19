@@ -6,8 +6,7 @@ import grails.plugin.springsecurity.annotation.Secured
 class ActivityController {
     def springSecurityService
     def eventService
-    def coordinationService
-    def helperService
+    def employeeService
 
     static allowedMethods = [
         index: "GET",
@@ -16,7 +15,8 @@ class ActivityController {
         events: ["GET", "POST"],
         cloneEvent: "GET",
         removeEvent: "GET",
-        save: "POST"
+        save: "POST",
+        show: "GET"
     ]
 
     def index(String calendarType) {
@@ -175,10 +175,17 @@ class ActivityController {
     }
 
     def save() {
+        User currentUser = springSecurityService.currentUser
+        Map employee = employeeService.getEmployee(currentUser.id)
+        Map coordination = employee.coordination
+        Map act = session?.activity
+
+        String receiverEmail = employeeService.getEmployeeInstitutionalMail(coordination)
+
         Activity activity = new Activity(
-            name: session?.activity.name,
-            externalCustomer: session?.activity?.externalCustomer,
-            createdBy: springSecurityService.currentUser
+            name: act?.name,
+            externalCustomer: act?.externalCustomer,
+            createdBy: currentUser
         )
 
         session?.events?.each { event ->
@@ -188,9 +195,34 @@ class ActivityController {
         flash.message = "Actividad guardada. Pendiente de ser aprobada"
         activity.save(flush: true)
 
+        sendMail {
+            from currentUser.email
+            to receiverEmail
+            subject "Protocolo - Nueva actividad $activity.name"
+            html g.render(template: "email", model: [
+                    name: activity.name,
+                    username: currentUser.username,
+                    client: activity?.externalCustomer?.name ?: coordination.name,
+                    host: "http://${grailsApplication.config.ni.edu.uccleon.serverUrl}/activity/show/${activity.id}"
+                ]
+            )
+        }
+
         redirect action: "index"
     }
+
+    def show(Long id) {
+        Activity activity = Activity.get(id)
+
+        if (!activity) {
+            response.sendError 404
+        }
+
+        [activity: activity]
+    }
 }
+
+
 
 class ActivityCommand {
     String name

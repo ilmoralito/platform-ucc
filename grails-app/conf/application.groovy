@@ -43,9 +43,9 @@ ni {
                 logo: ""
             ]
 
-            tableTypes = ["Blue", "White", "Folding"]
+            tableTypes = ["Azules", "Blancas", "Plegable"]
 
-            chairTypes = ["Desk", "Furnished"]
+            chairTypes = ["Pupitre", "Amueblado"]
 
             mountingTypes = [
                 "Libre",
@@ -55,6 +55,22 @@ ni {
                 "Sala de reunion",
                 "Grupo"
             ]
+
+            serverUrl = "192.168.7.99:8181"
         }
     }
 }
+
+grails {
+   mail {
+        host = "smtp.gmail.com"
+        port = 465
+        username = System.env.GMAIL_USERNAME
+        password = System.env.GMAIL_PASSWORD
+        props = ["mail.smtp.auth":"true",
+              "mail.smtp.socketFactory.port":"465",
+              "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
+              "mail.smtp.socketFactory.fallback":"false"]
+   }
+}
+
