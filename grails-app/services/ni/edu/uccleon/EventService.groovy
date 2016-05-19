@@ -37,7 +37,7 @@ class EventService {
                         activities: a.value.collect { b ->
                             [
                                 id: b.activity.id,
-                                name: b.activity.name,
+                                name: b.activity,
                                 externalCustomer: b.activity.externalCustomer,
                                 status: activityService.getStatus(b.activity)
                             ]

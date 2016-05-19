@@ -1,11 +1,9 @@
 package ni.edu.uccleon
 
-import groovy.transform.ToString
 import org.grails.databinding.BindingFormat
 import groovy.transform.AutoClone
 
 @AutoClone
-@ToString(includeNames=true)
 class Event {
     @BindingFormat("yyyy-MM-dd")
     Date date
@@ -82,4 +80,6 @@ class Event {
     }
 
     static hasMany = [tableTypes: TableType, chairTypes: ChairType, tableclothColors: TableclothColor]
+
+    String toString() { date }
 }

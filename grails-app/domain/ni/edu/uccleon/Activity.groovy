@@ -1,8 +1,5 @@
 package ni.edu.uccleon
 
-import groovy.transform.ToString
-
-@ToString(includeNames=true)
 class Activity {
     String name
     User createdBy
@@ -31,4 +28,6 @@ class Activity {
     }
 
     static hasMany = [events: Event]
+
+    String toString() { name }
 }
