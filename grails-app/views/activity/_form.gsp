@@ -51,9 +51,11 @@
         value="${session?.events?.getAt(index)?.numberOfPeople ?: params?.numberOfPeople}"
         class="form-control"
         min="1">
-</div>
 
-<div id="numberOfPeopleAlert" class="alert alert-danger hide">Fuera de limite</div>
+        <span id="helpBlock" class="helpBlock hide">
+            Fuera de limite. Recomendado <span id="recommendedCapactity"></span> personas.
+        </span>
+</div>
 
 <div class="row">
     <div class="col-md-3">

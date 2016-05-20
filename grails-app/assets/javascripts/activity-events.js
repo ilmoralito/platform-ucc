@@ -4,15 +4,16 @@ $(function() {
         var value = self.val();
         var location = $('#location option:selected');
         var capacity = location.data("capacity")
-        var alert = $('#numberOfPeopleAlert');
+        var helpBlock = $('#helpBlock');
+        var recommendedCapactity = $('#recommendedCapactity');
 
         if (value.length && capacity !== undefined) {
             if (parseInt(value) > capacity) {
-                alert.addClass("show");
+                recommendedCapactity.html(capacity);
+                helpBlock.addClass("show");
             } else {
-                alert.removeClass("show");
+                helpBlock.removeClass("show");
             }
         }
     });
 });
-
