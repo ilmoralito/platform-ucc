@@ -19,7 +19,8 @@ class AppTagLib {
         tableType: "raw",
         chairs: "raw",
         tableclothColor: "raw",
-        externalCustomers: "raw"
+        externalCustomers: "raw",
+        activityWidget: "raw"
     ]
 
     def profile = {
@@ -250,5 +251,52 @@ class AppTagLib {
             value: externalCustomer,
             class: "form-control"
         )
+    }
+
+    def activityStatus = { attrs ->
+        String status = attrs.status
+
+        if (status == "pending") {
+            out << "Pendiente"
+        } else if (status == "granted") {
+            out << "Aceptado"
+        } else if (status == "approved") {
+            out << "Aprobado"
+        } else {
+            out << "Atendido"
+        }
+    }
+
+    def activityWidget = { attrs ->
+        MarkupBuilder mb = new MarkupBuilder(out)
+        ActivityWidget a = attrs.activityWidget
+
+        mb.div {
+            label "Creado por"
+            p a.createdBy.username
+
+            label "Fecha y hora de creacion"
+            p g.formatDate(format: "yyyy-MM-dd HH:mm", date: a.dateCreated)
+
+            label "Estado"
+            p ucc.activityStatus(status: a.status)
+
+            label "Coordinacion"
+            p a.coordination
+
+            label "Notificado"
+            p a.notified ? "Si" : "No"
+
+            label "Dias permitidos para notificar"
+            p a.daysAllowedToNotify > 0 ? a.daysAllowedToNotify : "Dias para enviar notificacion agotados"
+
+            if (a.notified) {
+                label "Notificado por"
+                p a.notifiedBy.username
+
+                label "Fecha y hora de notificacion"
+                p g.formatDate(format: "yyyy-MM-dd HH:mm", date: a.notificationDate)
+            }
+        }
     }
 }

@@ -4,14 +4,17 @@ import grails.transaction.Transactional
 
 @Transactional
 class ActivityService {
+    def springSecurityService
+    def employeeService
 
-    String getStatus(Activity activity) {
-        if (activity.grantedBy == null && activity.approvedBy == null) {
-            "Pendiente de aprobacion"
-        } else if (activity.grantedBy != null && activity.approvedBy == null) {
-            "Aprovado"
-        } else if (activity.grantedBy == null && activity.approvedBy != null) {
-            "Autorizado"
+    def getActivities() {
+        User currentUser = springSecurityService.currentUser
+
+        if (currentUser.authorities.authority.contains("ROLE_USER")) {
+            Activity.where {
+                coordination == employeeService.getEmployeeCoordination(currentUser.id) &&
+                status != "done"
+            }.list()
         }
     }
 }

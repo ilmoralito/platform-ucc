@@ -23,7 +23,7 @@
 
         <g:if test="${session?.events}">
             <g:form action="save">
-                <g:submitButton name="send" value="Confirmar" class="btn btn-block btn-danger"/>
+                <g:submitButton name="send" value="Confirmar" class="btn btn-block btn-primary"/>
             </g:form>
         </g:if>
     </content>

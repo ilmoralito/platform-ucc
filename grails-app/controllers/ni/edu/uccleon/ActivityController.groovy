@@ -2,11 +2,12 @@ package ni.edu.uccleon
 
 import grails.plugin.springsecurity.annotation.Secured
 
-@Secured(["ROLE_ADMIN", "ROLE_USER", "ROLE_SUPERVISOR"])
+@Secured(["ROLE_ADMIN", "ROLE_USER", "ROLE_ADMINISTRATIVE_SUPERVISOR", "ROLE_ACADEMIC_SUPERVISOR"])
 class ActivityController {
     def springSecurityService
-    def eventService
+    def activityService
     def employeeService
+    def eventService
 
     static allowedMethods = [
         index: "GET",
@@ -16,14 +17,14 @@ class ActivityController {
         cloneEvent: "GET",
         removeEvent: "GET",
         save: "POST",
-        show: "GET"
+        show: "GET",
+        sendNotification: "GET"
     ]
 
     def index(String calendarType) {
-        List<Event> events = eventService.getEvents()
-        List data = eventService.presentation(events)
+        List<Activity> activities = activityService.getActivities()
 
-        [data: data, calendarType: calendarType]
+        [activities: activities, calendarType: calendarType]
     }
 
     def init() {
@@ -176,24 +177,76 @@ class ActivityController {
 
     def save() {
         User currentUser = springSecurityService.currentUser
-        Map employee = employeeService.getEmployee(currentUser.id)
-        Map coordination = employee.coordination
-        Map act = session?.activity
-
-        String receiverEmail = employeeService.getEmployeeInstitutionalMail(coordination)
+        String coordination = employeeService.getEmployeeCoordination(currentUser.id)
 
         Activity activity = new Activity(
-            name: act?.name,
-            externalCustomer: act?.externalCustomer,
-            createdBy: currentUser
+            name: session?.activity?.name,
+            createdBy: currentUser,
+            coordination: coordination,
+            externalCustomer: session?.activity?.externalCustomer
         )
 
         session?.events?.each { event ->
             activity.addToEvents(event)
         }
 
-        flash.message = "Actividad guardada. Pendiente de ser aprobada"
-        activity.save(flush: true)
+        if (!activity.save()) {
+            activity.errors.allErrors.each { error ->
+                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+            }
+
+            flash.bean = activity
+            redirect action: "events"
+
+            return
+        }
+
+        flash.message = "Actividad creada"
+        redirect action: "index", id: 0
+    }
+
+    def show(Long id) {
+        Activity activity = Activity.get(id)
+        User currentUser = springSecurityService.currentUser
+        String coordination = employeeService.getEmployeeCoordination(currentUser.id)
+        Date eventsMinDate = eventService.getEventMinDate(activity)
+
+        if (!activity) {
+            response.sendError 404
+        }
+
+        [
+            activity: activity,
+            daysAllowedToNotify: (eventsMinDate - 2) - new Date(),
+            activityWidget: createActivityWidget(activity)
+        ]
+    }
+
+    def sendNotification(Long id) {
+        Activity activity = Activity.get(id)
+        User currentUser = springSecurityService.currentUser
+        Map employee = employeeService.getEmployee(currentUser.id)
+        Map coordination = employee.coordination
+        String receiverEmail = employeeService.getEmployeeInstitutionalMail(coordination)
+
+        if (!activity) {
+            response.sendError 404
+        }
+
+        activity.notified = true
+        activity.notifiedBy = currentUser
+        activity.notificationDate = new Date()
+
+        if (!activity.save()) {
+            activity.errors.allErrors.each { error ->
+                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+            }
+
+            flash.bean = activity
+            redirect action: "show", id: id
+
+            return
+        }
 
         sendMail {
             from currentUser.email
@@ -208,21 +261,34 @@ class ActivityController {
             )
         }
 
+        flash.message = "Actividad notificada"
         redirect action: "index"
     }
 
-    def show(Long id) {
-        Activity activity = Activity.get(id)
-
-        if (!activity) {
-            response.sendError 404
-        }
-
-        [activity: activity]
+    private ActivityWidget createActivityWidget(Activity activity) {
+        return new ActivityWidget(
+            createdBy: activity.createdBy,
+            dateCreated: activity.dateCreated,
+            status: activity.status,
+            coordination: activity.coordination,
+            notified: activity.notified,
+            notifiedBy: activity.notifiedBy,
+            notificationDate: activity.notificationDate,
+            daysAllowedToNotify: (eventService.getEventMinDate(activity) - 2) - new Date()
+        )
     }
 }
 
-
+class ActivityWidget {
+    User createdBy
+    Date dateCreated
+    String status
+    String coordination
+    Boolean notified
+    User notifiedBy
+    Date notificationDate
+    Integer daysAllowedToNotify
+}
 
 class ActivityCommand {
     String name

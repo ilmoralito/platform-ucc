@@ -43,10 +43,10 @@ class Event {
     List<TableclothColor> tableclothColors
 
     static constraints = {
-        date validator: { date, obj ->
+        date validator: { date ->
             Date today = new Date()
 
-            date >= today + 2
+            date > today + 2
         }
         startTime blank: false, range: 8..16
         endingTime blank: false, range: 9..17, validator: { endingTime, obj ->

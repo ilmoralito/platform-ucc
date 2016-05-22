@@ -47,42 +47,32 @@
         </sec:ifAnyGranted>
 
         <g:if test="${calendarType == 'schedule' || !calendarType}">
-            <g:if test="${data}">
-                <g:each in="${data}" var="d" status="idx">
-                    <table class="table table-hover">
-                        <caption><g:formatDate format="yyyy-MM-dd" date="${d.date}"/></caption>
-                        <colgroup>
-                            <col span="1" style="width: 50%;">
-                            <col span="1" style="width: 50%;">
-                        </colgroup>
-                        <g:if test="${idx == 0}">
-                            <thead>
-                                <th>Nombre de la actividad</th>
-                                <th>Estado</th>
-                            </thead>
-                        </g:if>
-                            <tbody>
-                                <g:each in="${d.activities}" var="a">
-                                    <tr>
-                                        <td>
-                                            <g:link action="show" id="${a.id}">
-                                                ${a.name}
-                                                ${a?.externalCustomer?.name}
-                                            </g:link>
-                                        </td>
-                                        <td>
-                                            <span class="label label-default">
-                                                ${a.status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </g:each>
-                            </tbody>
-                    </table>
-                </g:each>
+            <g:if test="${activities}">
+                <table class="table table-hover">
+                    <colgroup>
+                        <col span="1" style="width: 40%;">
+                        <col span="1" style="width: 60%;">
+                    </colgroup>
+                    <thead>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                    </thead>
+                    <tbody>
+                        <g:each in="${activities}" var="activity">
+                            <tr>
+                                <td>
+                                    <g:link action="show" id="${activity.id}">
+                                        <g:fieldValue bean="${activity}" field="name"/>
+                                    </g:link>
+                                </td>
+                                <td><ucc:activityStatus status="${activity.status}"/></td>
+                            </tr>
+                        </g:each>
+                    </tbody>
+                </table>
             </g:if>
             <g:else>
-                <p>Nada que mostrar</p>
+                <p>Sin actividades recientes que mostrar</p>
             </g:else>
         </g:if>
     </content>

@@ -22,7 +22,7 @@ class EmployeeService {
         json
     }
 
-    def getEmployeeInstitutionalMail(Map coordination) {
+    String getEmployeeInstitutionalMail(Map coordination) {
         List employees = getEmployees()
 
         if (Environment.current == Environment.DEVELOPMENT) {
@@ -42,5 +42,9 @@ class EmployeeService {
                 }.institutionalMail
             }
         }
+    }
+
+    String getEmployeeCoordination(Long id) {
+        getEmployee(id).coordination.name
     }
 }
