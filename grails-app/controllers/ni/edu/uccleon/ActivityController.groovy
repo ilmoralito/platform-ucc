@@ -48,7 +48,7 @@ class ActivityController {
             session.activity.name = command.name
             session.activity.externalCustomer = command.externalCustomer
 
-            redirect action: "events", params: [index: params?.index]
+            redirect action: "events", params: [index: params.index]
         }
     }
 
@@ -63,10 +63,10 @@ class ActivityController {
                 return [bean: command]
             }
 
-            Integer position = params.int("index")
+            Integer index = params.int("index")
 
-            if (position >= 0 && position <= session?.events?.size() - 1) {
-                Event event = session?.events?.getAt(position)
+            if (index >= 0 && index <= session?.events?.size() - 1) {
+                Event event = session?.events?.getAt(index)
 
                 event.date = command.date
                 event.numberOfPeople = command.numberOfPeople
@@ -140,7 +140,7 @@ class ActivityController {
                 session?.events << event
             }
 
-            redirect action: "events", params: [index: position ?: session?.events?.size() - 1]
+            redirect action: "events", params: [index: index ?: session?.events?.size() - 1]
         }
     }
 
@@ -196,13 +196,13 @@ class ActivityController {
             }
 
             flash.bean = activity
-            redirect action: "events"
+            redirect action: "events", id: 0
 
             return
         }
 
         flash.message = "Actividad creada"
-        redirect action: "index", id: 0
+        redirect action: "index"
     }
 
     def show(Long id) {
