@@ -287,8 +287,10 @@ class AppTagLib {
             label "Notificado"
             p a.notified ? "Si" : "No"
 
-            label "Dias permitidos para notificar"
-            p a.daysAllowedToNotify > 0 ? a.daysAllowedToNotify : "Dias para enviar notificacion agotados"
+            if (!a.notified) {
+                label "Dias permitidos para notificar"
+                p a.daysAllowedToNotify > 0 ? a.daysAllowedToNotify : "Dias para enviar notificacion agotados"
+            }
 
             if (a.notified) {
                 label "Notificado por"

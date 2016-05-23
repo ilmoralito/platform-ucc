@@ -8,12 +8,30 @@
     </content>
 
     <content tag="right-column">
-        <ucc:activityWidget activityWidget="${activityWidget}"/>
 
-        <g:if test="${activity.notified == false && daysAllowedToNotify >= 3}">
-            <g:link action="sendNotification" id="${activity.id}" class="btn btn-primary btn-block">
-                Notificar
-            </g:link>
+        <g:render template="showNav"/>
+
+        <g:if test="${params?.tab == 'data' || !params?.tab}">
+            <ucc:activityWidget activityWidget="${activityWidget}"/>
+        </g:if>
+
+        <g:if test="${params?.tab == 'edit'}">
+            <g:form name="form" action="updateActivity" autocomplete="off">
+                <g:hiddenField name="id" value="${params.id}"/>
+                <g:hiddenField name="tab" value="${params?.tab}"/>
+
+                <g:render template="activityForm"/>
+
+                <g:submitButton name="send" value="Actualizar" class="btn btn-primary btn-block"/>
+            </g:form>
+        </g:if>
+
+        <g:if test="${params?.tab == 'notification'}">
+            <g:if test="${activity.notified == false && daysAllowedToNotify >= 3}">
+                <g:link action="sendNotification" id="${activity.id}" class="btn btn-danger btn-block">
+                    Notificar
+                </g:link>
+            </g:if>
         </g:if>
     </content>
 </g:applyLayout>

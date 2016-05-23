@@ -18,6 +18,7 @@ class ActivityController {
         removeEvent: "GET",
         save: "POST",
         show: "GET",
+        updateActivity: "POST",
         sendNotification: "GET"
     ]
 
@@ -205,6 +206,11 @@ class ActivityController {
         redirect action: "index"
     }
 
+    /**
+     * Show activity instance and its events by activity id
+     * @param id Activity instance id
+     * @return
+     */
     def show(Long id) {
         Activity activity = Activity.get(id)
         User currentUser = springSecurityService.currentUser
@@ -220,6 +226,36 @@ class ActivityController {
             daysAllowedToNotify: (eventsMinDate - 2) - new Date(),
             activityWidget: createActivityWidget(activity)
         ]
+    }
+
+    /**
+     * Update activity properties name and externalCustomer
+     * @param id Activity instance id
+     * @param tab current tab in action nav
+     * @return
+     */
+    def updateActivity(Long id, String tab) {
+        Activity activity = Activity.get(id)
+
+        if (!activity) {
+            response.sendError 404
+        }
+
+        activity.properties["name", "externalCustomer"] = params
+
+        if (!activity.save()) {
+            activity.errors.allErrors.each { error ->
+                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+            }
+
+            flash.message = "A ocurrido un error"
+            flash.bean = activity
+            redirect action: "show", params: [id: id, tab: tab]
+            return
+        }
+
+        flash.message = "Actualizacion correcta"
+        redirect action: "show", params: [id: id, tab: tab]
     }
 
     def sendNotification(Long id) {
