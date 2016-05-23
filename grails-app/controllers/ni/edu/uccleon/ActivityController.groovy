@@ -19,6 +19,8 @@ class ActivityController {
         save: "POST",
         show: "GET",
         updateActivity: "POST",
+        cloneActivityEvent: "GET",
+        removeActivityEvent: "GET",
         sendNotification: "GET"
     ]
 
@@ -207,13 +209,12 @@ class ActivityController {
     }
 
     /**
-     * Show activity instance and its events by activity id
      * @param id Activity instance id
      * @return
      */
     def show(Long id) {
-        Activity activity = Activity.get(id)
         User currentUser = springSecurityService.currentUser
+        Activity activity = Activity.get(id)
         String coordination = employeeService.getEmployeeCoordination(currentUser.id)
         Date eventsMinDate = eventService.getEventMinDate(activity)
 
@@ -229,7 +230,6 @@ class ActivityController {
     }
 
     /**
-     * Update activity properties name and externalCustomer
      * @param id Activity instance id
      * @param tab current tab in action nav
      * @return
@@ -258,6 +258,112 @@ class ActivityController {
         redirect action: "show", params: [id: id, tab: tab]
     }
 
+    /**
+     * @param id Activity id
+     * @param tab current selected tab
+     * @param eventId selected event id
+     * @return
+     */
+    def cloneActivityEvent(Long id, String tab, Long eventId) {
+        Activity activity = Activity.get(id)
+        Event event = Event.get(eventId)
+
+        if (!activity || !event) {
+            response.sendError 404
+        }
+
+        Event newEvent = new Event(
+            date: event.date,
+            startTime: event.startTime,
+            endingTime: event.endingTime,
+            numberOfPeople: event.numberOfPeople,
+            location: event.location,
+            audiovisual: event.audiovisual,
+            wifi: event.wifi,
+            sound: event.sound,
+            speaker: event.speaker,
+            microfone: event.microfone,
+            pointer: event.pointer,
+            water: event.water,
+            coffee: event.coffee,
+            cookies: event.cookies,
+            waterBottles: event.waterBottles,
+            mountingType: event.mountingType,
+            presidiumTable: event.presidiumTable,
+            flags: event.flags,
+            podium: event.podium,
+            tableForSpeaker: event.tableForSpeaker,
+            tablecloths: event.tablecloths,
+            refreshment: event.refreshment,
+            breakfast: event.breakfast,
+            lunch: event.lunch,
+            dinner: event.dinner,
+            observation: event.observation
+        )
+
+        event.tableTypes.each { t ->
+            newEvent.addToTableTypes(t)
+        }
+
+        event.chairTypes.each { c ->
+            newEvent.addToChairTypes(c)
+        }
+
+        event.tableclothColors.each { tc ->
+            newEvent.addToTableclothColors(tc)
+        }
+
+        activity.addToEvents(newEvent)
+        
+        if (!activity.save(flush: true)) {
+            activity.errors.allErrors.each { error ->
+                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+            }
+        }
+
+        redirect action: "show", params: [id: id, tab: tab, eventId: newEvent.id]
+    }
+
+    /**
+     * @param id Activity id
+     * @param tab current selected tab
+     * @param eventId selected event id
+     * @return
+     */
+    def removeActivityEvent(Long id, String tab, Long eventId) {
+        Activity activity = Activity.get(id)
+        Event event = Event.get(eventId)
+
+        if (!activity || !event) {
+            response.sendError 404
+        }
+
+        List<Event> events = activity.events
+        Integer index = events.findIndexOf { it == event }
+        Boolean last = index == (events.size() - 1)
+
+        if (events.size() == 1) {
+            activity.delete(flush: true)
+
+            redirect action: "index"
+            return
+        } else {
+            activity.removeFromEvents(event)
+
+            if (last) {
+                index--
+            } else {
+                index++
+            }
+        }
+
+        redirect action: "show", params: [id: id, tab: tab, eventId: events[index].id]
+    }
+
+    /**
+     * @param id Activity id
+     * @return
+     */
     def sendNotification(Long id) {
         Activity activity = Activity.get(id)
         User currentUser = springSecurityService.currentUser

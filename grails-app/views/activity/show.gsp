@@ -4,12 +4,14 @@
     </head>
 
     <content tag="main">
-        
+        <g:set var="events" value="${activity.events}"/>
+        <g:set var="eventId" value="${params.long('eventId') ?: activity.events[0].id}"/>
+
+        <g:render template="showNav"/>
     </content>
 
     <content tag="right-column">
-
-        <g:render template="showNav"/>
+        <g:render template="activityNav"/>
 
         <g:if test="${params?.tab == 'data' || !params?.tab}">
             <ucc:activityWidget activityWidget="${activityWidget}"/>

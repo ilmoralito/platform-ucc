@@ -1,17 +1,27 @@
-<ul class="nav nav-tabs">
-    <li role="presentation" class="${params?.tab == 'data' || !params?.tab ? 'active' : ''}">
-        <g:link action="show" params="[id: params.id, tab: 'data']">
-            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> 
-        </g:link>
-    </li>
-    <li role="presentation" class="${params?.tab == 'edit' ? 'active' : ''}">
-        <g:link action="show" params="[id: params.id, tab: 'edit']">
-            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-        </g:link>
-    </li>
-    <li role="presentation" class="${params?.tab == 'notification' ? 'active' : ''}">
-        <g:link action="show" params="[id: params.id, tab: 'notification']">
-            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
-        </g:link>
-    </li>
-</ul>
+<g:if test="${events}">
+    <ul id="nav" class="nav nav-tabs">
+        <g:each in="${events}" var="event">
+
+            <li role="presentation" class="${event.id == eventId ? 'active' : ''}">
+                <g:link action="show" params="[id: params.id, tab: params?.tab, eventId: event.id]">
+                    <g:formatDate date="${event.date}" format="MM-dd"/>
+                </g:link>
+            </li>
+
+        </g:each>
+        <li role="presentation">
+            <g:link
+                action="cloneActivityEvent"
+                params="[id: params.id, tab: params?.tab, eventId: eventId]">+</g:link>
+        </li>
+    </ul>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-right">
+                <g:link action="removeActivityEvent" params="[id: params.id, tab: params?.tab, eventId: eventId]">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </g:link>
+            </div>
+        </div>
+    </div>
+</g:if>
