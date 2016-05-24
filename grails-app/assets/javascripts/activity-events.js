@@ -1,19 +1,26 @@
 $(function() {
+    $('#location').on('change', function() {
+        notify()
+    });
+
     $('#numberOfPeople').on('blur', function() {
-        var self = $(this);
-        var value = self.val();
+        notify()
+    });
+
+    function notify() {
         var location = $('#location option:selected');
         var capacity = location.data("capacity")
+        var numberOfPeople = $('#numberOfPeople').val();
         var helpBlock = $('#helpBlock');
         var recommendedCapactity = $('#recommendedCapactity');
 
-        if (value.length && capacity !== undefined) {
-            if (parseInt(value) > capacity) {
+        if (numberOfPeople.length && capacity !== undefined) {
+            if (parseInt(numberOfPeople) > capacity) {
                 recommendedCapactity.html(capacity);
                 helpBlock.addClass("show");
             } else {
                 helpBlock.removeClass("show");
             }
         }
-    });
+    }
 });
