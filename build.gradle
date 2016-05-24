@@ -64,6 +64,7 @@ dependencies {
     compile "org.grails.plugins:spring-security-core:3.1.1"
     compile "org.grails:grails-datastore-rest-client:4.0.7.RELEASE"
     compile "org.grails.plugins:mail:2.0.0.RC6"
+    compile "com.craigburke.document:pdf:0.5.0"
 }
 
 task wrapper(type: Wrapper) {
