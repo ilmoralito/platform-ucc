@@ -251,6 +251,7 @@
     <g:textArea
         name="observation"
         value="${events.getAt(index)?.observation ?: params?.dinner}"
+        rows="1"
         class="form-control"
         />
 </div>

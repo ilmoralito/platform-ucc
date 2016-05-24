@@ -3,20 +3,9 @@
 //= require /mustache.js/mustache.min.js
 //= require /moment/min/moment.min.js
 //= require /eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js
+//= require /autosize/dist/autosize.min.js
 //= require_tree .
 //= require_self
-
-(function($,undefined) {
-    $.fn.cloneSelects = function(withDataAndEvents, deepWithDataAndEvents) {
-        var $clone = this.clone(withDataAndEvents, deepWithDataAndEvents);
-        var $origSelects = $('select', this);
-        var $clonedSelects = $('select', $clone);
-        $origSelects.each(function(i) {
-            $clonedSelects.eq(i).val($(this).val());
-        });
-        return $clone;
-    }
-})(jQuery);
 
 $(function() {
     $('#employee').on('change', function() {
@@ -31,3 +20,5 @@ $(function() {
         $('#target').html(rendered);
     });
 })
+
+autosize($('#observation'))
