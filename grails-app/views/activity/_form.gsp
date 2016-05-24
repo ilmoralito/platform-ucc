@@ -250,8 +250,7 @@
     <label for="observation">Observacion</label>
     <g:textArea
         name="observation"
-        value="${events.getAt(index)?.observation ?: params?.dinner}"
+        value="${events.getAt(index)?.observation ?: params?.observation}"
         rows="1"
-        class="form-control"
-        />
+        class="form-control"/>
 </div>

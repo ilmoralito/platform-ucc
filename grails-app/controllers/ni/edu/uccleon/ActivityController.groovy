@@ -62,13 +62,14 @@ class ActivityController {
                     log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
                 }
 
+                flash.bean = command
                 flash.message = "Datos Incorrectos"
-                return [bean: command]
+                return
             }
 
-            Integer index = params.int("index")
+            Integer index = params.index == "" ? 0 : params.int("index")
 
-            if (index >= 0 && index <= session?.events?.size() - 1) {
+            if (session?.events?.size() > 0) {
                 Event event = session?.events?.getAt(index)
 
                 event.date = command.date
@@ -143,7 +144,7 @@ class ActivityController {
                 session?.events << event
             }
 
-            redirect action: "events", params: [index: index ?: session?.events?.size() - 1]
+            redirect action: "events", params: [index: index]
         }
     }
 
