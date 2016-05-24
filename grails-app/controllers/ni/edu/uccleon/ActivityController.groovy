@@ -302,15 +302,15 @@ class ActivityController {
         )
 
         event.tableTypes.each { t ->
-            newEvent.addToTableTypes(t)
+            newEvent.addToTableTypes(new TableType(t.name))
         }
 
         event.chairTypes.each { c ->
-            newEvent.addToChairTypes(c)
+            newEvent.addToChairTypes(new ChairType(c.name))
         }
 
         event.tableclothColors.each { tc ->
-            newEvent.addToTableclothColors(tc)
+            newEvent.addToTableclothColors(new TableclothColor(tc.name))
         }
 
         activity.addToEvents(newEvent)
@@ -358,6 +358,74 @@ class ActivityController {
         }
 
         redirect action: "show", params: [id: id, tab: tab, eventId: events[index].id]
+    }
+
+    /**
+     * @param command event command object
+     * @param id Activity id
+     * @param tab current selected tab
+     * @param eventId selected event id
+     * @return
+     */
+    def updateEvent(EventCommand command, Long id, String tab, Long eventId) {
+        Activity activity = Activity.get(id)
+        Event event = Event.get(eventId)
+
+        if (!activity || !event) {
+            response.sendError 404
+        }
+
+        event.date = command.date
+        event.numberOfPeople = command.numberOfPeople
+        event.startTime = command.startTime
+        event.endingTime = command.endingTime
+        event.location = command.location
+        event.audiovisual = command.audiovisual
+        event.wifi = command.wifi
+        event.sound = command.sound
+        event.speaker = command.speaker
+        event.microfone = command.microfone
+        event.pointer = command.pointer
+        event.water = command.water
+        event.coffee = command.coffee
+        event.cookies = command.cookies
+        event.waterBottles = command.waterBottles
+        event.mountingType = command.mountingType
+        event.presidiumTable = command.presidiumTable
+        event.flags = command.flags
+        event.podium = command.podium
+        event.tableForSpeaker = command.tableForSpeaker
+        event.tablecloths = command.tablecloths
+        event.refreshment = command.refreshment
+        event.breakfast = command.breakfast
+        event.lunch = command.lunch
+        event.dinner = command.dinner
+        event.observation = command.observation
+
+        event.tableTypes.clear()
+        command.tableTypes.each { t ->
+            event.addToTableTypes(t)
+        }
+
+        event.chairTypes.clear()
+        command.chairTypes.each { c ->
+            event.addToChairTypes(c)
+        }
+
+        event.tableclothColors.clear()
+        command.tableclothColors.each { tc ->
+            event.addToTableclothColors(tc)
+        }
+
+        if (!event.save()) {
+            event.errors.allErrors.each { error ->
+                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+            }
+        }
+
+        flash.message = event.hasErrors() ? "A ocurrido un error" : "Actualizacion correcta"
+
+        redirect action: "show", params: [id: id, tab: tab, eventId: eventId]
     }
 
     /**

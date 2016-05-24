@@ -6,8 +6,7 @@
     <g:textField
         name="name"
         value="${name}"
-        class="form-control"
-        autofocus="true"/>
+        class="form-control"/>
 </div>
 
 <sec:ifAnyGranted roles="ROLE_PROTOCOL_COORDINATOR">

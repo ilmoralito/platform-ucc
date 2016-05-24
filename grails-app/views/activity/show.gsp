@@ -6,8 +6,19 @@
     <content tag="main">
         <g:set var="events" value="${activity.events}"/>
         <g:set var="eventId" value="${params.long('eventId') ?: activity.events[0].id}"/>
+        <g:set var="index" value="${events.findIndexOf { it == ni.edu.uccleon.Event.get(eventId) }}"/>
 
         <g:render template="showNav"/>
+
+        <g:form name="updateEventForm" action="updateEvent" autocomplete="off">
+            <g:hiddenField name="id" value="${params.id}"/>
+            <g:hiddenField name="tab" value="${params.tab ?: 'data'}"/>
+            <g:hiddenField name="eventId" value="${params.eventId ?: activity.events[0].id}"/>
+
+            <g:render template="form"/>
+
+            <g:submitButton name="send" value="Actualizar" class="btn btn-primary"/>
+        </g:form>
     </content>
 
     <content tag="right-column">
@@ -18,7 +29,7 @@
         </g:if>
 
         <g:if test="${params?.tab == 'edit'}">
-            <g:form name="form" action="updateActivity" autocomplete="off">
+            <g:form name="updateActivityForm" action="updateActivity" autocomplete="off">
                 <g:hiddenField name="id" value="${params.id}"/>
                 <g:hiddenField name="tab" value="${params?.tab}"/>
 
