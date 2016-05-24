@@ -44,6 +44,7 @@ class Activity {
 
     static mapping = {
         events cascade: "all-delete-orphan"
+        sort dateCreated: "desc"
     }
 
     static hasMany = [events: Event]
