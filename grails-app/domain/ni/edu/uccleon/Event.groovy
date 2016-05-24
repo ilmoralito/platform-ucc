@@ -21,20 +21,20 @@ class Event {
 
     Boolean water = false
     Boolean coffee = false
-    Integer cookies
-    Integer waterBottles
+    Integer cookies = 0
+    Integer waterBottles = 0
 
     String mountingType
-    Integer presidiumTable
+    Integer presidiumTable = 0
     Boolean flags = false
     Boolean podium = false
     Boolean tableForSpeaker = true
     Boolean tablecloths = true
 
-    Integer refreshment
-    Integer breakfast
-    Integer lunch
-    Integer dinner
+    Integer refreshment = 0
+    Integer breakfast = 0
+    Integer lunch = 0
+    Integer dinner = 0
 
     String observation
 
@@ -53,8 +53,8 @@ class Event {
             endingTime > obj.startTime
         }
         numberOfPeople min: 1
-        cookies nullable: true, min: 1
-        waterBottles nullable: true, min: 1
+        cookies min: 0
+        waterBottles min: 0
         mountingType inList: [
             "Libre",
             "Forma U",
@@ -63,11 +63,11 @@ class Event {
             "Sala de reunion",
             "Grupo"
         ], maxSize: 255
-        presidiumTable nullable: true, min: 1
-        refreshment nullable: true, min: 1
-        breakfast nullable: true, min: 1
-        lunch nullable: true, min: 1
-        dinner nullable: true, min: 1
+        presidiumTable min: 0, max: 7
+        refreshment min: 0
+        breakfast min: 0
+        lunch min: 0
+        dinner min: 0
         observation nullable: true, maxSize: 255
     }
 

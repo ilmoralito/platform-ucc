@@ -125,9 +125,9 @@
                 type="number"
                 name="cookies"
                 id="cookies"
-                value="${events.getAt(index)?.cookies ?: params?.cookies}"
+                value="${!events.getAt(index)?.cookies && !params?.cookies ? 0 : events.getAt(index)?.cookies ?: params?.cookies}"
                 class="form-control"
-                min="1">
+                min="0">
         </div>
 
         <div class="form-group">
@@ -136,9 +136,9 @@
                 type="number"
                 name="waterBottles"
                 id="waterBottles"
-                value="${events.getAt(index)?.waterBottles ?: params?.waterBottles}"
+                value="${!events.getAt(index)?.waterBottles && !params?.waterBottles ? 0 : events.getAt(index)?.waterBottles ?: params?.waterBottles}"
                 class="form-control"
-                min="1">
+                min="0">
         </div>
     </div>
 
@@ -190,8 +190,8 @@
                 type="number"
                 name="presidiumTable"
                 id="presidiumTable"
-                value="${events.getAt(index)?.presidiumTable}"
-                min=1
+                value="${!events.getAt(index)?.presidiumTable && !params?.presidiumTable ? 0 : events.getAt(index)?.presidiumTable ?: params?.presidiumTable}"
+                min="0"
                 max="7"
                 class="form-control">
         </div>
@@ -206,9 +206,9 @@
                 type="number"
                 name="refreshment"
                 id="refreshment"
-                value="${events.getAt(index)?.refreshment ?: params?.refreshment}"
+                value="${!events.getAt(index)?.refreshment && !params?.refreshment ? 0 : events.getAt(index)?.refreshment ?: params?.refreshment}"
                 class="form-control"
-                min="1">
+                min="0">
         </div>
 
         <div class="form-group">
@@ -217,9 +217,9 @@
                 type="number"
                 name="breakfast"
                 id="breakfast"
-                value="${events.getAt(index)?.breakfast ?: params?.breakfast}"
+                value="${!events.getAt(index)?.breakfast && !params?.breakfast ? 0 : events.getAt(index)?.breakfast ?: params?.breakfast}"
                 class="form-control"
-                min="1">
+                min="0">
         </div>
 
         <div class="form-group">
@@ -228,9 +228,9 @@
                 type="number"
                 name="lunch"
                 id="lunch"
-                value="${events.getAt(index)?.lunch ?: params?.lunch}"
+                value="${!events.getAt(index)?.lunch && !params?.lunch ? 0 : events.getAt(index)?.lunch ?: params?.lunch}"
                 class="form-control"
-                min="1">
+                min="0">
         </div>
 
         <div class="form-group">
@@ -239,9 +239,9 @@
                 type="number"
                 name="dinner"
                 id="dinner"
-                value="${events.getAt(index)?.dinner ?: params?.dinner}"
+                value="${!events.getAt(index)?.dinner && !params?.dinner ? 0 : events.getAt(index)?.dinner ?: params?.dinner}"
                 class="form-control"
-                min="1">
+                min="0">
         </div>
     </div>
 </div>
