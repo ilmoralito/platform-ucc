@@ -10,11 +10,9 @@ class ActivityService {
     def getActivities() {
         User currentUser = springSecurityService.currentUser
 
-        if (currentUser.authorities.authority.contains("ROLE_USER")) {
-            Activity.where {
-                coordination == employeeService.getEmployeeCoordination(currentUser.id) &&
-                status != "done"
-            }.list()
-        }
+        Activity.where {
+            coordination == employeeService.getEmployeeCoordination(currentUser.id) &&
+            status != "done"
+        }.list()
     }
 }

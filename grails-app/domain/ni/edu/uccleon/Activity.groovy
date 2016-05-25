@@ -38,7 +38,7 @@ class Activity {
         }
         coordination blank: false
         externalCustomer nullable: true
-        status inList: ["pending", "granted", "approved", "done"], maxSize: 255
+        status inList: ["pending", "notified", "granted", "approved", "done"], maxSize: 255
         events nullable: false, minSize: 1
     }
 

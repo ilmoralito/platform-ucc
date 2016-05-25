@@ -445,6 +445,7 @@ class ActivityController {
         }
 
         activity.notified = true
+        activity.status = "notified"
         activity.notifiedBy = currentUser
         activity.notificationDate = new Date()
 
