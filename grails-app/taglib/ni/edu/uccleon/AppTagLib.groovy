@@ -301,4 +301,17 @@ class AppTagLib {
             }
         }
     }
+
+    def requestName = { attrs ->
+        User currentUser = springSecurityService.currentUser
+        List<String> authorities = currentUser.authorities.authority
+
+        if (authorities.contains("ROLE_ADMINISTRATIVE_SUPERVISOR")) {
+            out << "def autorizacion"
+        } else if (authorities.contains("ROLE_ACADEMIC_SUPERVISOR")) {
+            out << "de aprobacion"
+        } else if (authorities.contains("ROLE_PROTOCOL_SUPERVISOR")) {
+            out << "autorizadas"
+        }
+    }
 }

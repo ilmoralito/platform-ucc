@@ -14,6 +14,27 @@
 
         <ul class="nav navbar-nav navbar-right">
             <sec:ifLoggedIn>
+                <sec:ifAnyGranted roles="ROLE_ADMINISTRATIVE_SUPERVISOR, ROLE_ACADEMIC_SUPERVISOR, ROLE_PROTOCOL_SUPERVISOR">
+                    <li class="dropdown">
+                        <a href="#"
+                            class="dropdown-toggle"
+                            data-toggle="dropdown"
+                            role="button"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                            # solicitudes <ucc:requestName/>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <g:each in="${0..9}" var="i">
+                                <li>
+                                    <g:link>${i}</g:link>
+                                </li>
+                            </g:each>
+                        </ul>
+                    </li>
+                </sec:ifAnyGranted>
+
                 <li class="dropdown">
                     <a href="#"
                         class="dropdown-toggle"

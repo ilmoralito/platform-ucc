@@ -28,7 +28,7 @@ class BootStrap {
         Role adminRole = new Role("ROLE_ADMIN").save failOnError: true
         Role administrativeSupervisorRole = new Role("ROLE_ADMINISTRATIVE_SUPERVISOR").save failOnError: true
         Role academicSupervisorRole = new Role("ROLE_ACADEMIC_SUPERVISOR").save failOnError: true
-        Role protocolCoordinatorRole = new Role("ROLE_PROTOCOL_COORDINATOR").save failOnError: true
+        Role protocolCoordinatorRole = new Role("ROLE_PROTOCOL_SUPERVISOR").save failOnError: true
         Role userRole = new Role("ROLE_USER").save failOnError: true
 
         Map JR = employeeService.getEmployee(1)
