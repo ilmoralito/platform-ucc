@@ -6,20 +6,20 @@
 <body>
     <form action="${postUrl ?: '/login/authenticate'}" method="POST" autocomplete="off">
         <div class="form-group">
+            <label for="username">Correo institucional</label>
             <input
                 type="email"
                 name="${usernameParameter ?: 'username'}"
                 id="username"
-                class="form-control input-lg"
-                placeholder="Correo institucional"/>
+                class="form-control input-lg"/>
         </div>
         <div class="form-group">
+            <label for="password">Clave de paso</label>
             <input
                 type="password"
                 name="${passwordParameter ?: 'password'}"
                 class="form-control input-lg"
-                id="password"
-                placeholder="Clave de paso"/>
+                id="password"/>
         </div>
 
         <input
