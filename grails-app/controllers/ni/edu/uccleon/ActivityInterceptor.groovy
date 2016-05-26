@@ -5,23 +5,13 @@ class ActivityInterceptor {
     def employeeService
 
     ActivityInterceptor() {
-        match(action: "updateActivity")
+        match controller: "activity", action: ~/(updateActivity|cloneActivityEvent|removeActivityEvent|updateEvent|sendNotification|removeActivity)/
     }
 
     boolean before() {
         User currentUser = springSecurityService.currentUser
         Activity activity = Activity.get(params.int("id"))
-        Map employee = employeeService.getEmployee(currentUser.id)
-        String employeeCoordination = employee.coordination.name
-        String employeeLocation = employee.coordination.location
-        String activityStatus = activity.status
-        String activityCoordination = activity.coordination
-
-        /*
-        if (employeeCoordination != activityCoordination && activityStatus != "pending") {
-            return false
-        }
-        */
+        List<String> authorities = currentUser.authorities.authority
 
         true
     }

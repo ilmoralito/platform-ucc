@@ -21,7 +21,8 @@ class ActivityController {
         updateActivity: "POST",
         cloneActivityEvent: "GET",
         removeActivityEvent: "GET",
-        sendNotification: "GET"
+        sendNotification: "POST",
+        removeActivity: "POST"
     ]
 
     def index(String calendarType) {
@@ -226,7 +227,9 @@ class ActivityController {
         [
             activity: activity,
             daysAllowedToNotify: (eventsMinDate - 2) - new Date(),
-            activityWidget: createActivityWidget(activity)
+            activityWidget: createActivityWidget(activity),
+            status: activity.status,
+            currentUserRoles: currentUser.authorities.authority
         ]
     }
 
@@ -235,7 +238,7 @@ class ActivityController {
      * @param tab current tab in action nav
      * @return
      */
-    def updateActivity(Long id, String tab) {
+    def updateActivity(Long id, String tab, Long eventId) {
         Activity activity = Activity.get(id)
 
         if (!activity) {
@@ -249,14 +252,11 @@ class ActivityController {
                 log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
             }
 
-            flash.message = "A ocurrido un error"
             flash.bean = activity
-            redirect action: "show", params: [id: id, tab: tab]
-            return
         }
 
-        flash.message = "Actualizacion correcta"
-        redirect action: "show", params: [id: id, tab: tab]
+        flash.message =  activity.hasErrors() ? "A ocurrido un error" : "Actualizacion correcta"
+        redirect action: "show", params: [id: id, tab: tab, eventId: eventId]
     }
 
     /**
@@ -315,7 +315,7 @@ class ActivityController {
         }
 
         activity.addToEvents(newEvent)
-        
+
         if (!activity.save(flush: true)) {
             activity.errors.allErrors.each { error ->
                 log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
@@ -438,7 +438,6 @@ class ActivityController {
         User currentUser = springSecurityService.currentUser
         Map employee = employeeService.getEmployee(currentUser.id)
         Map coordination = employee.coordination
-        String receiverEmail = employeeService.getEmployeeInstitutionalMail(coordination)
 
         if (!activity) {
             response.sendError 404
@@ -460,6 +459,8 @@ class ActivityController {
             return
         }
 
+        String receiverEmail = employeeService.getEmployeeInstitutionalMail(coordination)
+
         sendMail {
             from currentUser.email
             to receiverEmail
@@ -474,6 +475,19 @@ class ActivityController {
         }
 
         flash.message = "Actividad notificada"
+        redirect action: "index"
+    }
+
+    def removeActivity(Long id) {
+        Activity activity = Activity.get(id)
+
+        if (!activity) {
+            response.sendError 404
+        }
+
+        activity.delete(flush: true)
+
+        flash.message = "Actividad eliminada"
         redirect action: "index"
     }
 

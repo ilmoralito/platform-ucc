@@ -13,7 +13,7 @@
         <g:form name="updateEventForm" action="updateEvent" autocomplete="off">
             <g:hiddenField name="id" value="${params.id}"/>
             <g:hiddenField name="tab" value="${params.tab ?: 'data'}"/>
-            <g:hiddenField name="eventId" value="${params.eventId ?: activity.events[0].id}"/>
+            <g:hiddenField name="eventId" value="${eventId}"/>
 
             <g:render template="form"/>
 
@@ -28,22 +28,33 @@
             <ucc:activityWidget activityWidget="${activityWidget}"/>
         </g:if>
 
-        <g:if test="${params?.tab == 'edit'}">
-            <g:form name="updateActivityForm" action="updateActivity" autocomplete="off">
-                <g:hiddenField name="id" value="${params.id}"/>
-                <g:hiddenField name="tab" value="${params?.tab}"/>
+        <g:if test="${activity.status == 'pending'}">
+            <g:if test="${params?.tab == 'edit'}">
+                <g:form name="updateActivityForm" action="updateActivity" autocomplete="off">
+                    <g:hiddenField name="id" value="${params.id}"/>
+                    <g:hiddenField name="tab" value="${params.tab ?: data}"/>
+                    <g:hiddenField name="eventId" value="${eventId}"/>
 
-                <g:render template="activityForm"/>
+                    <g:render template="activityForm"/>
 
-                <g:submitButton name="send" value="Actualizar" class="btn btn-primary btn-block"/>
-            </g:form>
-        </g:if>
+                    <g:submitButton name="send" value="Actualizar" class="btn btn-primary btn-block"/>
+                </g:form>
+            </g:if>
 
-        <g:if test="${params?.tab == 'notification'}">
-            <g:if test="${activity.notified == false && daysAllowedToNotify >= 3}">
-                <g:link action="sendNotification" id="${activity.id}" class="btn btn-danger btn-block">
-                    Notificar
-                </g:link>
+            <g:if test="${params?.tab == 'notification'}">
+                <g:form name="sendNotificationForm" action="sendNotification">
+                    <g:hiddenField name="id" value="${activity.id}"/>
+
+                    <g:submitButton name="send" value="Notificar" class="btn btn-danger btn-block"/>
+                </g:form>
+            </g:if>
+
+            <g:if test="${params.tab == 'remove'}">
+                <g:form name="removeActivityForm" action="removeActivity">
+                    <g:hiddenField name="id" value="${activity.id}"/>
+
+                    <g:submitButton name="send" value="Eliminar" class="btn btn-danger btn-block"/>
+                </g:form>
             </g:if>
         </g:if>
     </content>
