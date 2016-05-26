@@ -358,7 +358,7 @@ class ActivityController {
             }
         }
 
-        redirect action: "show", params: [id: id, tab: tab, eventId: events[index].id]
+        redirect action: "show", params: [id: id, tab: tab, eventId: events[index]?.id ?: 0]
     }
 
     /**

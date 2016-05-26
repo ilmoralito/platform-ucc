@@ -11,7 +11,6 @@ class TableclothColor {
     }
 
     TableclothColor(String name) {
-        this()
         this.name = name
     }
 
