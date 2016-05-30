@@ -20,4 +20,7 @@ if (Environment.isDevelopmentMode() && targetDir) {
         }
     }
     logger("StackTrace", ERROR, ['FULL_STACKTRACE'], false)
+    logger "grails.app.controllers.ni.edu.uccleon.ActivityInterceptor", DEBUG, ["STDOUT"], false
+    logger "grails.app.controllers.ni.edu.uccleon.NotificationInterceptor", DEBUG, ["STDOUT"], false
+    logger "grails.app.controllers.ni.edu.uccleon.ProtocolInterceptor", DEBUG, ["STDOUT"], false
 }
