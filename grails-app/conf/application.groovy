@@ -43,9 +43,9 @@ ni {
                 logo: ""
             ]
 
-            tableTypes = ["Azules", "Blancas", "Plegable"]
+            tableTypes = ["Azules", "Blancas", "Plegable", "Madera"]
 
-            chairTypes = ["Pupitre", "Amueblado"]
+            chairTypes = ["Pupitre", "Amueblada"]
 
             mountingTypes = [
                 "Libre",
