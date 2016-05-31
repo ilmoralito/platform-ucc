@@ -21,7 +21,6 @@ class BootStrap {
         DomainBuilder builder = new DomainBuilder()
         Date today = new Date()
         List<ExternalCustomer> externalCustomers = []
-        List<Activity> activies = []
 
         builder.classNameResolver = "ni.edu.uccleon"
 
