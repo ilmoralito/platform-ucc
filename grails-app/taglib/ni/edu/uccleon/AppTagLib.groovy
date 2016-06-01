@@ -20,6 +20,7 @@ class AppTagLib {
         chairs: "raw",
         tableclothColor: "raw",
         externalCustomers: "raw",
+        activityStatus: "raw",
         activityWidget: "raw"
     ]
 
@@ -105,7 +106,7 @@ class AppTagLib {
                     }
 
                     params.value = classroom.id
-                    option(params) { 
+                    option(params) {
                         mkp.yield classroom?.name ?: classroom.code
                     }
                 }
@@ -255,16 +256,26 @@ class AppTagLib {
 
     def activityStatus = { attrs ->
         String status = attrs.status
+        String message, modifier
 
         if (status == "pending") {
-            out << "Pendiente"
+            message = "Pendiente"
+            modifier = "default"
+        } else if (status == "notified"){
+            message = "Notificado"
+            modifier = "primary"
         } else if (status == "granted") {
-            out << "Aceptado"
+            message = "Aprobado"
+            modifier = "info"
         } else if (status == "approved") {
-            out << "Aprobado"
+            message = "Autorizado"
+            modifier = "danger"
         } else {
-            out << "Atendido"
+            message = "Atendido"
+            modifier = "success"
         }
+
+        out << "<span class='label label-$modifier'>$message</span>"
     }
 
     def activityWidget = { attrs ->

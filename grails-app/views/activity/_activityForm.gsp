@@ -9,7 +9,7 @@
         class="form-control"/>
 </div>
 
-<sec:ifAnyGranted roles="ROLE_PROTOCOL_COORDINATOR">
+<sec:ifAnyGranted roles="ROLE_PROTOCOL_SUPERVISOR">
     <div class="form-group">
         <label for="externalCustomer">Cliente externo</label>
         <ucc:externalCustomers

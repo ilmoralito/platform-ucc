@@ -3,6 +3,8 @@ package ni.edu.uccleon
 class Activity {
     def eventService
 
+    static transients = ["notificationMessage"]
+
     String name
     User createdBy
     User approvedBy
@@ -13,6 +15,7 @@ class Activity {
     User notifiedBy
     Date notificationDate
     String coordination
+    String location
     ExternalCustomer externalCustomer
     String status = "pending"
 
@@ -37,6 +40,7 @@ class Activity {
             }
         }
         coordination blank: false
+        location inList: ["Administrative", "Academic"], maxSize: 255
         externalCustomer nullable: true
         status inList: ["pending", "notified", "granted", "approved", "done"], maxSize: 255
         events nullable: false, minSize: 1
@@ -48,6 +52,10 @@ class Activity {
     }
 
     static hasMany = [events: Event]
+
+    String getNotificationMessage() {
+        "$name por $coordination"
+    }
 
     String toString() { name }
 }

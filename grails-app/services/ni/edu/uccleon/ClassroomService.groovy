@@ -9,8 +9,6 @@ class ClassroomService {
 
     def getClassrooms() {
         RestBuilder restBuilder = new RestBuilder()
-
-        //log.info = "Retrieving classrooms"
         def json = restBuilder.get(classroomURL).json
 
         json
@@ -18,8 +16,6 @@ class ClassroomService {
 
     def getClassroom(Integer id, Integer max = 25) {
         RestBuilder restBuilder = new RestBuilder()
-
-        //log.info = "Retrieving classroom with id [$id]"
         def json = restBuilder.get("$classroomURL/$id?max=$max").json
 
         json

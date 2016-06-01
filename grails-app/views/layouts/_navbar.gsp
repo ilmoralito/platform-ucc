@@ -22,15 +22,28 @@
                             role="button"
                             aria-haspopup="true"
                             aria-expanded="false">
-                            # solicitudes <ucc:requestName/>
+                            ${session?.activityList?.size()} solicitudes <ucc:requestName/>
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <g:each in="${0..9}" var="i">
-                                <li>
-                                    <g:link>${i}</g:link>
-                                </li>
-                            </g:each>
+                            <g:if test="${session?.activityList}">
+                                <li class="dropdown-header">Actividades</li>
+                                <g:each in="${session.activityList}" var="activity">
+                                    <li>
+                                        <g:link controller="activity" action="show" id="${activity.id}">
+                                            <g:fieldValue bean="${activity}" field="notificationMessage" />
+                                        </g:link>
+                                    </li>
+                                </g:each>
+                            </g:if>
+                            <!-- Example about new features to come -->
+                            <sec:ifAnyGranted roles="ROLE_ADMINISTRATIVE_SUPERVISOR">
+                                <li class="dropdown-header">Mercadeo</li>
+                                <li><a href="#" id="">lorem</a></li>
+                                <li><a href="#" id="">lorem ipsum</a></li>
+                                <li class="dropdown-header">Copias</li>
+                                <li><a href="#" id="">Lorem ipsum dolor sit amet</a></li>
+                            </sec:ifAnyGranted>
                         </ul>
                     </li>
                 </sec:ifAnyGranted>

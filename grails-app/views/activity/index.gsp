@@ -50,29 +50,29 @@
             <g:if test="${activities}">
                 <table class="table table-hover">
                     <colgroup>
-                        <col span="1" style="width: 40%;">
-                        <col span="1" style="width: 60%;">
+                        <col span="1" style="width: 50%;">
+                        <col span="1" style="width: 50%;">
                     </colgroup>
                     <thead>
                         <th>Nombre</th>
                         <th>Estado</th>
                     </thead>
                     <tbody>
-                        <g:each in="${activities}" var="activity">
+                        <g:each in="${activities}" var="a">
                             <tr>
                                 <td>
-                                    <g:link action="show" id="${activity.id}">
-                                        <g:fieldValue bean="${activity}" field="name"/>
+                                    <g:link action="show" id="${a.id}">
+                                        <g:fieldValue bean="${a}" field="name"/>
                                     </g:link>
                                 </td>
-                                <td><ucc:activityStatus status="${activity.status}"/></td>
+                                <td><ucc:activityStatus status="${a.status}"/></td>
                             </tr>
                         </g:each>
                     </tbody>
                 </table>
             </g:if>
             <g:else>
-                <p>Sin actividades recientes que mostrar</p>
+                <p>Sin actividades programadas</p>
             </g:else>
         </g:if>
     </content>
