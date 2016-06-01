@@ -22,7 +22,7 @@
     </content>
 
     <content tag="right-column">
-        <sec:noAccess expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
+        <g:if test="${!(activity.status in ['approved', 'done'])}">
             <g:render template="activityNav"/>
 
             <g:if test="${params?.tab == 'data' || !params?.tab}">
@@ -56,31 +56,34 @@
                     <g:submitButton name="send" value="Eliminar" class="btn btn-danger btn-block"/>
                 </g:form>
             </g:if>
-        </sec:noAccess>
+        </g:if>
+
         <sec:access expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
-            <ul class="nav nav-tabs">
-                <li role="presentation" class="${params.tab == 'print' || !params.tab ? 'active' : ''}">
-                    <g:link action="show" params="[id: activity.id, tab: 'print']">
-                        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                    </g:link>
-                </li>
-                <li role="presentation" class="${params.tab == 'send' ? 'active' : ''}">
-                    <g:link action="show" params="[id: activity.id, tab: 'send']">
-                        <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
-                    </g:link>
-                </li>
-            </ul>
+            <g:if test="${activity.status in ['approved', 'done']}">
+                <ul class="nav nav-tabs">
+                    <li role="presentation" class="${params.tab == 'print' || !params.tab ? 'active' : ''}">
+                        <g:link action="show" params="[id: activity.id, tab: 'print']">
+                            <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                        </g:link>
+                    </li>
+                    <li role="presentation" class="${params.tab == 'send' ? 'active' : ''}">
+                        <g:link action="show" params="[id: activity.id, tab: 'send']">
+                            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                        </g:link>
+                    </li>
+                </ul>
 
-            <g:if test="${params.tab == 'print' || !params.tab}">
-                <g:link action="printActivity" id="${activity.id}" class="btn btn-primary btn-block">
-                    Imprimir actividad
-                </g:link>
-            </g:if>
+                <g:if test="${params.tab == 'print' || !params.tab}">
+                    <g:link action="printActivity" id="${activity.id}" class="btn btn-primary btn-block">
+                        Imprimir actividad
+                    </g:link>
+                </g:if>
 
-            <g:if test="${params.tab == 'send'}">
-                <g:link action="setActivityToDone" id="${activity.id}" class="btn btn-primary btn-block">
-                    Notificar fin de actividad
-                </g:link>
+                <g:if test="${params.tab == 'send'}">
+                    <g:link action="setActivityToDone" id="${activity.id}" class="btn btn-primary btn-block">
+                        Notificar fin de actividad
+                    </g:link>
+                </g:if>
             </g:if>
         </sec:access>
     </content>

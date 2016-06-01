@@ -54,7 +54,11 @@ class Activity {
     static hasMany = [events: Event]
 
     String getNotificationMessage() {
-        "$name por $coordination"
+        if (externalCustomer) {
+            "$name por $coordination.toUpperCase() para ${externalCustomer.name.toUpperCase()}"
+        } else {
+            "$name por ${coordination.toUpperCase()}"
+        }
     }
 
     String toString() { name }
