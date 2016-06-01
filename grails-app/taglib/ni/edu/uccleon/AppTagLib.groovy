@@ -213,7 +213,7 @@ class AppTagLib {
         Map<String, String> params = [name: "tableclothColors", type: "checkbox"]
 
         if (coordinationColors.size() == 1) {
-            mb.input(type: "hidden", value: coordinationColors[0])
+            mb.input(name: "tableclothColors", type: "hidden", value: coordinationColors[0])
         } else {
             mb.div {
                 label "Colores de manteles"

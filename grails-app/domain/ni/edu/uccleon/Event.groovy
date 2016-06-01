@@ -64,6 +64,11 @@ class Event {
             "Grupo"
         ], maxSize: 255
         presidiumTable min: 0, max: 7
+        tablecloths validator: { tablecloths, obj ->
+            if (tablecloths) {
+                obj.tableclothColors.size() >= 1
+            }
+        }
         refreshment min: 0
         breakfast min: 0
         lunch min: 0
