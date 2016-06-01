@@ -55,7 +55,7 @@ class Activity {
 
     String getNotificationMessage() {
         if (externalCustomer) {
-            "$name por $coordination.toUpperCase() para ${externalCustomer.name.toUpperCase()}"
+            "$name por ${coordination.toUpperCase()} para ${externalCustomer.name.toUpperCase()}"
         } else {
             "$name por ${coordination.toUpperCase()}"
         }

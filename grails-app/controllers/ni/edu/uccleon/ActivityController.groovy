@@ -566,7 +566,7 @@ class ActivityController {
                 paragraph "Actividad: $event.activity.name. Por: $event.activity.coordination"
 
                 paragraph(margin: [top: 0.inches, bottom: 0.inches]) {
-                    text "Locacion"
+                    text "Datos"
                 }
 
                 table(columns: [1, 2], padding: 1.px, border: [size: 0]) {
@@ -596,11 +596,13 @@ class ActivityController {
                     }
                 }
 
-                paragraph(margin: [bottom: 0.inches]) {
-                    text "Observación"
-                }
+                if (event.observation) {
+                    paragraph(margin: [bottom: 0.inches]) {
+                        text "Observación"
+                    }
 
-                paragraph event.observation
+                    paragraph event.observation
+                }
 
                 paragraph(margin: [bottom: 0.inches]) {
                     text "Requerimientos"
@@ -814,7 +816,7 @@ class ActivityController {
                     paragraph "Actividad: $event.activity.name. Por: $event.activity.coordination"
 
                     paragraph(margin: [top: 0.inches, bottom: 0.inches]) {
-                        text "Locacion"
+                        text "Datos"
                     }
 
                     table(columns: [1, 2], padding: 1.px, border: [size: 0]) {
@@ -844,11 +846,13 @@ class ActivityController {
                         }
                     }
 
-                    paragraph(margin: [bottom: 0.inches]) {
-                        text "Observación"
-                    }
+                    if (event.observation) {
+                        paragraph(margin: [bottom: 0.inches]) {
+                            text "Observación"
+                        }
 
-                    paragraph event.observation
+                        paragraph event.observation
+                    }
 
                     paragraph(margin: [bottom: 0.inches]) {
                         text "Requerimientos"
