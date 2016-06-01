@@ -1048,6 +1048,7 @@ class ActivityController {
 
     private ActivityWidget createActivityWidget(Activity activity) {
         return new ActivityWidget(
+            name: activity.name,
             createdBy: activity.createdBy,
             dateCreated: activity.dateCreated,
             status: activity.status,
@@ -1074,6 +1075,7 @@ class ActivityController {
 }
 
 class ActivityWidget {
+    String name
     User createdBy
     Date dateCreated
     String status

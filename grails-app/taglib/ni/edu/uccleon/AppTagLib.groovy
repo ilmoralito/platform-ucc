@@ -255,27 +255,21 @@ class AppTagLib {
     }
 
     def activityStatus = { attrs ->
-        String status = attrs.status
-        String message, modifier
+        String status = attrs.status, message
 
         if (status == "pending") {
             message = "Pendiente"
-            modifier = "default"
         } else if (status == "notified"){
             message = "Notificado"
-            modifier = "primary"
         } else if (status == "granted") {
             message = "Aprobado"
-            modifier = "info"
         } else if (status == "approved") {
             message = "Autorizado"
-            modifier = "danger"
         } else {
             message = "Atendido"
-            modifier = "success"
         }
 
-        out << "<span class='label label-$modifier'>$message</span>"
+        out << message
     }
 
     def activityWidget = { attrs ->
@@ -283,6 +277,9 @@ class AppTagLib {
         ActivityWidget a = attrs.activityWidget
 
         mb.div {
+            label "Nombre de la actividad"
+            p a.name
+
             label "Creado por"
             p a.createdBy.username
 

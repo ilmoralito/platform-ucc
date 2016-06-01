@@ -65,7 +65,11 @@
                                         <g:fieldValue bean="${a}" field="name"/>
                                     </g:link>
                                 </td>
-                                <td><ucc:activityStatus status="${a.status}"/></td>
+                                <td>
+                                    <span class="label label-info">
+                                        <ucc:activityStatus status="${a.status}"/>
+                                    </span>
+                                </td>
                             </tr>
                         </g:each>
                     </tbody>
