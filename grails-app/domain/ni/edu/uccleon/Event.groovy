@@ -74,6 +74,12 @@ class Event {
         lunch min: 0
         dinner min: 0
         observation nullable: true, maxSize: 255
+
+        tableclothColors validator: { tableclothColors, obj ->
+            if (tableclothColors.size()) {
+                return obj.tablecloths == true
+            }
+        }
     }
 
     static belongsTo = [activity: Activity]
