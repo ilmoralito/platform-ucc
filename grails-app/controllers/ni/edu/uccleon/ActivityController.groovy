@@ -1063,11 +1063,11 @@ class ActivityController {
         [time: 10, value: "10:00"],
         [time: 11, value: "11:00"],
         [time: 12, value: "12:00"],
-        [time: 1, value: "1:00"],
-        [time: 2, value: "2:00"],
-        [time: 3, value: "3:00"],
-        [time: 4, value: "4:00"],
-        [time: 5, value: "5:00"]
+        [time: 13, value: "1:00"],
+        [time: 14, value: "2:00"],
+        [time: 15, value: "3:00"],
+        [time: 16, value: "4:00"],
+        [time: 17, value: "5:00"]
     ]
 }
 
