@@ -456,10 +456,6 @@ class ActivityController {
             activity.notifiedBy = currentUser
             activity.notificationDate = new Date()
         } else {
-            if (activity.status == "approved") {
-                activity.status = "done"
-            }
-
             if (activity.status == "granted") {
                 activity.status = "approved"
                 activity.approvedBy = currentUser
