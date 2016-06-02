@@ -11,7 +11,7 @@ class TableType {
     }
 
     static constraints = {
-        name inList: ["Azules", "Blancas", "Plegable"], maxSize: 255
+        name inList: ["Azules", "Blancas", "Plegable", "Madera"], maxSize: 255
     }
 
     static belongsTo = [event: Event]

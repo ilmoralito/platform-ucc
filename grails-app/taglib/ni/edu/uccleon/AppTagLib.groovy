@@ -219,7 +219,6 @@ class AppTagLib {
                 label "Colores de manteles"
 
                 coordinationColors.each { tableclothColor ->
-
                     div(class: "checkbox") {
                         label {
                             params.value = tableclothColor.name

@@ -150,6 +150,7 @@ class ActivityController {
                 session?.events << event
             }
 
+
             redirect action: "events", params: [index: index]
         }
     }

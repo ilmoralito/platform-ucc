@@ -11,7 +11,7 @@ class ChairType {
     }
 
     static constraints = {
-        name inList: ["Pupitre", "Amueblado"], maxSize: 255
+        name inList: ["Pupitre", "Amueblada"], maxSize: 255
     }
 
     static belongsTo = [event: Event]
