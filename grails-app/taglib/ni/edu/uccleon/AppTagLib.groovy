@@ -210,20 +210,36 @@ class AppTagLib {
         MarkupBuilder mb = new MarkupBuilder(out)
         User currentUser = springSecurityService.currentUser
         List coordinationColors = employeeService.getEmployee(currentUser.id).coordination.colors
+        List<String> tableclothColorList = attrs.list("tableclothColorList")
         Map<String, String> params = [name: "tableclothColors", type: "checkbox"]
 
-        if (coordinationColors.size() == 1) {
-            mb.input(name: "tableclothColors", type: "hidden", value: coordinationColors[0])
-        } else {
-            mb.div {
-                label "Colores de manteles"
+        mb.div {
+            label "Colores de manteles"
 
+            if (coordinationColors.size() == 1) {
+                String color = coordinationColors[0].name
+
+                params.value = color
+
+                div(class: "checkbox") {
+                    label {
+                        if (color in tableclothColorList) {
+                            params.checked = true
+                        } else {
+                            params.remove("checked")
+                        }
+
+                        input(params)
+                        mkp.yield coordinationColors[0].name
+                    }
+                }
+            } else {
                 coordinationColors.each { tableclothColor ->
+                    params.value = tableclothColor.name
+
                     div(class: "checkbox") {
                         label {
-                            params.value = tableclothColor.name
-
-                            if (tableclothColor.name in attrs.list("tableclothColorList")) {
+                            if (tableclothColor.name in tableclothColorList) {
                                 params.checked = true
                             } else {
                                 params.remove("checked")
