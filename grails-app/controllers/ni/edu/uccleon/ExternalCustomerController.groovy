@@ -2,7 +2,7 @@ package ni.edu.uccleon
 
 import grails.plugin.springsecurity.annotation.Secured
 
-@Secured(["ROLE_ADMIN", "ROLE_PROTOCOL_COORDINATOR"])
+@Secured(["ROLE_PROTOCOL_SUPERVISOR"])
 class ExternalCustomerController {
     def externalCustomerService
 

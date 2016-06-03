@@ -5,7 +5,7 @@
     <li role="presentation" class="${controllerName == 'activity' ? 'active' : ''}">
         <g:link controller="activity">Protocolo</g:link>
     </li>
-    <sec:ifAnyGranted roles="ROLE_ADMIN, ROLE_PROTOCOL_COORDINATOR">
+    <sec:ifAnyGranted roles="ROLE_PROTOCOL_SUPERVISOR">
         <li role="presentation" class="${controllerName == 'externalCustomer' ? 'active' : ''}">
             <g:link controller="externalCustomer">Clientes externos</g:link>
         </li>
