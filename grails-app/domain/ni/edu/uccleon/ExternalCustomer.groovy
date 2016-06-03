@@ -11,7 +11,6 @@ class ExternalCustomer {
     String name
     String email
     String telephoneNumber
-    Contact contact
 
     Date dateCreated
     Date lastUpdated
@@ -20,5 +19,8 @@ class ExternalCustomer {
         name blank: false, unique: true
         email email: true, unique: true, blank: false
         telephoneNumber blank: false, unique: true, size: 8..8
+        contact unique: true
     }
+
+    static hasOne = [contact: Contact]
 }

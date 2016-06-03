@@ -13,9 +13,15 @@ class Contact {
     String address
     String email
     String telephoneNumber
+    ExternalCustomer externalCustomer
 
     static constraints = {
+        fullName blank: false
+        identityCard blank: false
+        address blank: false
         email email: true, unique: true, blank: false
         telephoneNumber blank: false, unique: true, size: 8..8
     }
+
+    static belongsTo = ExternalCustomer
 }

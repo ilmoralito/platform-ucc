@@ -17,7 +17,18 @@ class ExternalCustomerController {
         }
 
         if (request.post) {
-            ExternalCustomer externalCustomer = new ExternalCustomer(params)
+            ExternalCustomer externalCustomer = new ExternalCustomer(
+                name: params.name,
+                email: params.email,
+                telephoneNumber: params.telephoneNumber,
+                contact: new Contact(
+                    fullName: params.contact.fullName,
+                    identityCard: params.contact.identityCard,
+                    address: params.contact.address,
+                    email: params.contact.email,
+                    telephoneNumber: params.contact.telephoneNumber
+                )
+            )
 
             if (!externalCustomer.save()) {
                 externalCustomer.errors.allErrors.each { error ->
@@ -28,6 +39,8 @@ class ExternalCustomerController {
             }
 
             flash.message = "Cliente externo creado"
+
+            println params
         }
 
         [externalCustomers: externalCustomers()]
