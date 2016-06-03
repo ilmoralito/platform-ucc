@@ -4,6 +4,7 @@
 //= require /moment/min/moment.min.js
 //= require /eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js
 //= require /autosize/dist/autosize.min.js
+//= require /select2/dist/js/select2.min.js
 //= require_tree .
 //= require_self
 

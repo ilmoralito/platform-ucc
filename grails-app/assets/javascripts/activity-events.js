@@ -23,4 +23,8 @@ $(function() {
             }
         }
     }
+
+    $('#location, #externalCustomer').select2({
+        theme: "bootstrap"
+    });
 });
