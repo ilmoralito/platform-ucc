@@ -144,6 +144,11 @@ class BootStrap {
         externalCustomers.each { externalCustomer ->
             externalCustomer.save failOnError: true
         }
+
+        Guest guest1 = new Guest("John Doe").save failOnError: true
+        Guest guest2 = new Guest("Juan Perez").save failOnError: true
+        Guest guest3 = new Guest("Miguel de Cervantes").save failOnError: true
+        Guest guest4 = new Guest("Donald Trump").save failOnError: true
     }
 
     private production() {}

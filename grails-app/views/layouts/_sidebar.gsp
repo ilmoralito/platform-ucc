@@ -9,6 +9,9 @@
         <li role="presentation" class="${controllerName == 'externalCustomer' ? 'active' : ''}">
             <g:link controller="externalCustomer">Clientes externos</g:link>
         </li>
+        <li role="presentation" class="${controllerName == 'guest' ? 'active' : ''}">
+            <g:link controller="guest">Invitados</g:link>
+        </li>
     </sec:ifAnyGranted>
     <li role="presentation" class="${controllerName == 'copy' ? 'active' : ''}">
         <g:link controller="copy">Copias</g:link>
