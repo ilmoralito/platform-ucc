@@ -18,6 +18,14 @@
     "tests"
   ],
   "dependencies": {
-    "eonasdan-bootstrap-datetimepicker": "^4.17.37"
+    "eonasdan-bootstrap-datetimepicker": "^4.17.37",
+    "vue": "^1.0.24",
+    "autosize": "^3.0.15",
+    "bootstrap": "^3.3.6",
+    "mustache.js": "mustache#^2.2.1",
+    "select2": "^4.0.3",
+    "select2-bootstrap-theme": "^0.1.0-beta.4",
+    "jquery": "^2.2.4",
+    "moment": "^2.13.0"
   }
 }
