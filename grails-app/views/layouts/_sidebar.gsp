@@ -6,11 +6,14 @@
         <g:link controller="activity">Protocolo</g:link>
     </li>
     <sec:ifAnyGranted roles="ROLE_PROTOCOL_SUPERVISOR">
+        <li role="presentation" class="${controllerName == 'voucher' ? 'active' : ''}">
+            <g:link controller="voucher">Vales</g:link>
+        </li>
         <li role="presentation" class="${controllerName == 'externalCustomer' ? 'active' : ''}">
             <g:link controller="externalCustomer">Clientes externos</g:link>
         </li>
         <li role="presentation" class="${controllerName == 'guest' ? 'active' : ''}">
-            <g:link controller="guest">Invitados</g:link>
+            <g:link controller="guest">Visitas</g:link>
         </li>
     </sec:ifAnyGranted>
     <li role="presentation" class="${controllerName == 'copy' ? 'active' : ''}">
