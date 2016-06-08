@@ -11,6 +11,7 @@ class ExternalCustomer {
     String name
     String email
     String telephoneNumber
+    String city
 
     Date dateCreated
     Date lastUpdated
@@ -19,6 +20,7 @@ class ExternalCustomer {
         name blank: false, unique: true
         email email: true, unique: true, blank: false
         telephoneNumber blank: false, unique: true, size: 8..8
+        city inList: ["Leon", "Chinandega", "Managua"], maxSize: 255
         contact unique: true
     }
 

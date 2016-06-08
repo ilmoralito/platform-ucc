@@ -4,19 +4,16 @@
     </head>
 
     <content tag="main">
-        <g:form action="update">
+        <g:form name="updateExternalCustomerForm" action="update" autocomplete="off">
             <g:hiddenField name="id" value="${externalCustomer.id}"/>
-            <div class="row">
-                <div class="col-md-6">
-                    <g:render template="form"/>
-                </div>
-            </div>
+            <g:render template="form"/>
 
-            <g:submitButton name="send" value="Actualizar" class="btn btn-primary"/>
+            <g:submitButton name="send" value="Actualizar" class="btn btn-primary pull-right"/>
         </g:form>
 
-        <g:hasErrors bean="${externalCustomer}">
-            <g:renderErrors bean="${externalCustomer}" as="list" />
+        <g:hasErrors bean="${flash.bag}">
+            <br>
+            <g:renderErrors bean="${flash.bag}" as="list"/>
         </g:hasErrors>
     </content>
 </g:applyLayout>

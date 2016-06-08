@@ -8,42 +8,43 @@ class ExternalCustomerController {
 
     def allowedMethods = [
         index: ["GET", "POST"],
-        edit: "GET"
+        create: ["GET","POST"],
+        edit: "GET",
+        update: "POST"
     ]
 
     def index() {
-        Closure externalCustomers = {
-            externalCustomerService.getAll()
-        }
+        List<ExternalCustomer> externalCustomers = []
 
         if (request.post) {
-            ExternalCustomer externalCustomer = new ExternalCustomer(
-                name: params.name,
-                email: params.email,
-                telephoneNumber: params.telephoneNumber,
-                contact: new Contact(
-                    fullName: params.contact.fullName,
-                    identityCard: params.contact.identityCard,
-                    address: params.contact.address,
-                    email: params.contact.email,
-                    telephoneNumber: params.contact.telephoneNumber
-                )
-            )
+            externalCustomers = ExternalCustomer.where {
+                name =~ "%params?.name%" ||
+                city in params.list("cities")
+            }.list(params)
+        } else {
+            externalCustomers = ExternalCustomer.list(params)
+        }
 
+        [externalCustomers: externalCustomers]
+    }
+
+    def create() {
+        ExternalCustomer externalCustomer = new ExternalCustomer(params)
+
+        if (request.post) {
             if (!externalCustomer.save()) {
                 externalCustomer.errors.allErrors.each { error ->
                     log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
                 }
 
-                return [externalCustomer: externalCustomer, externalCustomers: externalCustomers()]
+                flash.bag = externalCustomer
             }
 
-            flash.message = "Cliente externo creado"
-
-            println params
+            flash.message = externalCustomer.hasErrors() ? "Error" : "Tarea correcta"
+            return
         }
 
-        [externalCustomers: externalCustomers()]
+        [externalCustomer: externalCustomer]
     }
 
     def edit(Long id) {
@@ -70,12 +71,10 @@ class ExternalCustomerController {
                 log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
             }
 
-            flash.message = "Error"
-            chain action: "edit", id: id, model: [externalCustomer: externalCustomer]
-            return
+            flash.bag = externalCustomer
         }
 
-        flash.message = "Cliente externo actualizado"
+        flash.message = externalCustomer.hasErrors() ? "Error" : "Cliente externo actualizado"
         redirect action: "edit", id: id
     }
 }

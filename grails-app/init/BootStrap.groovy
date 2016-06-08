@@ -100,6 +100,7 @@ class BootStrap {
             name: "externalCustomer1",
             email: "externalCustomer1@domain.com",
             telephoneNumber: "12345678",
+            city: "Leon",
             id: "externalCustomer1"
         ) {
             contact(
@@ -115,6 +116,7 @@ class BootStrap {
             name: "externalCustomer2",
             email: "externalCustomer2@domain.com",
             telephoneNumber: "12345679",
+            city: "Leon",
             id: "externalCustomer2"
         ) {
             contact(
@@ -130,6 +132,7 @@ class BootStrap {
             name: "externalCustomer3",
             email: "externalCustomer3@domain.com",
             telephoneNumber: "82385679",
+            city: "Chinandega",
             id: "externalCustomer3"
         ) {
             contact(
