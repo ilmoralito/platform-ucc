@@ -4,19 +4,19 @@
     </head>
 
     <content tag="main">
-        <table class="table table-hover table-striped">
+        <table class="table table-hover">
             <colgroup>
-                <col span="1" style="width: 1%;">
-                <col span="1" style="width: 99%;">
+                <col span="1" style="width: 5%;">
+                <col span="1" style="width: 95%;">
             </colgroup>
             <thead>
-                <th>#</th>
+                <th style="text-align: center;">#</th>
                 <th>Nombre y apellido</th>
             </thead>
             <tbody>
                 <g:each in="${users}" var="user" status="idx">
                     <tr>
-                        <td>${idx + 1}</td>
+                        <td style="text-align: center;">${idx + 1}</td>
                         <td>
                             <g:link action="show" id="${user.id}">${user.username}</g:link>
                         </td>
@@ -27,76 +27,50 @@
     </content>
 
     <content tag="right-column">
-        <g:form action="index" autocomplete="off">
-            <div class="form-group">
-                <ucc:getEmployee/>
-            </div>
+        <g:if test="${employees}">
+            <g:form action="create" autocomplete="off">
+                <div class="form-group">
+                    <ucc:getEmployeeList employees="${employees}"/>
+                </div>
 
-            <div id="target"></div>
+                <div id="target"></div>
 
-            <g:submitButton name="send" value="Confirmar" class="btn btn-primary btn-block"/>
-        </g:form>
+                <g:submitButton name="send" value="Confirmar" class="btn btn-primary btn-block"/>
+            </g:form>
 
-        <script id="template" type="x-tmpl-mustache">
-            <div class='panel panel-default'>
-                <table class='table table'>
-                    <tr>
-                        <td colspan='2'><b>Nombre</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan='2'>{{ fullName }}</td>
-                    </tr>
+            <script id="template" type="x-tmpl-mustache">
+                <label>Nombre</label>
+                <p>{{ fullName }}</p>
 
-                    <tr>
-                        <td colspan='2'><b>Email</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan='2'>{{ institutionalMail }}</td>
-                    </tr>
+                <label>Mail</label>
+                <p>{{ institutionalMail }}</p>
 
-                    <tr>
-                        <td colspan='2'><b>Puesto</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan='2'>{{ position }}</td>
-                    </tr>
+                <label>Puesto</label>
+                <p>{{ position }}</p>
 
-                    <tr>
-                        <td colspan='2'><b>Rol</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan='2'>{{ authority }}</td>
-                    </tr>
+                <label>Rol</label>
+                <p>{{ authority }}</p>
 
-                    <tr>
-                        <td colspan='2'><b>Cedula</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan='2'>{{ identityCard }}</td>
-                    </tr>
+                <label>Numero de cedula</label>
+                <p>{{ identityCard }}</p>
 
-                    <tr>
-                        <td colspan='2'><b>INSS</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan='2'>{{ inss }}</td>
-                    </tr>
+                <label>Numero de INSS</label>
+                <p>{{ inss }}</p>
 
-                    <tr>
-                        <td colspan='2'><b>Coordinacion</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan='2'>{{ coordination.name }}</td>
-                    </tr>
+                {{ #coordinations }}
+                    <label>Coordinacion</label>
+                    <p>{{ name }}</p>
 
-                    <tr>
-                        <td colspan='2'><b>Extension</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan='2'>{{ coordination.extensionNumber }}</td>
-                    </tr>
-                </table>
-            </div>
-        </script>
+                    <label>Numero de extension</label>
+                    <p>{{ extensionNumber }}</p>
+
+                    <label>Direccion</label>
+                    <p>{{ location }}</p>
+                {{ /coordinations }}
+            </script>
+        </g:if>
+        <g:else>
+            <p>Todos los empleados fueron agregados</p>
+        </g:else>
     </content>
 </g:applyLayout>

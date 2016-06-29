@@ -2,6 +2,7 @@ package ni.edu.uccleon
 
 class NotificationInterceptor {
     def springSecurityService
+    def voucherService
 
     int order = HIGHEST_PRECEDENCE + 200
 
@@ -22,7 +23,13 @@ class NotificationInterceptor {
                 (status == "notified" && location == "Administrative") || status == "granted"
             }.list()
 
-            session.activityList = activityList
+            grailsApplication.config.ni.edu.uccleon.activityList = activityList
+
+            List<Voucher> vouchers = Voucher.where {
+                status == "notified"
+            }.list()
+
+            grailsApplication.config.ni.edu.uccleon.voucherList = voucherService.groupVouchersByDate(vouchers)
         }
 
         if (authorities.authority.contains("ROLE_ACADEMIC_SUPERVISOR")) {
@@ -30,7 +37,7 @@ class NotificationInterceptor {
                 status == "notified" && location == "Academic"
             }.list()
 
-            session.activityList = activityList
+            grailsApplication.config.ni.edu.uccleon.activityList = activityList
         }
 
         if (authorities.authority.contains("ROLE_PROTOCOL_SUPERVISOR")) {
@@ -38,7 +45,13 @@ class NotificationInterceptor {
                 status == "approved"
             }.list()
 
-            session.activityList = activityList
+            grailsApplication.config.ni.edu.uccleon.activityList = activityList
+
+            List<Voucher> vouchers = Voucher.where {
+                status == "approved"
+            }.list()
+
+            grailsApplication.config.ni.edu.uccleon.voucherList = voucherService.groupVouchersByDate(vouchers)
         }
 
         true

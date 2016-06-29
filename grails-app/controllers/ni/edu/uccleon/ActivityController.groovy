@@ -489,20 +489,20 @@ class ActivityController {
             return
         }
 
-        // String receiverEmail = employeeService.getEmployeeInstitutionalMail(coordination)
+        String receiverEmail = employeeService.getEmployeeInstitutionalMail(coordination)
 
-        // sendMail {
-        //     from currentUser.email
-        //     to receiverEmail
-        //     subject "Protocolo - Nueva actividad $activity.name"
-        //     html g.render(template: "email", model: [
-        //             name: activity.name,
-        //             username: currentUser.username,
-        //             client: activity?.externalCustomer?.name ?: coordination.name,
-        //             host: "http://${grailsApplication.config.ni.edu.uccleon.serverUrl}/activity/show/${activity.id}"
-        //         ]
-        //     )
-        // }
+        sendMail {
+            from currentUser.email
+            to receiverEmail
+            subject "Protocolo - Nueva actividad $activity.name"
+            html g.render(template: "email", model: [
+                    name: activity.name,
+                    username: currentUser.username,
+                    client: activity?.externalCustomer?.name ?: coordination.name,
+                    host: "http://${grailsApplication.config.ni.edu.uccleon.serverUrl}/activity/show/${activity.id}"
+                ]
+            )
+        }
 
         flash.message = "Actividad notificada"
         redirect action: "index"

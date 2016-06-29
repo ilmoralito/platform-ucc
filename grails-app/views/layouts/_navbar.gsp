@@ -1,3 +1,6 @@
+<g:set var="activityList" value="${grailsApplication.config.ni.edu.uccleon.activityList}"/>
+<g:set var="voucherList" value="${grailsApplication.config.ni.edu.uccleon.voucherList}"/>
+
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -22,13 +25,13 @@
                             role="button"
                             aria-haspopup="true"
                             aria-expanded="false">
-                            ${session?.activityList?.size()} solicitudes <ucc:requestName/>
+                            <span class="glyphicon glyphicon-bell" aria-hidden="true" style="color: ${activityList || voucherList ? 'gold;' : ''}"></span>
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <g:if test="${session?.activityList}">
+                            <g:if test="${activityList}">
                                 <li class="dropdown-header">Actividades</li>
-                                <g:each in="${session.activityList}" var="activity">
+                                <g:each in="${activityList}" var="activity">
                                     <li>
                                         <g:link controller="activity" action="show" id="${activity.id}">
                                             <g:fieldValue bean="${activity}" field="notificationMessage" />
@@ -36,14 +39,17 @@
                                     </li>
                                 </g:each>
                             </g:if>
-                            <!-- Example about new features to come -->
-                            <sec:ifAnyGranted roles="ROLE_ADMINISTRATIVE_SUPERVISOR">
-                                <li class="dropdown-header">Mercadeo</li>
-                                <li><a href="#" id="">lorem</a></li>
-                                <li><a href="#" id="">lorem ipsum</a></li>
-                                <li class="dropdown-header">Copias</li>
-                                <li><a href="#" id="">Lorem ipsum dolor sit amet</a></li>
-                            </sec:ifAnyGranted>
+                            <g:if test="${voucherList}">
+                                <li class="dropdown-header">Vales</li>
+                                <g:each in="${voucherList}" var="voucher">
+                                    <li>
+                                        <g:link controller="voucher" action="show" params="[date: voucher.date]">
+                                            ${voucher.size} - ${voucher.date.format('yyyy-MM-dd')}
+                                        </g:link>
+                                    </li>
+                                </g:each>
+                            </g:if>
+                            <sec:ifAnyGranted roles="ROLE_ADMINISTRATIVE_SUPERVISOR"></sec:ifAnyGranted>
                         </ul>
                     </li>
                 </sec:ifAnyGranted>
@@ -58,7 +64,19 @@
                         <sec:loggedInUserInfo field="username"/> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="${actionName == 'profile' ? 'active' : ''}">
+                        <sec:ifAllGranted roles='ROLE_ADMIN'>
+                            <li class="${controllerName == 'user' && !(actionName in ['profile', 'password']) ? 'active' : ''}">
+                                <g:link controller="user">
+                                    Administrar usuarios
+                                </g:link>
+                            </li>
+                            <li class="${controllerName == 'coordination' ? 'active' : ''}">
+                                <g:link controller="coordination">
+                                    Administrar coordinaciones
+                                </g:link>
+                            </li>
+                        </sec:ifAllGranted>
+                        <li class="${controllerName == 'user' && actionName == 'profile' ? 'active' : ''}">
                             <g:link controller="user" action="profile">Perfil</g:link>
                         </li>
                         <li role="separator" class="divider"></li>

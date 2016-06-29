@@ -8,12 +8,13 @@ class AppTagLib {
     def employeeService
     def classroomService
     def externalCustomerService
+    def guestService
+    def voucherService
 
     static defaultEncodeAs = [taglib: "html"]
     static namespace = "ucc"
     static encodeAsForTags = [
         profile: "raw",
-        getEmployee: "raw",
         classrooms: "raw",
         mountingType: "raw",
         tableType: "raw",
@@ -21,7 +22,12 @@ class AppTagLib {
         tableclothColor: "raw",
         externalCustomers: "raw",
         activityStatus: "raw",
-        activityWidget: "raw"
+        activityWidget: "raw",
+        voucherStatus: "raw",
+        getEmployeeList: "raw",
+        getEmployees: "raw",
+        getGuests: "raw",
+        getColors: "raw"
     ]
 
     def profile = {
@@ -60,20 +66,6 @@ class AppTagLib {
             label "Colores de coordinacion"
             employee.coordination.colors.each { color ->
                 p color.name
-            }
-        }
-    }
-
-    def getEmployee = {
-        MarkupBuilder mb = new MarkupBuilder(out)
-        List employees = employeeService.getEmployees()
-
-        mb.select(id: "employee", name: "employee", class: "form-control") {
-            option(value: '') { mkp.yield "-Selecciona un perfil-" }
-            employees.each { employee ->
-                option(value: employee.id, "data-data": JsonOutput.toJson(employee)) {
-                    mkp.yield employee.fullName
-                }
             }
         }
     }
@@ -335,6 +327,131 @@ class AppTagLib {
             out << "de aprobacion"
         } else if (authorities.contains("ROLE_PROTOCOL_SUPERVISOR")) {
             out << "autorizadas"
+        }
+    }
+
+    def voucherStatus = { attrs ->
+        String status = attrs.status
+
+        if (status == "pending") {
+            out << "Pendiente"
+        } else if (status == "notified") {
+            out << "Notificado"
+        } else {
+            out << "Aprovado"
+        }
+    }
+
+    def getEmployeeList = { attrs ->
+        MarkupBuilder mb = new MarkupBuilder(out)
+        List employees = attrs.employees
+        Map<String, String> params = [:]
+
+        mb.div(class: "form-group") {
+            delegate.select(name: "employee", id: "employee", class: "form-control") {
+                employees.each { e ->
+                    params.value = e.id
+                    params["data-information"] = JsonOutput.toJson(e)
+
+                    option(params) {
+                        mkp.yield e.fullName
+                    }
+                }
+            }
+        }
+    }
+
+    def getEmployees = { attrs ->
+        MarkupBuilder mb = new MarkupBuilder(out)
+        List employees = employeeService.getEmployees()
+        String name = attrs.name ?: "employee"
+        Integer currentEmployee = attrs?.currentEmployee
+        Map<String, String> params = [id: name, name: name, class: "form-control"]
+        Map<String, String> optionParams = [:]
+
+        if (attrs.multiple) {
+            params.multiple = "multiple"
+        }
+
+        mb.select(params) {
+            employees.each { employee ->
+                optionParams.value = employee.id
+                optionParams["data-data"] = JsonOutput.toJson(employee)
+
+                if (currentEmployee) {
+                    if (currentEmployee == employee.id) {
+                        optionParams.selected = true
+                    } else {
+                        optionParams.remove("selected")
+                    }
+                }
+
+                option(optionParams) {
+                    mkp.yield employee.fullName
+                }
+            }
+        }
+    }
+
+    def employee = { attrs ->
+        String employeeFullName = employeeService.getEmployee(attrs.id).fullName
+
+        out << employeeFullName
+    }
+
+    def getGuests = { attrs ->
+        MarkupBuilder mb = new MarkupBuilder(out)
+        List<Guest> guests = guestService.getGuests()
+        Integer guestId = attrs.guestId ?: 1
+        Map<String, String> params = [:]
+
+        mb.div {
+            label(for: "guests") {
+                mkp.yield "Invitados"
+            }
+
+            delegate.select(name: "guests", id: "guests", class: "form-control") {
+                guests.each { guest ->
+                    if (guest.id == guestId) {
+                        params.selected = true
+                    } else {
+                        params.remove("selected")
+                    }
+
+                    option(value: guest.id) {
+                        mkp.yield guest.fullName
+                    }
+                }
+            }
+
+        }
+    }
+
+    def getColors = { attrs ->
+        MarkupBuilder mb = new MarkupBuilder(out)
+        List colorList = attrs.colorList
+        List colorParamList = attrs.colorParamList
+        Map params = [type: "checkbox", name: "colors"]
+
+        mb {
+            label "Colores"
+
+            colorList.each { color ->
+                params.value = color.name
+
+                if (color.name in colorParamList) {
+                    params.selected = true
+                } else {
+                    params.remove("selected")
+                }
+
+                div(class: "checkbox") {
+                    label {
+                        input(params)
+                        mkp color.name
+                    }
+                }
+            }
         }
     }
 }

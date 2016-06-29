@@ -6,8 +6,12 @@ import static java.util.Calendar.*
 class BootStrap {
     def employeeService
     def classroomService
+    def grailsApplication
 
     def init = { servletContext ->
+        grailsApplication.config.ni.edu.uccleon.activityList
+        grailsApplication.config.ni.edu.uccleon.voucherList
+
          if (Environment.DEVELOPMENT) {
             development()
         }
@@ -36,6 +40,8 @@ class BootStrap {
         Map CV = employeeService.getEmployee(4)
         Map JM = employeeService.getEmployee(5)
         Map SC = employeeService.getEmployee(6)
+        Map SL = employeeService.getEmployee(8)
+        Map MM = employeeService.getEmployee(9)
 
         User jrUser = new User(
             JR.fullName,
@@ -72,13 +78,11 @@ class BootStrap {
             "password"
         ).save failOnError: true
 
-        User scUser = new User(
-            SC.fullName,
-            SC.id,
-            SC.institutionalMail,
-            "password"
-        ).save failOnError: true
+        User scUser = new User(SC.fullName, SC.id, SC.institutionalMail, "password").save failOnError: true
 
+        User adminUser = new User(MM.fullName, MM.id, MM.institutionalMail, "password").save failOnError: true
+
+        UserRole.create adminUser, adminRole, true
         UserRole.create jrUser, administrativeSupervisorRole, true
         UserRole.create rlUser, academicSupervisorRole, true
         UserRole.create ogUser, protocolCoordinatorRole, true
@@ -92,9 +96,9 @@ class BootStrap {
             it.clear()
         }
 
-        assert User.count() == 6
+        assert User.count() == 7
         assert Role.count() == 5
-        assert UserRole.count() == 7
+        assert UserRole.count() == 8
 
         externalCustomers << builder.externalCustomer(
             name: "externalCustomer1",

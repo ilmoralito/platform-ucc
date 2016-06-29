@@ -19,7 +19,9 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
     [pattern: "/**/css/**",      access: ["permitAll"]],
     [pattern: "/**/images/**",   access: ["permitAll"]],
     [pattern: "/**/favicon.ico", access: ["permitAll"]],
-    [pattern: "/dbconsole/**", access: ["permitAll"]]
+    [pattern: "/dbconsole/**", access: ["permitAll"]],
+    [pattern: "/console/**", access: ["ROLE_ADMIN"]],
+    [pattern: "/plugins/console*/**", access: ["ROLE_ADMIN"]]
 ]
 
 grails.plugin.springsecurity.filterChain.chainMap = [
@@ -56,7 +58,18 @@ ni {
                 "Grupo"
             ]
 
+            foods = [
+                [spanish: "Refresco", english: "refreshment"],
+                [spanish: "Desayuno", english: "breakfast"],
+                [spanish: "Almuerzo", english: "lunch"],
+                [spanish: "Cena", english: "dinner"]
+            ]
+
             serverUrl = "192.168.7.99:8181"
+
+            activityList = []
+
+            voucherList = []
         }
     }
 }
@@ -65,8 +78,8 @@ grails {
    mail {
         host = "smtp.gmail.com"
         port = 465
-        username = System.env.GMAIL_USERNAME
-        password = System.env.GMAIL_PASSWORD
+        username = "mario.martinez@ucc.edu.ni" // System.env.GMAIL_USERNAME
+        password = "hotch^peluso" // System.env.GMAIL_PASSWORD
         props = ["mail.smtp.auth":"true",
               "mail.smtp.socketFactory.port":"465",
               "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",

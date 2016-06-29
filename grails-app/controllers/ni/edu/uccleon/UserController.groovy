@@ -1,6 +1,8 @@
 package ni.edu.uccleon
 
 import grails.plugin.springsecurity.annotation.Secured
+import org.springframework.http.ResponseEntity
+import grails.plugins.rest.client.RestResponse
 
 @Secured(["ROLE_ADMIN"])
 class UserController {
@@ -8,7 +10,8 @@ class UserController {
     def employeeService
 
     static allowedMethods = [
-        index: ["GET", "POST"],
+        index: "GET",
+        create: "POST",
         show: "GET",
         update: "POST",
         profile: "GET",
@@ -16,29 +19,30 @@ class UserController {
     ]
 
     def index() {
-        Closure users = {
-            User.list()
-        }
+        List<User> users = User.list()
+        List employeeList = employeeService.getEmployees()
+        List<Integer> userList = users.employee
+        List employeesNotInUserList = employeeList.findAll { !(it.id in userList) }
 
-        if (request.post) {
-            Integer id = params.int("employee")
-            Map<String, String> employee = employeeService.getEmployee(id)
-            User user = new User(
-                username: employee.institutionalMail,
-                email: employee.institutionalMail,
-                employee: employee.id
-            )
+        [users: users, employees: employeesNotInUserList]
+    }
 
-            if (!user.save()) {
-                user.errors.allErrors.each { error ->
-                    log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
-                }
+    def create(Long employee) {
+        Map<String, String> e = employeeService.getEmployee(employee)
+        User user = new User(
+            username: e.fullName,
+            email: e.institutionalMail,
+            employee: e.id
+        )
 
-                return [users: users(), user: user]
+        if (!user.save()) {
+            user.errors.allErrors.each { error ->
+                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
             }
         }
 
-        [users: users()]
+        flash.message = user.hasErrors() ? "A ocurrido un error" : "Tarea completada"
+        redirect action: "index"
     }
 
     def show(Long id) {
@@ -48,9 +52,36 @@ class UserController {
             response.sendError 404
         }
 
-        Map<String, String> employee = employeeService.getEmployee(id)
+        [user: user, employee: employeeService.getEmployee(id)]
+    }
 
-        [user: user, employee: employee]
+    def update(Long id) {
+        User user = User.get(id)
+        def result
+
+        if (!user) {
+            response.sendError 404
+        }
+
+        user.properties = params
+
+        if (!user.save()) {
+            user.errors.allErrors.each { error ->
+                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+            }
+
+            flash.bag = user
+        } else {
+            result = employeeService.updateEmployee(id, params?.fullName, params?.institutionalMail, params?.position, params?.authority, params?.identityCard, params?.inss)
+
+            if (result.json.message) {
+                flash.employeeBag = result.json
+                log.error "A ocurrido el error $result.json.message"
+            }
+        }
+
+        flash.message = user.hasErrors() || result.json.message ? "A ocurrido un error" : "Tarea completada"
+        redirect action: "show", id: id
     }
 
     @Secured(["ROLE_ADMIN", "ROLE_SUPERVISOR", "ROLE_USER"])

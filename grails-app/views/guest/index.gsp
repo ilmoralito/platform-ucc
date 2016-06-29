@@ -30,7 +30,7 @@
     <content tag="right-column">
         <ul class="nav nav-tabs">
             <li role="presentation" class="${params.tab == 'index' || !params.tab ? 'active' : ''}">
-                <g:link action="index" params="[tab: 'index']">Crear</g:link>
+                <g:link action="index">Crear</g:link>
             </li>
             <li role="presentation" class="${params.tab == 'filter' ? 'active' : ''}">
                 <g:link action="index" params="[tab: 'filter']">Filtro</g:link>
@@ -47,8 +47,7 @@
                 <g:submitButton name="createGuest" value="Agregar" class="btn btn-primary btn-block"/>
             </g:form>
         </g:if>
-
-        <g:if test="${params.tab == 'filter' ? 'active' : ''}">
+        <g:else>
             <g:form name="filterForm" action="index" params="[tab: 'filter']">
                 <p>Estado</p>
                 <div class="checkbox">
@@ -67,6 +66,6 @@
 
                 <g:submitButton name="filterGuest" value="Confirmar" class="btn btn-primary btn-block"/>
             </g:form>
-        </g:if>
+        </g:else>
     </content>
 </g:applyLayout>

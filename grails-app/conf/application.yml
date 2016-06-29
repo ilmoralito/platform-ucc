@@ -10,6 +10,8 @@ beans:
         coordinationURL: "http://localhost:9090/coordinations"
     employeeService:
         employeeURL: "http://localhost:9090/employees"
+    colorService:
+        colorURL: "http://localhost:9090/colors"
 
 ---
 hibernate:

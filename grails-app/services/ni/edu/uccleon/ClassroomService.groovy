@@ -7,16 +7,16 @@ import grails.plugins.rest.client.RestBuilder
 class ClassroomService {
     String classroomURL
 
-    def getClassrooms() {
+    def getClassroom(Integer id, Integer max = 25) {
         RestBuilder restBuilder = new RestBuilder()
-        def json = restBuilder.get(classroomURL).json
+        def json = restBuilder.get("$classroomURL/$id?max=$max").json
 
         json
     }
 
-    def getClassroom(Integer id, Integer max = 25) {
+    def getClassrooms() {
         RestBuilder restBuilder = new RestBuilder()
-        def json = restBuilder.get("$classroomURL/$id?max=$max").json
+        def json = restBuilder.get(classroomURL).json
 
         json
     }

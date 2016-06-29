@@ -14,7 +14,6 @@ class ActivityInterceptor {
         User currentUser = springSecurityService.currentUser
         List<String> currentUserAuthorities = currentUser.authorities.authority
         Activity activity = Activity.get(params.int("id"))
-        String activityLocation = employeeService.getEmployeeLocation(activity.createdBy.id)
 
         if (activity.status == "pending") {
             String currentEmployeeCoordination = employeeService.getEmployeeCoordination(currentUser.id)

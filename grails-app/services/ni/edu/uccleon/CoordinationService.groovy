@@ -1,25 +1,38 @@
 package ni.edu.uccleon
 
-import grails.transaction.Transactional
+import grails.plugins.rest.client.RestResponse
 import grails.plugins.rest.client.RestBuilder
+import org.springframework.http.MediaType
+import grails.transaction.Transactional
 
 @Transactional
 class CoordinationService {
     String coordinationURL
 
-    def getCoordinations(Integer id, Integer max = 25) {
+    Map getCoordination(Integer id) {
         RestBuilder restBuilder = new RestBuilder()
-
-        def json = restBuilder.get("$coordinationURL/$id?max=$max").json
+        def json = restBuilder.get("$coordinationURL/$id").json
 
         json
     }
 
-    def getCoordination() {
+    List getCoordinations(Integer max = 100) {
         RestBuilder restBuilder = new RestBuilder()
-
-        def json = restBuilder.get(coordinationURL).json
+        def json = restBuilder.get("$coordinationURL?max=$max").json
 
         json
+    }
+
+    RestResponse postCoordination(String name, String extensionNumber, String location, List<String> colors) {
+        RestBuilder restBuilder = new RestBuilder()
+        Map data = [name: name, extensionNumber: extensionNumber, location: location, colors: colors]
+        RestResponse response = restBuilder.post(coordinationURL) {
+            contentType MediaType.APPLICATION_JSON_VALUE
+            header("Accept-Language", "en")
+            header("Accept", MediaType.APPLICATION_JSON_VALUE)
+            json data
+        }
+
+        response
     }
 }
