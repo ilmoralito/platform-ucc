@@ -26,6 +26,7 @@ class CoordinationService {
     RestResponse postCoordination(String name, String extensionNumber, String location, List<String> colors) {
         RestBuilder restBuilder = new RestBuilder()
         Map data = [name: name, extensionNumber: extensionNumber, location: location, colors: colors]
+
         RestResponse response = restBuilder.post(coordinationURL) {
             contentType MediaType.APPLICATION_JSON_VALUE
             header("Accept-Language", "en")
