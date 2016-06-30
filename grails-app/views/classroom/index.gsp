@@ -3,6 +3,7 @@
         <title>Aulas</title>
     </head>
 
+
     <content tag="main">
         <g:if test="${classrooms}">
             <table class="table table-hover">
