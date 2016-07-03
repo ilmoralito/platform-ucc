@@ -64,18 +64,7 @@
                         <sec:loggedInUserInfo field="username"/> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <sec:ifAllGranted roles='ROLE_ADMIN'>
-                            <li class="${controllerName == 'user' && !(actionName in ['profile', 'password']) ? 'active' : ''}">
-                                <g:link controller="user">
-                                    Administrar usuarios
-                                </g:link>
-                            </li>
-                            <li class="${controllerName == 'coordination' ? 'active' : ''}">
-                                <g:link controller="coordination">
-                                    Administrar coordinaciones
-                                </g:link>
-                            </li>
-                        </sec:ifAllGranted>
+                        <g:render template="/layouts/administration"/>
                         <li class="${controllerName == 'user' && actionName == 'profile' ? 'active' : ''}">
                             <g:link controller="user" action="profile">Perfil</g:link>
                         </li>

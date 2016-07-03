@@ -8,14 +8,24 @@ class ClassroomController {
     def classroomService
 
     static allowedMethods = [
-        index: "GET",
+        index: ["GET", "POST"],
         create: "POST",
         edit: "GET",
         update: "POST"
     ]
 
     def index() {
-        [classrooms: classroomService.groupClassroomsByCode()]
+        List classrooms = []
+
+        if (request.post) {
+            List<Integer> floorList = params.list("floor")*.toInteger()
+            List<String> codeList = params.list("code")
+            List<Boolean> airConditionedList = params.list("airConditioned")*.toBoolean()
+
+            classrooms = classroomService.filter(floorList, codeList, airConditionedList)
+        }
+
+        [classrooms: classroomService.groupClassroomsByCode(classrooms)]
     }
 
     def create(ClassroomCommand cmd) {

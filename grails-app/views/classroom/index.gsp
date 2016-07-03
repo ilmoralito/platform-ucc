@@ -3,7 +3,6 @@
         <title>Aulas</title>
     </head>
 
-
     <content tag="main">
         <g:if test="${classrooms}">
             <table class="table table-hover">
@@ -54,7 +53,47 @@
             </g:form>
         </g:if>
         <g:else>
-            <p>Onder construction</p>
+            <g:form action="index" name="filterForm" params="[tab: 'filter']" autocomplete="off">
+                <label>Piso</label>
+                <div class="checkbox">
+                    <label>
+                        <g:checkBox name="floor" value="1" checked="${params.list('floor').contains('1')}"/> 1
+                    </label>
+                </div>
+
+                <div class="checkbox">
+                    <label>
+                        <g:checkBox name="floor" value="2" checked="${params.list('floor').contains('2')}"/> 2
+                    </label>
+                </div>
+
+                <label>Codigo</label>
+                <g:each in="${['C', 'B', 'D', 'E', 'K']}" var="code">
+                    <div class="checkbox">
+                        <label>
+                            <g:checkBox name="code" value="${code}" checked="${params.list('code').contains(code)}"/>
+                            ${code}
+                        </label>
+                    </div>
+                </g:each>
+
+                <label>Aire acondicionado</label>
+                <div class="checkbox">
+                    <label>
+                        <g:checkBox name="airConditioned" value="true" checked="${params.list('airConditioned').contains('true')}"/>
+                        Climatizado
+                    </label>
+                </div>
+
+                <div class="checkbox">
+                    <label>
+                        <g:checkBox name="airConditioned" value="false" checked="${params.list('airConditioned').contains('false')}"/>
+                        No climatizado
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Filtrar</button>
+            </g:form>
         </g:else>
     </content>
 </g:applyLayout>

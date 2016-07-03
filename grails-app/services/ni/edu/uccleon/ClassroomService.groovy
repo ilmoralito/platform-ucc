@@ -51,8 +51,8 @@ class ClassroomService {
         response
     }
 
-    List groupClassroomsByCode() {
-        List classroomList = getClassrooms()
+    List groupClassroomsByCode(List classrooms) {
+        List classroomList = classrooms ?: getClassrooms()
 
         classroomList.groupBy { it.code[0] }.sort { it.key }.collect { c ->
             [
@@ -66,5 +66,21 @@ class ClassroomService {
                 }
             ]
         }
+    }
+
+    List filter(List<Integer> floorList, List<String> codeList, List<Boolean> airConditionedList) {
+        List classrooms = getClassrooms()
+        List classroomList = []
+
+        classrooms.each { c ->
+            Integer floor = c.code[1].toInteger()
+            String code = c.code[0]
+
+            if (floor in floorList && code in codeList && c.airConditioned in airConditionedList) {
+                classroomList << c
+            }
+        }
+
+        classroomList
     }
 }
