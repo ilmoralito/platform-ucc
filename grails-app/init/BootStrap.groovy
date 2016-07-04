@@ -31,15 +31,16 @@ class BootStrap {
         Role adminRole = new Role("ROLE_ADMIN").save failOnError: true
         Role administrativeSupervisorRole = new Role("ROLE_ADMINISTRATIVE_SUPERVISOR").save failOnError: true
         Role academicSupervisorRole = new Role("ROLE_ACADEMIC_SUPERVISOR").save failOnError: true
-        Role protocolCoordinatorRole = new Role("ROLE_PROTOCOL_SUPERVISOR").save failOnError: true
+        Role protocolSupervisorRole = new Role("ROLE_PROTOCOL_SUPERVISOR").save failOnError: true
         Role userRole = new Role("ROLE_USER").save failOnError: true
 
         Map JR = employeeService.getEmployee(1)
-        Map RL = employeeService.getEmployee(2)
-        Map OG = employeeService.getEmployee(3)
-        Map CV = employeeService.getEmployee(4)
-        Map JM = employeeService.getEmployee(5)
-        Map SC = employeeService.getEmployee(6)
+        Map CR = employeeService.getEmployee(2)
+        Map RL = employeeService.getEmployee(3)
+        Map OG = employeeService.getEmployee(4)
+        Map CV = employeeService.getEmployee(5)
+        Map JM = employeeService.getEmployee(6)
+        Map SC = employeeService.getEmployee(7)
         Map SL = employeeService.getEmployee(8)
         Map MM = employeeService.getEmployee(9)
 
@@ -49,6 +50,13 @@ class BootStrap {
             JR.institutionalMail,
             "password"
         ).save failOnError: true
+
+        User crUser = new User(
+            CR.fullName,
+            CR.id,
+            CR.institutionalMail,
+            "password")
+        .save failOnError: true
 
         User rlUser = new User(
             RL.fullName,
@@ -78,27 +86,45 @@ class BootStrap {
             "password"
         ).save failOnError: true
 
-        User scUser = new User(SC.fullName, SC.id, SC.institutionalMail, "password").save failOnError: true
+        User scUser = new User(
+            SC.fullName,
+            SC.id,
+            SC.institutionalMail,
+            "password"
+        ).save failOnError: true
 
-        User adminUser = new User(MM.fullName, MM.id, MM.institutionalMail, "password").save failOnError: true
+        User slUser = new User(
+            SL.fullName,
+            SL.id,
+            SL.institutionalMail,
+            "password"
+        ).save failOnError: true
 
-        UserRole.create adminUser, adminRole, true
+        User adminUser = new User(
+            MM.fullName,
+            MM.id,
+            MM.institutionalMail,
+            "password"
+        ).save failOnError: true
+
         UserRole.create jrUser, administrativeSupervisorRole, true
+        UserRole.create crUser, userRole, true
         UserRole.create rlUser, academicSupervisorRole, true
-        UserRole.create ogUser, protocolCoordinatorRole, true
-        UserRole.create ogUser, userRole, true
+        UserRole.create ogUser, protocolSupervisorRole, true
         UserRole.create cvUser, userRole, true
         UserRole.create jmUser, userRole, true
         UserRole.create scUser, userRole, true
+        UserRole.create slUser, userRole, true
+        UserRole.create adminUser, adminRole, true
 
         UserRole.withSession {
             it.flush()
             it.clear()
         }
 
-        assert User.count() == 7
+        assert User.count() == 9
         assert Role.count() == 5
-        assert UserRole.count() == 8
+        assert UserRole.count() == 9
 
         externalCustomers << builder.externalCustomer(
             name: "externalCustomer1",
