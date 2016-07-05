@@ -37,12 +37,10 @@ class CoordinationService {
         response
     }
 
-    List getCoordinationColors(String coordination) {
+    Map getCoordinationByName(String coordination) {
         List coordinations = getCoordinations().toList()
-        def colors = coordinations.find { it.name == coordination }.colors
+        Map data = coordinations.find { it.name == coordination }
 
-        println colors
-
-        colors
+        data
     }
 }

@@ -203,11 +203,9 @@ class AppTagLib {
     def tableclothColor = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
         Integer currentUserId = springSecurityService.loadCurrentUser().id
-        // List coordinationColors = employeeService.getEmployee(currentUserId).coordination.colors
-        List colors = coordinationService.getCoordinationColors(attrs.coordination)
+        List colors = coordinationService.getCoordinationByName(attrs.coordination).colors
         List tableclothColorList = attrs.list("tableclothColorList")
         Map params = [name: "tableclothColors", type: "checkbox"]
-
 
         mb.div {
             label "Colores de manteles"

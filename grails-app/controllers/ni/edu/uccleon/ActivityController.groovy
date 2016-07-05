@@ -10,6 +10,7 @@ class ActivityController {
     def employeeService
     def eventService
     def classroomService
+    def coordinationService
 
     static allowedMethods = [
         index: "GET",
@@ -194,7 +195,7 @@ class ActivityController {
 
     def save() {
         User currentUser = springSecurityService.currentUser
-        String location = employeeService.getEmployeeLocation(currentUser.id)
+        String location = coordinationService.getCoordinationByName(session?.coordination).location
 
         Activity activity = new Activity(
             name: session?.activity?.name,
