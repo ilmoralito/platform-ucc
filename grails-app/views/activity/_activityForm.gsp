@@ -9,6 +9,22 @@
         class="form-control"/>
 </div>
 
+<g:if test="${coordinations.size() > 1}">
+    <div class="form-group">
+        <label for="coordination">Coordinacion</label>
+        <g:select
+            name="coordination"
+            from="${coordinations}"
+            optionKey="name"
+            optionValue="name"
+            value="${session?.coordination}"
+            class="form-control"/>
+    </div>
+</g:if>
+<g:else>
+    <g:hiddenField name="coordination" value="${coordinations[0].name}"/>
+</g:else>
+
 <sec:ifAnyGranted roles="ROLE_PROTOCOL_SUPERVISOR">
     <div class="form-group">
         <label for="externalCustomer">Cliente externo</label>

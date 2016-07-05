@@ -11,7 +11,7 @@
                 lorem7
             </div>
             <div class="col-md-6">
-                <ucc:profile/>
+                <ucc:profile employee="${employee}"/>
             </div>
         </div>
     </content>

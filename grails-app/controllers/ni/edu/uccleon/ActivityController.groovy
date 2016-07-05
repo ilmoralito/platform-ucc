@@ -3,7 +3,7 @@ package ni.edu.uccleon
 import grails.plugin.springsecurity.annotation.Secured
 import com.craigburke.document.builder.PdfDocumentBuilder
 
-@Secured(["ROLE_ADMIN", "ROLE_USER", "ROLE_ADMINISTRATIVE_SUPERVISOR", "ROLE_ACADEMIC_SUPERVISOR"])
+@Secured(["ROLE_ADMIN", "ROLE_USER", "ROLE_ADMINISTRATIVE_SUPERVISOR", "ROLE_ACADEMIC_SUPERVISOR", "ROLE_PROTOCOL_SUPERVISOR"])
 class ActivityController {
     def springSecurityService
     def activityService
@@ -39,11 +39,14 @@ class ActivityController {
     def init() {
         session.activity = [:]
         session.events = []
+        session.coordination = ""
 
         redirect action: "activityName"
     }
 
     def activityName(ActivityCommand command) {
+        def currentUser = springSecurityService.loadCurrentUser()
+
         if (request.post) {
             if (command.hasErrors()) {
                 command.errors.allErrors.each { error ->
@@ -56,9 +59,12 @@ class ActivityController {
 
             session.activity.name = command.name
             session.activity.externalCustomer = command.externalCustomer
+            session.coordination = command.coordination
 
             redirect action: "events", params: [index: params.index]
         }
+
+        [coordinations: employeeService.getEmployeeCoordinations(currentUser.id)]
     }
 
     def events(EventCommand command) {
@@ -189,13 +195,12 @@ class ActivityController {
     def save() {
         User currentUser = springSecurityService.currentUser
         String location = employeeService.getEmployeeLocation(currentUser.id)
-        String coordination = employeeService.getEmployeeCoordination(currentUser.id)
 
         Activity activity = new Activity(
             name: session?.activity?.name,
             createdBy: currentUser,
             location: location,
-            coordination: coordination,
+            coordination: session.coordination,
             externalCustomer: session?.activity?.externalCustomer
         )
 
@@ -1086,6 +1091,7 @@ class ActivityWidget {
 class ActivityCommand {
     String name
     ExternalCustomer externalCustomer
+    String coordination
 
     static constraints = {
         importFrom Activity

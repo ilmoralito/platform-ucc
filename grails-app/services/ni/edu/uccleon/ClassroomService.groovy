@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import org.springframework.http.MediaType
 import grails.plugins.rest.client.RestBuilder
 import grails.plugins.rest.client.RestResponse
+import groovy.json.JsonOutput
 
 @Transactional
 class ClassroomService {
@@ -70,17 +71,14 @@ class ClassroomService {
 
     List filter(List<Integer> floorList, List<String> codeList, List<Boolean> airConditionedList) {
         List classrooms = getClassrooms()
-        List classroomList = []
 
-        classrooms.each { c ->
-            Integer floor = c.code[1].toInteger()
-            String code = c.code[0]
-
-            if (floor in floorList && code in codeList && c.airConditioned in airConditionedList) {
-                classroomList << c
-            }
+        (floorList, codeList, airConditionedList) = [floor: floorList, code: codeList, airConditioned: airConditionedList].collect { prop, list ->
+            list ?: classrooms[prop].unique()
         }
 
-        classroomList
+        classrooms
+            .findAll { c -> ((c.code[1].toInteger()) in floorList) }
+            .findAll { c -> c.code[0] in codeList }
+            .findAll { c -> c.airConditioned in airConditionedList }
     }
 }

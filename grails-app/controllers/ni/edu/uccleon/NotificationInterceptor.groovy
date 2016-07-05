@@ -15,44 +15,44 @@ class NotificationInterceptor {
     }
 
     boolean before() {
-        User currentUser = springSecurityService.currentUser
-        Set<Role> authorities = currentUser.authorities
+        // User currentUser = springSecurityService.currentUser
+        // Set<Role> authorities = currentUser.authorities
 
-        if (authorities.authority.contains("ROLE_ADMINISTRATIVE_SUPERVISOR")) {
-            List<Activity> activityList = Activity.where {
-                (status == "notified" && location == "Administrative") || status == "granted"
-            }.list()
+        // if (authorities.authority.contains("ROLE_ADMINISTRATIVE_SUPERVISOR")) {
+        //     List<Activity> activityList = Activity.where {
+        //         (status == "notified" && location == "Administrative") || status == "granted"
+        //     }.list()
 
-            grailsApplication.config.ni.edu.uccleon.activityList = activityList
+        //     grailsApplication.config.ni.edu.uccleon.activityList = activityList
 
-            List<Voucher> vouchers = Voucher.where {
-                status == "notified"
-            }.list()
+        //     List<Voucher> vouchers = Voucher.where {
+        //         status == "notified"
+        //     }.list()
 
-            grailsApplication.config.ni.edu.uccleon.voucherList = voucherService.groupVouchersByDate(vouchers)
-        }
+        //     grailsApplication.config.ni.edu.uccleon.voucherList = voucherService.groupVouchersByDate(vouchers)
+        // }
 
-        if (authorities.authority.contains("ROLE_ACADEMIC_SUPERVISOR")) {
-            List<Activity> activityList = Activity.where {
-                status == "notified" && location == "Academic"
-            }.list()
+        // if (authorities.authority.contains("ROLE_ACADEMIC_SUPERVISOR")) {
+        //     List<Activity> activityList = Activity.where {
+        //         status == "notified" && location == "Academic"
+        //     }.list()
 
-            grailsApplication.config.ni.edu.uccleon.activityList = activityList
-        }
+        //     grailsApplication.config.ni.edu.uccleon.activityList = activityList
+        // }
 
-        if (authorities.authority.contains("ROLE_PROTOCOL_SUPERVISOR")) {
-            List<Activity> activityList = Activity.where {
-                status == "approved"
-            }.list()
+        // if (authorities.authority.contains("ROLE_PROTOCOL_SUPERVISOR")) {
+        //     List<Activity> activityList = Activity.where {
+        //         status == "approved"
+        //     }.list()
 
-            grailsApplication.config.ni.edu.uccleon.activityList = activityList
+        //     grailsApplication.config.ni.edu.uccleon.activityList = activityList
 
-            List<Voucher> vouchers = Voucher.where {
-                status == "approved"
-            }.list()
+        //     List<Voucher> vouchers = Voucher.where {
+        //         status == "approved"
+        //     }.list()
 
-            grailsApplication.config.ni.edu.uccleon.voucherList = voucherService.groupVouchersByDate(vouchers)
-        }
+        //     grailsApplication.config.ni.edu.uccleon.voucherList = voucherService.groupVouchersByDate(vouchers)
+        // }
 
         true
     }

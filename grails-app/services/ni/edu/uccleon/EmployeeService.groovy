@@ -66,8 +66,8 @@ class EmployeeService {
         }
     }
 
-    String getEmployeeCoordination(Long id) {
-        getEmployee(id).coordination.name
+    List getEmployeeCoordinations(Long id) {
+        getEmployee(id).coordinations
     }
 
     String getEmployeeLocation(Long id, Boolean translate = false) {

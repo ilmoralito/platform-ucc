@@ -9,10 +9,10 @@ class ActivityService {
 
     def getActivities() {
         User currentUser = springSecurityService.currentUser
+        List coordinations = employeeService.getEmployeeCoordinations(currentUser.id)
 
         Activity.where {
-            coordination == employeeService.getEmployeeCoordination(currentUser.id) &&
-            status != "done"
+            coordination in coordinations.name && status != "done"
         }.list()
     }
 }

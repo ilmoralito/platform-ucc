@@ -10,6 +10,7 @@ class AppTagLib {
     def externalCustomerService
     def guestService
     def voucherService
+    def coordinationService
 
     static defaultEncodeAs = [taglib: "html"]
     static namespace = "ucc"
@@ -30,10 +31,9 @@ class AppTagLib {
         getColors: "raw"
     ]
 
-    def profile = {
+    def profile = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
-        User currentUser = springSecurityService.currentUser
-        Map<String, String> employee = employeeService.getEmployee(currentUser.id)
+        Map employee = attrs.employee
 
         mb.div {
             label "Nombre y apellido"
@@ -54,18 +54,20 @@ class AppTagLib {
             label "INSS"
             p employee.inss
 
-            label "Coordinacion"
-            p employee.coordination.name
+            employee.coordinations.each { coordination ->
+                label "Coordinacion"
+                p coordination.name
 
-            label "Numero de extension"
-            p employee.coordination.extensionNumber
+                label "Numero de extension"
+                p coordination.extensionNumber
 
-            label "Area"
-            p employee.coordination.location
+                label "Area"
+                p coordination.location
 
-            label "Colores de coordinacion"
-            employee.coordination.colors.each { color ->
-                p color.name
+                label "Colores de coordinacion"
+                coordination.colors.each { color ->
+                    p color.name
+                }
             }
         }
     }
@@ -200,49 +202,51 @@ class AppTagLib {
 
     def tableclothColor = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
-        User currentUser = springSecurityService.currentUser
-        List coordinationColors = employeeService.getEmployee(currentUser.id).coordination.colors
-        List<String> tableclothColorList = attrs.list("tableclothColorList")
-        Map<String, String> params = [name: "tableclothColors", type: "checkbox"]
+        Integer currentUserId = springSecurityService.loadCurrentUser().id
+        // List coordinationColors = employeeService.getEmployee(currentUserId).coordination.colors
+        List colors = coordinationService.getCoordinationColors(attrs.coordination)
+        List tableclothColorList = attrs.list("tableclothColorList")
+        Map params = [name: "tableclothColors", type: "checkbox"]
+
 
         mb.div {
             label "Colores de manteles"
 
-            if (coordinationColors.size() == 1) {
-                String color = coordinationColors[0].name
+            // if (coordinationColors.size() == 1) {
+            //     String color = coordinationColors[0].name
 
-                params.value = color
+            //     params.value = color
 
-                div(class: "checkbox") {
-                    label {
-                        if (color in tableclothColorList) {
-                            params.checked = true
-                        } else {
-                            params.remove("checked")
-                        }
+            //     div(class: "checkbox") {
+            //         label {
+            //             if (color in tableclothColorList) {
+            //                 params.checked = true
+            //             } else {
+            //                 params.remove("checked")
+            //             }
 
-                        input(params)
-                        mkp.yield coordinationColors[0].name
-                    }
-                }
-            } else {
-                coordinationColors.each { tableclothColor ->
-                    params.value = tableclothColor.name
+            //             input(params)
+            //             mkp.yield coordinationColors[0].name
+            //         }
+            //     }
+            // } else {
+            //     coordinationColors.each { tableclothColor ->
+            //         params.value = tableclothColor.name
 
-                    div(class: "checkbox") {
-                        label {
-                            if (tableclothColor.name in tableclothColorList) {
-                                params.checked = true
-                            } else {
-                                params.remove("checked")
-                            }
+            //         div(class: "checkbox") {
+            //             label {
+            //                 if (tableclothColor.name in tableclothColorList) {
+            //                     params.checked = true
+            //                 } else {
+            //                     params.remove("checked")
+            //                 }
 
-                            input(params)
-                            mkp.yield tableclothColor.name
-                        }
-                    }
-                }
-            }
+            //                 input(params)
+            //                 mkp.yield tableclothColor.name
+            //             }
+            //         }
+            //     }
+            // }
         }
     }
 

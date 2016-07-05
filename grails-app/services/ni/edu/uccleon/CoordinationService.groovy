@@ -36,4 +36,13 @@ class CoordinationService {
 
         response
     }
+
+    List getCoordinationColors(String coordination) {
+        List coordinations = getCoordinations().toList()
+        def colors = coordinations.find { it.name == coordination }.colors
+
+        println colors
+
+        colors
+    }
 }
