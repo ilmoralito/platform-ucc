@@ -178,7 +178,7 @@
 
             <ucc:tableclothColor
                 tableclothColorList="${events?.getAt(index)?.tableclothColors?.name ?: params?.tableclothColors}"
-                coordination="${session?.coordination}"/>
+                coordination="${session?.coordination ?: activity.coordination}"/>
 
             <ucc:tableType
                 tableTypeList="${events?.getAt(index)?.tableTypes?.name ?: params?.tableTypes}"/>

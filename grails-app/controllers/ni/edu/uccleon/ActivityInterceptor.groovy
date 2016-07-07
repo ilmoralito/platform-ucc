@@ -11,14 +11,15 @@ class ActivityInterceptor {
     }
 
     boolean before() {
+        Activity activity = Activity.get(params.int("id"))
         User currentUser = springSecurityService.currentUser
         List<String> currentUserAuthorities = currentUser.authorities.authority
-        Activity activity = Activity.get(params.int("id"))
+
 
         if (activity.status == "pending") {
-            String currentEmployeeCoordination = employeeService.getEmployeeCoordination(currentUser.id)
+            List employeeCoordinations = employeeService.getEmployeeCoordinations(currentUser.id)
 
-            if (currentEmployeeCoordination != activity.coordination) {
+            if (!(activity.coordination in employeeCoordinations.name)) {
                 log.debug "Sin acceso porque ${currentUser} no pertenece a la coordinacion $activity.coordination"
                 render "No permitido"
 

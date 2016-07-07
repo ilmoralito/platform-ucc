@@ -42,15 +42,15 @@
             </g:if>
 
             <g:if test="${params?.tab == 'notification'}">
-                <g:form name="sendNotificationForm" action="sendNotification">
+                <g:form action="sendNotification">
                     <g:hiddenField name="id" value="${activity.id}"/>
 
-                    <g:submitButton name="send" value="Notificar" class="btn btn-danger btn-block"/>
+                    <g:submitButton name="send" value="Notificar" class="btn btn-warning btn-block"/>
                 </g:form>
             </g:if>
 
             <g:if test="${params.tab == 'remove'}">
-                <g:form name="removeActivityForm" action="removeActivity">
+                <g:form action="removeActivity">
                     <g:hiddenField name="id" value="${activity.id}"/>
 
                     <g:submitButton name="send" value="Eliminar" class="btn btn-danger btn-block"/>

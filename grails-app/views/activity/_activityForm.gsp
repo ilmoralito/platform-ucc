@@ -9,7 +9,7 @@
         class="form-control"/>
 </div>
 
-<g:if test="${coordinations.size() > 1}">
+<g:if test="${coordinations?.size() > 1}">
     <div class="form-group">
         <label for="coordination">Coordinacion</label>
         <g:select
@@ -17,7 +17,7 @@
             from="${coordinations}"
             optionKey="name"
             optionValue="name"
-            value="${session?.coordination}"
+            value="${activity?.coordination ?: session?.coordination}"
             class="form-control"/>
     </div>
 </g:if>

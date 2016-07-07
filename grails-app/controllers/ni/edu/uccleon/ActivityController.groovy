@@ -228,10 +228,7 @@ class ActivityController {
      * @return
      */
     def show(Long id) {
-        User currentUser = springSecurityService.currentUser
         Activity activity = Activity.get(id)
-        String coordination = employeeService.getEmployeeCoordination(currentUser.id)
-        Date eventsMinDate = eventService.getEventMinDate(activity)
 
         if (!activity) {
             response.sendError 404
@@ -239,10 +236,8 @@ class ActivityController {
 
         [
             activity: activity,
-            daysAllowedToNotify: (eventsMinDate - 2) - new Date(),
             activityWidget: createActivityWidget(activity),
-            status: activity.status,
-            currentUserRoles: currentUser.authorities.authority
+            coordinations: employeeService.getEmployeeCoordinations(activity.createdBy.id)
         ]
     }
 
@@ -258,7 +253,7 @@ class ActivityController {
             response.sendError 404
         }
 
-        activity.properties["name", "externalCustomer"] = params
+        activity.properties["name", "coordination", "externalCustomer"] = params
 
         if (!activity.save()) {
             activity.errors.allErrors.each { error ->
@@ -514,16 +509,16 @@ class ActivityController {
         redirect action: "index"
     }
 
-    def removeActivity(Long id, String tab) {
+    def removeActivity(Long id) {
         Activity activity = Activity.get(id)
 
         if (!activity) {
             response.sendError 404
         }
 
-        activity.delete(flush: true)
-
+        activity.delete()
         flash.message = "Actividad eliminada"
+
         redirect action: "index"
     }
 

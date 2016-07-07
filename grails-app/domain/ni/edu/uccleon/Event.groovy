@@ -76,7 +76,7 @@ class Event {
         observation nullable: true, maxSize: 255
 
         tableclothColors validator: { tableclothColors, obj ->
-            if (tableclothColors.size()) {
+            if (tableclothColors?.size()) {
                 return obj.tablecloths == true
             }
         }
