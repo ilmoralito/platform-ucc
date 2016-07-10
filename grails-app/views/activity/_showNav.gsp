@@ -18,11 +18,6 @@
     <div class="row">
         <div class="col-md-12">
             <div class="btn-group pull-right">
-                <sec:access expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
-                    <g:link action="printEvent" params="[eventId: eventId]" class="btn btn-default">
-                        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                    </g:link>
-                </sec:access>
                 <g:link
                     action="removeActivityEvent"
                     params="[id: params.id, tab: params?.tab, eventId: eventId]"

@@ -31,6 +31,32 @@ class AppTagLib {
         getColors: "raw"
     ]
 
+    def notificationMessage = { attrs ->
+        String activityStatus = attrs.status
+        String activityLocation = attrs.location
+        String message = ""
+
+        switch(activityStatus) {
+            case "pending":
+                message = "Notificar"
+            break
+            case { activityStatus == "notified" && activityLocation == "Academic" }:
+                message = "Aprobar"
+            break
+            case { activityStatus == "notified" && activityLocation == "Administrative" }:
+                message = "Autorizar"
+            break
+            case "granted":
+                message = "Autorizar"
+            break
+            case "approved":
+                message = "Archivar solicitud"
+            break
+        }
+
+        out << message
+    }
+
     def profile = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
         Map employee = attrs.employee
@@ -301,15 +327,12 @@ class AppTagLib {
             label "Coordinacion"
             p a.coordination
 
-            label "Notificado"
-            p a.notified ? "Si" : "No"
-
-            if (!a.notified) {
-                label "Dias permitidos para notificar"
+            if (a.status == "pending") {
+                label "Dias hábiles para notificar"
                 p a.daysAllowedToNotify > 0 ? a.daysAllowedToNotify : "Dias para enviar notificacion agotados"
             }
 
-            if (a.notified) {
+            if (a.status != "pending") {
                 label "Notificado por"
                 p a.notifiedBy.username
 

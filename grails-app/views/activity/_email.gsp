@@ -1,10 +1,8 @@
 <%@ page contentType="text/html" %>
 
-<p>
-    Actividad creada con nombre <b>${name}</b>
-    creado por ${username}
-</p>
-
-<p>A nombre de ${client}</p>
-
+<p>Nombre de la actividad: ${name}</p>
+<p>Coordinacion: ${coordination}</p>
+<g:if test="${client}">
+    <p>Cliente: ${client}</p>
+</g:if>
 <p><a href="${host}">Mas detalles</a></p>

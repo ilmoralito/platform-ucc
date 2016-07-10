@@ -20,15 +20,14 @@ class ActivityController {
         cloneEvent: "GET",
         removeEvent: "GET",
         save: "POST",
+        edit: "GET",
         show: "GET",
         updateActivity: "POST",
         cloneActivityEvent: "GET",
         removeActivityEvent: "GET",
         sendNotification: "POST",
         removeActivity: "POST",
-        printEvent: "GET",
-        printActivity: "GET",
-        setActivityToDone: "GET"
+        printActivity: "GET"
     ]
 
     def index(String calendarType) {
@@ -221,6 +220,10 @@ class ActivityController {
 
         flash.message = "Actividad creada"
         redirect action: "index"
+    }
+
+    def edit(Long id) {
+        
     }
 
     /**
@@ -444,39 +447,35 @@ class ActivityController {
     def sendNotification(Long id, String tab, Long eventId) {
         Activity activity = Activity.get(id)
         User currentUser = springSecurityService.currentUser
-        Map employee = employeeService.getEmployee(currentUser.id)
-        Map coordination = employee.coordination
 
         if (!activity) {
             response.sendError 404
         }
 
-        if (activity.status == "pending") {
-            activity.notified = true
-            activity.status = "notified"
-            activity.notifiedBy = currentUser
-            activity.notificationDate = new Date()
-        } else {
-            if (activity.status == "granted") {
+        switch(activity.status) {
+            case "pending":
+                activity.status = "notified"
+                activity.notifiedBy = currentUser
+                activity.notificationDate = new Date()
+            break
+            case { activity.status == "notified" && activity.location == "Academic" }:
+                activity.status = "granted"
+                activity.grantedBy = currentUser
+                activity.dateGranted = new Date()
+            break
+            case { activity.status == "notified" && activity.location == "Administrative" }:
                 activity.status = "approved"
                 activity.approvedBy = currentUser
                 activity.dateApproved = new Date()
-            }
-
-            if (activity.status == "notified") {
-                User createdBy = activity.createdBy
-                String location = employeeService.getEmployee(createdBy.id).coordination.location
-
-                if (location == "Academic") {
-                    activity.status = "granted"
-                    activity.grantedBy = currentUser
-                    activity.dateGranted = new Date()
-                } else {
-                    activity.status = "approved"
-                    activity.approvedBy = currentUser
-                    activity.dateApproved = new Date()
-                }
-            }
+            break
+            case "granted":
+                activity.status = "approved"
+                activity.approvedBy = currentUser
+                activity.dateApproved = new Date()
+            break
+            case "approved":
+                activity.status = "done"
+            break
         }
 
         if (!activity.save()) {
@@ -490,22 +489,24 @@ class ActivityController {
             return
         }
 
-        String receiverEmail = employeeService.getEmployeeInstitutionalMail(coordination)
+        // if (activity.status != "approved")) {
+        //     String managerEmail = employeeService.getManagerMail(activity.location)
 
-        sendMail {
-            from currentUser.email
-            to receiverEmail
-            subject "Protocolo - Nueva actividad $activity.name"
-            html g.render(template: "email", model: [
-                    name: activity.name,
-                    username: currentUser.username,
-                    client: activity?.externalCustomer?.name ?: coordination.name,
-                    host: "http://${grailsApplication.config.ni.edu.uccleon.serverUrl}/activity/show/${activity.id}"
-                ]
-            )
-        }
+        //     sendMail {
+        //         from currentUser.email
+        //         to managerEmail
+        //         subject "Protocolo - $activity.name"
+        //         html g.render(template: "email", model: [
+        //                 name: activity.name,
+        //                 coordination: activity.coordination,
+        //                 client: activity?.externalCustomer?.name ?: null,
+        //                 host: "http://${grailsApplication.config.ni.edu.uccleon.serverUrl}/activity/show/${activity.id}"
+        //             ]
+        //         )
+        //     }
+        // }
 
-        flash.message = "Actividad notificada"
+        flash.message = activity.status != "done" ? "Actividad notificada" : "Actividad archivada"
         redirect action: "index"
     }
 
@@ -520,254 +521,6 @@ class ActivityController {
         flash.message = "Actividad eliminada"
 
         redirect action: "index"
-    }
-
-    /**
-     * Print event
-     * @param  eventId Event id
-     * @return         PDF document
-     */
-    def printEvent(Long eventId) {
-        Event event = Event.get(eventId)
-
-        if (!event) {
-            response.sendError 404
-        }
-
-        Map classroom = classroomService.getClassroom(event.location.toInteger())
-        String location = classroom.name ?: classroom.code
-        PdfDocumentBuilder pdfBuilder = new PdfDocumentBuilder(response.outputStream)
-        def customTemplate = {
-            "document" font: [family: "Courier", size: 9.pt], margin: [top: 0.5.inches]
-            "cell.label" font: [bold: true]
-            "cell.info" font: [size: 8.pt]
-        }
-
-        pdfBuilder.create {
-            document(
-                template: customTemplate,
-                header: { info ->
-                    table(border: [size: 0]) {
-                        row {
-                            cell "Universidad de Ciencias Comerciales", align: "center", style: "info"
-                        }
-                    }
-                },
-                footer: { info ->
-                    table(border: [size: 0]) {
-                        row {
-                            cell "Impreso ${new Date().format('yyyy-MM-dd HH:mm:ss')}", align: "center", style: "info"
-                        }
-                    }
-                }
-            ) {
-                paragraph "Actividad: $event.activity.name. Por: $event.activity.coordination"
-
-                paragraph(margin: [top: 0.inches, bottom: 0.inches]) {
-                    text "Datos"
-                }
-
-                table(columns: [1, 2], padding: 1.px, border: [size: 0]) {
-                    row {
-                        cell "Fecha", style: "label"
-                        cell event.date.format("yyyy-MM-dd")
-                    }
-
-                    row {
-                        cell "Lugar", style: "label"
-                        cell location
-                    }
-
-                    row {
-                        cell "Asistentes", style: "label"
-                        cell event.numberOfPeople
-                    }
-
-                    row {
-                        cell "Inicio", style: "label"
-                        cell HOURS.find { it.time == event.startTime }.value
-                    }
-
-                    row {
-                        cell "Finaliza", style: "label"
-                        cell HOURS.find { it.time == event.endingTime }.value
-                    }
-                }
-
-                if (event.observation) {
-                    paragraph(margin: [bottom: 0.inches]) {
-                        text "Observación"
-                    }
-
-                    paragraph event.observation
-                }
-
-                paragraph(margin: [bottom: 0.inches]) {
-                    text "Requerimientos"
-                }
-
-                table(padding: 0.px, border: [size: 0]) {
-                    row {
-                        cell {
-                            table(padding: 1.px, border: [size: 0]) {
-                                row {
-                                    cell "Datashow", style: "label"
-                                    cell event.audiovisual ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "WIFI", style: "label"
-                                    cell event.wifi ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "Audio", style: "label"
-                                    cell event.sound ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "Parlantes", style: "label"
-                                    cell event.speaker ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "Microfono", style: "label"
-                                    cell event.microfone ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "Puntero", style: "label"
-                                    cell event.pointer ? "Si" : "-"
-                                }
-                            }
-                        }
-
-                        cell {
-                            table(padding: 1.px, border: [size: 0]) {
-                                row {
-                                    cell "Agua", style: "label"
-                                    cell event.water ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "Café", style: "label"
-                                    cell event.coffee ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "Galletas", style: "label"
-                                    cell event.cookies > 0 ? event.cookies : "-"
-                                }
-
-                                row {
-                                    cell "Botella A", style: "label"
-                                    cell event.waterBottles > 0 ? event.waterBottles : "-"
-                                }
-                            }
-                        }
-
-                        cell {
-                            table(padding: 1.px, border: [size: 0]) {
-                                row {
-                                    cell "Montaje", style: "label"
-                                    cell event.mountingType
-                                }
-
-                                row {
-                                    cell "Banderas", style: "label"
-                                    cell event.flags ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "Podium", style: "label"
-                                    cell event.podium ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "Mesa E", style: "label"
-                                    cell event.tableForSpeaker ? "Si" : "-"
-                                }
-
-                                row {
-                                    cell "Manteles", style: "label"
-                                    cell event.tablecloths ? "Si" : "-"
-                                }
-
-                                if (event.tableclothColors) {
-                                    row {
-                                        cell "Colores M", style: "label"
-                                        cell {
-                                            event.tableclothColors.each { tc ->
-                                                text tc.name
-                                                lineBreak()
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (event.tableTypes) {
-                                    row {
-                                        cell "Tipo meza", style: "label"
-                                        cell {
-                                            event.tableTypes.each { t ->
-                                                text t.name
-                                                lineBreak()
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (event.chairTypes) {
-                                    row {
-                                        cell "Tipo silla", style: "label"
-                                        cell {
-                                            event.chairTypes.each { c ->
-                                                text c.name
-                                                lineBreak()
-                                            }
-                                        }
-                                    }
-                                }
-
-                                row {
-                                    cell "Presidium", style: "label"
-                                    cell event.presidiumTable > 0 ? event.presidiumTable : "-"
-                                }
-                            }
-                        }
-
-                        cell {
-                            table(padding: 1.px, border: [size: 0]) {
-                                row {
-                                    cell "Refrescos", style: "label"
-                                    cell event.refreshment > 0 ? event.refreshment : "-"
-                                }
-
-                                row {
-                                    cell "Desayuno", style: "label"
-                                    cell event.breakfast > 0 ? event.breakfast : "-"
-                                }
-
-                                row {
-                                    cell "Almuerzo", style: "label"
-                                    cell event.lunch > 0 ? event.lunch : "-"
-                                }
-
-                                row {
-                                    cell "Cena", style: "label"
-                                    cell event.dinner > 0 ? event.dinner : "-"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        response.contentType = "application/pdf"
-        response.setHeader("Content-disposition", "attachment;filename=test.pdf")
-        //response.outputStream << out.toByteArray()
-        response.outputStream.flush()
     }
 
     /**
@@ -1025,25 +778,6 @@ class ActivityController {
         response.outputStream.flush()
     }
 
-    /**
-     * Set activity status to done
-     * @param  id Activity identifier
-     * @return    Update database
-     */
-    def setActivityToDone(Long id) {
-        Activity activity = Activity.get(id)
-
-        if (!activity) {
-            response.sendError 404
-        }
-
-        activity.status = "done"
-        activity.save(flush: true)
-
-        flash.message = "Actividad archivada"
-        redirect action: "index"
-    }
-
     private ActivityWidget createActivityWidget(Activity activity) {
         return new ActivityWidget(
             name: activity.name,
@@ -1051,7 +785,6 @@ class ActivityController {
             dateCreated: activity.dateCreated,
             status: activity.status,
             coordination: activity.coordination,
-            notified: activity.notified,
             notifiedBy: activity.notifiedBy,
             notificationDate: activity.notificationDate,
             daysAllowedToNotify: (eventService.getEventMinDate(activity) - 2) - new Date()

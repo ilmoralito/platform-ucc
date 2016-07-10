@@ -44,32 +44,28 @@ class EmployeeService {
         response
     }
 
-    String getEmployeeInstitutionalMail(Map coordination) {
-        List employees = getEmployees()
+    String getManagerMail(String location) {
+        String email = ""
 
         if (Environment.current == Environment.DEVELOPMENT) {
-            if (coordination.location == "Administrative") {
-                "jorge.rojas@ucc.edu.ni"
-            } else {
-                "amakenadog@gmail.com"
-            }
+            email = location == "Administrative" ? "mario.martinez@ucc.edu.ni" : "amakenadog@gmail.com"
         } else {
-            if (coordination.location == "Administrative") {
-                employees.find {
-                    it.authority == "Manager" && it.coordination.name == "Administracion"
-                }.institutionalMail
-            } else {
-                employees.find {
-                    it.authority == "Manager" && it.coordination.name == "Direccion academica"
-                }.institutionalMail
-            }
+            List employees = getEmployees()
+            String coordination = location == "Administrative" ? "Administracion" : "Direccion academica"
+
+            email = employees.find {
+                it.authority == "Manager" && coordination in it.coordinations.name
+            }.institutionalMail
         }
+
+        email
     }
 
     List getEmployeeCoordinations(Long id) {
         getEmployee(id).coordinations
     }
 
+    // TODO: check of this is necesary
     String getEmployeeLocation(Long id, Boolean translate = false) {
         String location = getEmployee(id).coordination.location
 

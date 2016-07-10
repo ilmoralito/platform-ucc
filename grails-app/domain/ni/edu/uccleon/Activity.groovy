@@ -7,15 +7,19 @@ class Activity {
 
     String name
     User createdBy
+
     User approvedBy
     Date dateApproved
+
     User grantedBy
     Date dateGranted
-    Boolean notified = false
+
     User notifiedBy
     Date notificationDate
+
     String coordination
     String location
+
     ExternalCustomer externalCustomer
     String status = "pending"
 
