@@ -479,4 +479,12 @@ class AppTagLib {
             }
         }
     }
+
+    def getClassroom = { attrs ->
+        Integer id = attrs.int("id")
+        Map classroom = classroomService.getClassroom(id)
+        println classroom
+
+        out << classroom?.name ?: classroom.code
+    }
 }

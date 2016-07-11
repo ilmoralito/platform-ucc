@@ -50,8 +50,8 @@
             <g:if test="${activities}">
                 <table class="table table-hover">
                     <colgroup>
-                        <col span="1" style="width: 50%;">
-                        <col span="1" style="width: 50%;">
+                        <col span="1" style="width: 95%;">
+                        <col span="1" style="width: 5%;">
                     </colgroup>
                     <thead>
                         <th>Nombre</th>
@@ -65,11 +65,7 @@
                                         <g:fieldValue bean="${a}" field="name"/>
                                     </g:link>
                                 </td>
-                                <td>
-                                    <span class="label label-info">
-                                        <ucc:activityStatus status="${a.status}"/>
-                                    </span>
-                                </td>
+                                <td><ucc:activityStatus status="${a.status}"/></td>
                             </tr>
                         </g:each>
                     </tbody>

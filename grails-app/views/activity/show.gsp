@@ -4,97 +4,170 @@
     </head>
 
     <content tag="main">
-        <g:set var="events" value="${activity.events}"/>
-        <g:set var="eventId" value="${params.long('eventId') ?: activity.events[0].id}"/>
-        <g:set var="index" value="${events.findIndexOf { it == ni.edu.uccleon.Event.get(eventId) }}"/>
+        <g:set var="position" value="${params.int('event') ?: 0}"/>
 
-        <g:render template="showNav"/>
+        <ul id="nav" class="nav nav-tabs">
+            <g:each in="${events}" var="event" status="idx">
+                <li role="presentation" class="${params.int('event') == idx || !params.event && idx == 0 ? 'active' : ''}">
+                    <g:link action="show" params="[id: params.id, event: idx]">
+                        ${idx + 1}
+                    </g:link>
+                </li>
+            </g:each>
+        </ul>
 
-        <g:form name="updateEventForm" action="updateEvent" autocomplete="off">
-            <g:hiddenField name="id" value="${params.id}"/>
-            <g:hiddenField name="tab" value="${params.tab ?: 'data'}"/>
-            <g:hiddenField name="eventId" value="${eventId}"/>
+        <p>Requerimientos</p>
+        <div class="row">
+            <div class="col-md-3">
+                <p>Medios</p>
 
-            <g:render template="form"/>
+                <g:each in="${means}" var="m">
+                    <p>
+                        <g:if test="${events[position][m.key]}">
+                            <i class="fa fa-check-square-o"></i>
+                        </g:if>
+                        <g:else>
+                            <i class="fa fa-square-o"></i>
+                        </g:else>
+                        ${m.value}
+                    </p>
+                </g:each>
+            </div>
+            <div class="col-md-3">
+                <p>Refrescos</p>
 
-            <g:submitButton name="send" value="Actualizar" class="btn btn-primary"/>
-        </g:form>
+                <p>
+                    <g:if test="${events[position].water}">
+                        <i class="fa fa-check-square-o"></i>
+                    </g:if>
+                    <g:else>
+                        <i class="fa fa-square-o"></i>
+                    </g:else>
+                    Agua
+                </p>
+
+                <p>
+                    <g:if test="${events[position].coffee}">
+                        <i class="fa fa-check-square-o"></i>
+                    </g:if>
+                    <g:else>
+                        <i class="fa fa-square-o"></i>
+                    </g:else>
+                    Cafe
+                </p>
+
+                <p>${events[position].cookies} Galletas</p>
+
+                <p>${events[position].waterBottles} Botellas de agua</p>
+            </div>
+            <div class="col-md-3">
+                <p>Montaje</p>
+
+                <label>Tipo de montaje</label>
+                <p><i class="fa fa-dot-circle-o"></i> ${events[position].mountingType}</p>
+
+                <label>Elementos</label>
+                <g:each in="${elements}" var="property">
+                    <p>
+                        <g:if test="${events[position][property.key]}">
+                            <i class="fa fa-check-square-o"></i>
+                        </g:if>
+                        <g:else>
+                            <i class="fa fa-square-o"></i>
+                        </g:else>
+                        ${property.value}
+                    </p>
+                </g:each>
+
+                <label>Tipo de mesas</label>
+                <g:each in="${tableTypes}" var="property">
+                    <p>
+                        <g:if test="${property in events[position].tableTypes.name}">
+                            <i class="fa fa-check-square-o"></i>
+                        </g:if>
+                        <g:else>
+                            <i class="fa fa-square-o"></i>
+                        </g:else>
+                        ${property}
+                    </p>
+                </g:each>
+
+                <label>Tipo de sillas</label>
+                <g:each in="${chairTypes}" var="property">
+                    <p>
+                        <g:if test="${property in events[position].chairTypes.name}">
+                            <i class="fa fa-check-square-o"></i>
+                        </g:if>
+                        <g:else>
+                            <i class="fa fa-square-o"></i>
+                        </g:else>
+                        ${property}
+                    </p>
+                </g:each>
+
+                <p>${events[position].presidiumTable} Mesa presidium</p>
+            </div>
+            <div class="col-md-3">
+                <p>Alimentos</p>
+
+                <p>${events[position].refreshment} Refrigerios</p>
+
+                <p>${events[position].breakfast} Desayuno</p>
+
+                <p>${events[position].lunch} Almuerzo</p>
+
+                <p>${events[position].dinner} Cena</p>
+            </div>
+        </div>
     </content>
 
     <content tag="right-column">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="${params.tab == 'data' || !params.tab ? 'active' : ''}">
-                <g:link action="show" params="[id: params.id, tab: 'data', eventId: eventId]">
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+            <li role="presentation" class="${!params.tab || params.tab == 'eventDetail' ? 'active' : ''}">
+                <g:link action="show" params="[id: activity.id, tab: 'eventDetail']">
+                    <i class="fa fa-file-text-o"></i>
+                </g:link>
+            </li>
+            <li role="presentation" class="${params.tab == 'activityInfo' ? 'active' : ''}">
+                <g:link action="show" params="[id: activity.id, tab: 'activityInfo']">
+                    <i class="fa fa-info"></i>
                 </g:link>
             </li>
             <li role="presentation" class="${params.tab == 'edit' ? 'active' : ''}">
-                <g:link action="show" params="[id: params.id, tab: 'edit', eventId: eventId]">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                <g:link action="show" params="[id: activity.id, tab: 'edit']">
+                    <i class="fa fa-pencil"></i>
                 </g:link>
             </li>
-            <li role="presentation" class="${params.tab == 'notification' ? 'active' : ''}">
-                <g:link action="show" params="[id: params.id, tab: 'notification', eventId: eventId]">
-                    <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
-                </g:link>
-            </li>
-            <li role="presentation" class="${params.tab == 'remove' ? 'active' : ''}">
-                <g:link action="show" params="[id: params.id, tab: 'remove', eventId: eventId]">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </g:link>
-            </li>
-            <sec:access expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
-                <li role="presentation" class="${params.tab == 'print' ? 'active' : ''}">
-                    <g:link action="show" params="[id: params.id, tab: 'print', eventId: eventId]">
-                        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
-                    </g:link>
-                </li>
-            </sec:access>
         </ul>
 
-        <g:if test="${params.tab == 'data' || !params.tab}">
+        <g:if test="${!params.tab || params.tab == 'eventDetail'}">
+            <label>Fecha</label>
+            <p><g:formatDate date="${events[position].date}" format="yyyy-MM-dd"/></p>
+
+            <label>Lugar</label>
+            <p><ucc:getClassroom id="${events[position].location}"/></p>
+
+            <label>Hora de inicio</label>
+            <p>${events[position].startTime}</p>
+
+            <label>Hora final</label>
+            <p>${events[position].endingTime}</p>
+
+            <label>Numero de asistentes</label>
+            <p>${events[position].numberOfPeople}</p>
+
+            <g:if test="${events[position].observation}">
+                <label>Observacion</label>
+                <p>${events[position].observation}</p>
+            </g:if>
+        </g:if>
+
+        <g:if test="${params.tab == 'activityInfo'}">
             <ucc:activityWidget activityWidget="${activityWidget}"/>
         </g:if>
 
         <g:if test="${params.tab == 'edit'}">
-            <g:form name="updateActivityForm" action="updateActivity" autocomplete="off">
-                <g:hiddenField name="id" value="${params.id}"/>
-                <g:hiddenField name="tab" value="${params.tab ?: data}"/>
-                <g:hiddenField name="eventId" value="${eventId}"/>
-
-                <g:render template="activityForm"/>
-
-                <g:submitButton name="send" value="Actualizar" class="btn btn-primary btn-block"/>
-            </g:form>
+            <g:link action="edit" id="${activity.id}" class="btn btn-block btn-primary">Editar</g:link>
         </g:if>
-
-        <g:if test="${params.tab == 'notification'}">
-            <g:form action="sendNotification">
-                <g:hiddenField name="id" value="${activity.id}"/>
-
-                <button type="submit" class="btn btn-block btn-warning">
-                    <ucc:notificationMessage status="${activity.status}" location="${activity.location}"/>
-                </button>
-            </g:form>
-        </g:if>
-
-        <g:if test="${params.tab == 'remove'}">
-            <g:form action="removeActivity">
-                <g:hiddenField name="id" value="${activity.id}"/>
-
-                <g:submitButton name="send" value="Eliminar" class="btn btn-danger btn-block"/>
-            </g:form>
-        </g:if>
-
-        <sec:access expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
-            <g:if test="${params.tab == 'print'}">
-                <g:link
-                    action="printActivity"
-                    params="[id: activity.id]"
-                    class="btn btn-block btn-default">
-                    Imprimir
-                </g:link>
-            </g:if>
-        </sec:access>
     </content>
 </g:applyLayout>

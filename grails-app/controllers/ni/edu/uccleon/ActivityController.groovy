@@ -223,14 +223,6 @@ class ActivityController {
     }
 
     def edit(Long id) {
-        
-    }
-
-    /**
-     * @param id Activity instance id
-     * @return
-     */
-    def show(Long id) {
         Activity activity = Activity.get(id)
 
         if (!activity) {
@@ -241,6 +233,24 @@ class ActivityController {
             activity: activity,
             activityWidget: createActivityWidget(activity),
             coordinations: employeeService.getEmployeeCoordinations(activity.createdBy.id)
+        ]
+    }
+
+    def show(Long id, Long eventId) {
+        Activity activity = Activity.get(id)
+
+        if (!activity) {
+            response.sendError 404
+        }
+
+        [
+            activity: activity,
+            events: activity.events,
+            activityWidget: createActivityWidget(activity),
+            tableTypes: grailsApplication.config.ni.edu.uccleon.tableTypes,
+            chairTypes: grailsApplication.config.ni.edu.uccleon.chairTypes,
+            elements: [flags: "Banderas", podium: "Podium", tableForSpeaker: "Mesa para expositor", tablecloths: "Manteles"],
+            means: [audiovisual: "Datashow", wifi: "Wi-Fi", sound: "Sonido", speaker: "Parlante", microfone: "Microfono", pointer: "Puntero"]
         ]
     }
 
