@@ -10,9 +10,9 @@
 
         <g:render template="showNav"/>
 
-        <g:form name="updateEventForm" action="updateEvent" autocomplete="off">
+        <g:form action="updateEvent" autocomplete="off">
             <g:hiddenField name="id" value="${params.id}"/>
-            <g:hiddenField name="tab" value="${params.tab ?: 'data'}"/>
+            <g:hiddenField name="tab" value="${params.tab ?: 'edit'}"/>
             <g:hiddenField name="eventId" value="${eventId}"/>
 
             <g:render template="form"/>
@@ -23,41 +23,32 @@
 
     <content tag="right-column">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="${params.tab == 'data' || !params.tab ? 'active' : ''}">
-                <g:link action="show" params="[id: params.id, tab: 'data', eventId: eventId]">
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-                </g:link>
-            </li>
-            <li role="presentation" class="${params.tab == 'edit' ? 'active' : ''}">
-                <g:link action="show" params="[id: params.id, tab: 'edit', eventId: eventId]">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            <li role="presentation" class="${!params.tab || params.tab == 'edit' ? 'active' : ''}">
+                <g:link action="edit" params="[id: params.id, tab: 'edit', eventId: eventId]">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
                 </g:link>
             </li>
             <li role="presentation" class="${params.tab == 'notification' ? 'active' : ''}">
-                <g:link action="show" params="[id: params.id, tab: 'notification', eventId: eventId]">
-                    <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                <g:link action="edit" params="[id: params.id, tab: 'notification', eventId: eventId]">
+                    <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
                 </g:link>
             </li>
             <li role="presentation" class="${params.tab == 'remove' ? 'active' : ''}">
-                <g:link action="show" params="[id: params.id, tab: 'remove', eventId: eventId]">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                <g:link action="edit" params="[id: params.id, tab: 'remove', eventId: eventId]">
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
                 </g:link>
             </li>
             <sec:access expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
                 <li role="presentation" class="${params.tab == 'print' ? 'active' : ''}">
-                    <g:link action="show" params="[id: params.id, tab: 'print', eventId: eventId]">
-                        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                    <g:link action="edit" params="[id: params.id, tab: 'print', eventId: eventId]">
+                        <i class="fa fa-print" aria-hidden="true"></i>
                     </g:link>
                 </li>
             </sec:access>
         </ul>
 
-        <g:if test="${params.tab == 'data' || !params.tab}">
-            <ucc:activityWidget activityWidget="${activityWidget}"/>
-        </g:if>
-
-        <g:if test="${params.tab == 'edit'}">
-            <g:form name="updateActivityForm" action="updateActivity" autocomplete="off">
+        <g:if test="${!params.tab || params.tab == 'edit'}">
+            <g:form action="updateActivity" autocomplete="off">
                 <g:hiddenField name="id" value="${params.id}"/>
                 <g:hiddenField name="tab" value="${params.tab ?: data}"/>
                 <g:hiddenField name="eventId" value="${eventId}"/>

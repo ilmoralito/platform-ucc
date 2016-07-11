@@ -231,7 +231,7 @@ class ActivityController {
 
         [
             activity: activity,
-            activityWidget: createActivityWidget(activity),
+            events: activity.events,
             coordinations: employeeService.getEmployeeCoordinations(activity.createdBy.id)
         ]
     }
@@ -254,12 +254,7 @@ class ActivityController {
         ]
     }
 
-    /**
-     * @param id Activity instance id
-     * @param tab current tab in action nav
-     * @return
-     */
-    def updateActivity(Long id, String tab, Long eventId) {
+    def updateActivity(Long id, Long eventId) {
         Activity activity = Activity.get(id)
 
         if (!activity) {
@@ -277,15 +272,9 @@ class ActivityController {
         }
 
         flash.message =  activity.hasErrors() ? "A ocurrido un error" : "Actualizacion correcta"
-        redirect action: "show", params: [id: id, tab: tab, eventId: eventId]
+        redirect action: "edit", params: [id: id, eventId: eventId]
     }
 
-    /**
-     * @param id Activity id
-     * @param tab current selected tab
-     * @param eventId selected event id
-     * @return
-     */
     def cloneActivityEvent(Long id, String tab, Long eventId) {
         Activity activity = Activity.get(id)
         Event event = Event.get(eventId)
@@ -343,15 +332,9 @@ class ActivityController {
             }
         }
 
-        redirect action: "show", params: [id: id, tab: tab, eventId: newEvent.id]
+        redirect action: "edit", params: [id: id, tab: tab, eventId: newEvent.id]
     }
 
-    /**
-     * @param id Activity id
-     * @param tab current selected tab
-     * @param eventId selected event id
-     * @return
-     */
     def removeActivityEvent(Long id, String tab, Long eventId) {
         Activity activity = Activity.get(id)
         Event event = Event.get(eventId)
@@ -379,16 +362,9 @@ class ActivityController {
             }
         }
 
-        redirect action: "show", params: [id: id, tab: tab, eventId: events[index]?.id ?: 0]
+        redirect action: "edit", params: [id: id, tab: tab, eventId: events[index]?.id ?: 0]
     }
 
-    /**
-     * @param command event command object
-     * @param id Activity id
-     * @param tab current selected tab
-     * @param eventId selected event id
-     * @return
-     */
     def updateEvent(EventCommand command, Long id, String tab, Long eventId) {
         Activity activity = Activity.get(id)
         Event event = Event.get(eventId)
@@ -446,14 +422,9 @@ class ActivityController {
         }
 
         flash.message = event.hasErrors() ? "A ocurrido un error" : "Actualizacion correcta"
-
-        redirect action: "show", params: [id: id, tab: tab, eventId: eventId]
+        redirect action: "edit", params: [id: id, tab: tab, eventId: eventId]
     }
 
-    /**
-     * @param id Activity id
-     * @return
-     */
     def sendNotification(Long id, String tab, Long eventId) {
         Activity activity = Activity.get(id)
         User currentUser = springSecurityService.currentUser
@@ -495,7 +466,7 @@ class ActivityController {
 
             flash.bean = activity
             flash.message = "A ocurrido un error"
-            redirect action: "show", params: [id: id, tab: tab, eventId: eventId]
+            redirect action: "edit", params: [id: id, tab: tab, eventId: eventId]
             return
         }
 
@@ -533,11 +504,6 @@ class ActivityController {
         redirect action: "index"
     }
 
-    /**
-     * Print activity and events
-     * @param  id Activity identifier
-     * @return    PDF document
-     */
     def printActivity(Long id) {
         Activity activity = Activity.get(id)
 

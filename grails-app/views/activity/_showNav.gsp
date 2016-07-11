@@ -3,7 +3,7 @@
         <g:each in="${events}" var="event">
 
             <li role="presentation" class="${event.id == eventId ? 'active' : ''}">
-                <g:link action="show" params="[id: params.id, tab: params?.tab, eventId: event.id]">
+                <g:link action="edit" params="[id: params.id, tab: params?.tab, eventId: event.id]">
                     <g:formatDate date="${event.date}" format="MM-dd"/>
                 </g:link>
             </li>
@@ -12,7 +12,9 @@
         <li role="presentation">
             <g:link
                 action="cloneActivityEvent"
-                params="[id: params.id, tab: params?.tab, eventId: eventId]">+</g:link>
+                params="[id: params.id, tab: params.tab, eventId: eventId]">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </g:link>
         </li>
     </ul>
     <div class="row">
@@ -22,7 +24,7 @@
                     action="removeActivityEvent"
                     params="[id: params.id, tab: params?.tab, eventId: eventId]"
                     class="btn btn-default">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
                 </g:link>
             </div>
         </div>
