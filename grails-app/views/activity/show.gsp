@@ -16,6 +16,8 @@
             </g:each>
         </ul>
 
+        <%-- <ucc:eventWidget eventWidget="${eventWidget}" position="${position}"/> --%>
+
         <p>Requerimientos</p>
         <div class="row">
             <div class="col-md-3">

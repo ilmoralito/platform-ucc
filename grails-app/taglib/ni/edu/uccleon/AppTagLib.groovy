@@ -28,7 +28,8 @@ class AppTagLib {
         getEmployeeList: "raw",
         getEmployees: "raw",
         getGuests: "raw",
-        getColors: "raw"
+        getColors: "raw",
+        eventWidget: "raw"
     ]
 
     def notificationMessage = { attrs ->
@@ -486,5 +487,33 @@ class AppTagLib {
         println classroom
 
         out << classroom?.name ?: classroom.code
+    }
+
+    def eventWidget = { attrs ->
+        MarkupBuilder mb = new MarkupBuilder(out)
+        EventWidget e = attrs.eventWidget
+        Integer position = attrs.int("position")
+
+        mb.div {
+            p "Requerimientos"
+
+            div(class: "row") {
+                div(class: "col-md-3") {
+                    p "Medios"
+
+                    e.means.each { m ->
+                        p {
+                            if (e.events[position][m.key]) {
+                                mkp.yieldUnescaped "<i class='fa fa-check-square-o'></i>"
+                            } else {
+                                mkp.yieldUnescaped "<i class='fa fa-square-o'></i>"
+                            }
+
+                            mkp.yield m.value
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -235,7 +235,7 @@ class ActivityController {
         ]
     }
 
-    def show(Long id, Long eventId) {
+    def show(Long id) {
         Activity activity = Activity.get(id)
 
         if (!activity) {
@@ -246,10 +246,13 @@ class ActivityController {
             activity: activity,
             events: activity.events,
             activityWidget: createActivityWidget(activity),
+            eventWidget: createEventWidget(activity.events),
+
+            // TODO this should go in activity widget?
+            coordinations: employeeService.getEmployeeCoordinations(activity.createdBy.id),
 
             tableTypes: grailsApplication.config.ni.edu.uccleon.tableTypes,
             chairTypes: grailsApplication.config.ni.edu.uccleon.chairTypes,
-            coordinations: employeeService.getEmployeeCoordinations(activity.createdBy.id),
             elements: [flags: "Banderas", podium: "Podium", tableForSpeaker: "Mesa para expositor", tablecloths: "Manteles"],
             means: [audiovisual: "Datashow", wifi: "Wi-Fi", sound: "Sonido", speaker: "Parlante", microfone: "Microfono", pointer: "Puntero"]
         ]
@@ -756,7 +759,7 @@ class ActivityController {
     }
 
     private ActivityWidget createActivityWidget(Activity activity) {
-        return new ActivityWidget(
+        new ActivityWidget(
             name: activity.name,
             createdBy: activity.createdBy,
             dateCreated: activity.dateCreated,
@@ -765,6 +768,16 @@ class ActivityController {
             notifiedBy: activity.notifiedBy,
             notificationDate: activity.notificationDate,
             daysAllowedToNotify: (eventService.getEventMinDate(activity) - 2) - new Date()
+        )
+    }
+
+    private EventWidget createEventWidget(List<Event> events) {
+        new EventWidget(
+            events: events,
+            tableTypes: grailsApplication.config.ni.edu.uccleon.tableTypes,
+            chairTypes: grailsApplication.config.ni.edu.uccleon.chairTypes,
+            elements: [flags: "Banderas", podium: "Podium", tableForSpeaker: "Mesa para expositor", tablecloths: "Manteles"],
+            means: [audiovisual: "Datashow", wifi: "Wi-Fi", sound: "Sonido", speaker: "Parlante", microfone: "Microfono", pointer: "Puntero"]
         )
     }
 
@@ -780,6 +793,14 @@ class ActivityController {
         [time: 16, value: "4:00"],
         [time: 17, value: "5:00"]
     ]
+}
+
+class EventWidget {
+    List<Event> events
+    List<String> tableTypes
+    List<String> chairTypes
+    Map<String, String> elements
+    Map<String, String> means
 }
 
 class ActivityWidget {
