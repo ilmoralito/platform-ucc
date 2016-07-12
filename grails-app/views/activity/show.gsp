@@ -163,7 +163,34 @@
         </g:if>
 
         <g:if test="${params.tab == 'activityInfo'}">
-            <ucc:activityWidget activityWidget="${activityWidget}"/>
+            <div class="clearfix">
+                <div class="btn-group pull-right">
+                    <g:link
+                        action="show"
+                        params="[id: activity.id, tab: 'activityInfo', task: 'update']"
+                        class="btn btn-default btn-sm ${!params.task || params.task == 'update' ? 'active' : ''}">
+                        <i class="fa fa-pencil"></i>
+                    </g:link>
+                    <g:link
+                        action="show"
+                        params="[id: activity.id, tab: 'activityInfo', task: 'resumen']"
+                        class="btn btn-default btn-sm ${params.task == 'resumen' ? 'active' : ''}">
+                        <i class="fa fa-align-justify"></i>
+                    </g:link>
+                </div>
+            </div>
+
+            <g:if test="${!params.task || params.task == 'update'}">
+                <g:form action="updateActivity" autocomplete="off">
+                    <g:hiddenField name="id" value="${activity.id}"/>
+                    <g:render template="activityForm"/>
+
+                    <button type="submit" class="btn btn-primary btn-block">Confirmar</button>
+                </g:form>
+            </g:if>
+            <g:else>
+                <ucc:activityWidget activityWidget="${activityWidget}"/>
+            </g:else>
         </g:if>
 
         <g:if test="${params.tab == 'edit'}">

@@ -50,12 +50,7 @@
 
     <content tag="right-column">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="${!params.tab || params.tab == 'edit' ? 'active' : ''}">
-                <g:link action="edit" params="[id: params.id, tab: 'edit', eventId: eventId]">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                </g:link>
-            </li>
-            <li role="presentation" class="${params.tab == 'notification' ? 'active' : ''}">
+            <li role="presentation" class="${!params.tab || params.tab == 'notification' ? 'active' : ''}">
                 <g:link action="edit" params="[id: params.id, tab: 'notification', eventId: eventId]">
                     <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
                 </g:link>
@@ -74,19 +69,7 @@
             </sec:access>
         </ul>
 
-        <g:if test="${!params.tab || params.tab == 'edit'}">
-            <g:form action="updateActivity" autocomplete="off">
-                <g:hiddenField name="id" value="${params.id}"/>
-                <g:hiddenField name="tab" value="${params.tab ?: data}"/>
-                <g:hiddenField name="eventId" value="${eventId}"/>
-
-                <g:render template="activityForm"/>
-
-                <g:submitButton name="send" value="Actualizar" class="btn btn-primary btn-block"/>
-            </g:form>
-        </g:if>
-
-        <g:if test="${params.tab == 'notification'}">
+        <g:if test="${!params.tab || params.tab == 'notification'}">
             <g:form action="sendNotification">
                 <g:hiddenField name="id" value="${activity.id}"/>
 

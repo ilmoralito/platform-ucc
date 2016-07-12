@@ -231,8 +231,7 @@ class ActivityController {
 
         [
             activity: activity,
-            events: activity.events,
-            coordinations: employeeService.getEmployeeCoordinations(activity.createdBy.id)
+            events: activity.events
         ]
     }
 
@@ -247,14 +246,16 @@ class ActivityController {
             activity: activity,
             events: activity.events,
             activityWidget: createActivityWidget(activity),
+
             tableTypes: grailsApplication.config.ni.edu.uccleon.tableTypes,
             chairTypes: grailsApplication.config.ni.edu.uccleon.chairTypes,
+            coordinations: employeeService.getEmployeeCoordinations(activity.createdBy.id),
             elements: [flags: "Banderas", podium: "Podium", tableForSpeaker: "Mesa para expositor", tablecloths: "Manteles"],
             means: [audiovisual: "Datashow", wifi: "Wi-Fi", sound: "Sonido", speaker: "Parlante", microfone: "Microfono", pointer: "Puntero"]
         ]
     }
 
-    def updateActivity(Long id, Long eventId) {
+    def updateActivity(Long id) {
         Activity activity = Activity.get(id)
 
         if (!activity) {
@@ -272,7 +273,7 @@ class ActivityController {
         }
 
         flash.message =  activity.hasErrors() ? "A ocurrido un error" : "Actualizacion correcta"
-        redirect action: "edit", params: [id: id, eventId: eventId]
+        redirect action: "show", params: [id: id, tab: "activityInfo"]
     }
 
     def cloneActivityEvent(Long id, String tab, Long eventId) {
