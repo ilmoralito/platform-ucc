@@ -84,7 +84,7 @@ class UserController {
         redirect action: "show", id: id
     }
 
-    @Secured(["ROLE_ADMIN", "ROLE_SUPERVISOR", "ROLE_USER"])
+    @Secured(["ROLE_ADMIN", "ROLE_USER", "ROLE_ADMINISTRATIVE_SUPERVISOR", "ROLE_ACADEMIC_SUPERVISOR", "ROLE_PROTOCOL_SUPERVISOR"])
     def profile() {
         Integer currentUserId = springSecurityService.loadCurrentUser().id
         Map employee = employeeService.getEmployee(currentUserId)
