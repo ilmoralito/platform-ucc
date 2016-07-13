@@ -484,7 +484,6 @@ class AppTagLib {
     def getClassroom = { attrs ->
         Integer id = attrs.int("id")
         Map classroom = classroomService.getClassroom(id)
-        println classroom
 
         out << classroom?.name ?: classroom.code
     }
@@ -515,5 +514,24 @@ class AppTagLib {
                 }
             }
         }
+    }
+
+    def getHour = { attrs ->
+        Integer hour = attrs.int("hour")
+
+        List hours = [
+            [time: 8, value: "8:00"],
+            [time: 9, value: "9:00"],
+            [time: 10, value: "10:00"],
+            [time: 11, value: "11:00"],
+            [time: 12, value: "12:00"],
+            [time: 13, value: "1:00"],
+            [time: 14, value: "2:00"],
+            [time: 15, value: "3:00"],
+            [time: 16, value: "4:00"],
+            [time: 17, value: "5:00"]
+        ]
+
+        out << hours.find { it.time == hour }.value
     }
 }
