@@ -25,7 +25,13 @@
                             role="button"
                             aria-haspopup="true"
                             aria-expanded="false">
-                            <span class="glyphicon glyphicon-bell" aria-hidden="true" style="color: ${activityList || voucherList ? 'gold;' : ''}"></span>
+                            <g:if test="${activityList || voucherList}">
+                                <i class="fa fa-bell" aria-hidden="true"></i>
+                            </g:if>
+                            <g:else>
+                                <i class="fa fa-bell-o" aria-hidden="true"></i>
+                            </g:else>
+
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">

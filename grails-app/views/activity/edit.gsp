@@ -50,52 +50,17 @@
 
     <content tag="right-column">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="${!params.tab || params.tab == 'notification' ? 'active' : ''}">
-                <g:link action="edit" params="[id: params.id, tab: 'notification', eventId: eventId]">
-                    <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-                </g:link>
-            </li>
-            <li role="presentation" class="${params.tab == 'remove' ? 'active' : ''}">
-                <g:link action="edit" params="[id: params.id, tab: 'remove', eventId: eventId]">
+            <li role="presentation" class="active">
+                <g:link action="edit" params="[id: params.id, eventId: eventId]">
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                 </g:link>
             </li>
-            <sec:access expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
-                <li role="presentation" class="${params.tab == 'print' ? 'active' : ''}">
-                    <g:link action="edit" params="[id: params.id, tab: 'print', eventId: eventId]">
-                        <i class="fa fa-print" aria-hidden="true"></i>
-                    </g:link>
-                </li>
-            </sec:access>
         </ul>
 
-        <g:if test="${!params.tab || params.tab == 'notification'}">
-            <g:form action="sendNotification">
-                <g:hiddenField name="id" value="${activity.id}"/>
+        <g:form action="removeActivity">
+            <g:hiddenField name="id" value="${activity.id}"/>
 
-                <button type="submit" class="btn btn-block btn-warning">
-                    <ucc:notificationMessage status="${activity.status}" location="${activity.location}"/>
-                </button>
-            </g:form>
-        </g:if>
-
-        <g:if test="${params.tab == 'remove'}">
-            <g:form action="removeActivity">
-                <g:hiddenField name="id" value="${activity.id}"/>
-
-                <g:submitButton name="send" value="Eliminar" class="btn btn-danger btn-block"/>
-            </g:form>
-        </g:if>
-
-        <sec:access expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
-            <g:if test="${params.tab == 'print'}">
-                <g:link
-                    action="printActivity"
-                    params="[id: activity.id]"
-                    class="btn btn-block btn-default">
-                    Imprimir
-                </g:link>
-            </g:if>
-        </sec:access>
+            <g:submitButton name="send" value="Eliminar" class="btn btn-danger btn-block"/>
+        </g:form>
     </content>
 </g:applyLayout>

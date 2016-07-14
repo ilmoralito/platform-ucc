@@ -33,18 +33,23 @@ class AppTagLib {
     ]
 
     def notificationMessage = { attrs ->
+        String message = ""
         String activityStatus = attrs.status
         String activityLocation = attrs.location
-        String message = ""
+        String activityCoordination = attrs.coordination
+        Integer currentUserId = springSecurityService.loadCurrentUser().id
 
         switch(activityStatus) {
             case "pending":
                 message = "Notificar"
             break
-            case { activityStatus == "notified" && activityLocation == "Academic" }:
+            // case {activityStatus != "pending" && employeeService.getEmployeeCoordinations(currentUserId).any { it.name == activityCoordination }}:
+            //     message = "En proceso"
+            // break
+            case {activityStatus == "notified" && activityLocation == "Academic"}:
                 message = "Aprobar"
             break
-            case { activityStatus == "notified" && activityLocation == "Administrative" }:
+            case {activityStatus == "notified" && activityLocation == "Administrative"}:
                 message = "Autorizar"
             break
             case "granted":
@@ -52,6 +57,9 @@ class AppTagLib {
             break
             case "approved":
                 message = "Archivar solicitud"
+            break
+            case "done":
+                message = "Archivado"
             break
         }
 
@@ -281,7 +289,7 @@ class AppTagLib {
 
         out << g.select(
             name: "externalCustomer",
-            noSelection: ['': '-Selecciona cliente cliente-'],
+            noSelection: [null: '-Selecciona cliente cliente-'],
             from: externalCustomers,
             optionKey: "id",
             optionValue: "name",

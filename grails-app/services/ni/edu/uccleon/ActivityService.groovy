@@ -7,9 +7,9 @@ class ActivityService {
     def springSecurityService
     def employeeService
 
-    def getActivities() {
-        User currentUser = springSecurityService.currentUser
-        List coordinations = employeeService.getEmployeeCoordinations(currentUser.id)
+    List<Activity> getActivities() {
+        Long currentUserId = springSecurityService.loadCurrentUser().id
+        List coordinations = employeeService.getEmployee(currentUserId).coordinations
 
         Activity.where {
             coordination in coordinations.name && status != "done"

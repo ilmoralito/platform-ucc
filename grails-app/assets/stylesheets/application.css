@@ -18,9 +18,9 @@ label {
     font-weight: normal;
 }
 
-textarea {
-    resize: none;
-}
+textarea { resize: none; }
+
+hr { margin-top: 10px;  }
 
 .checkbox label,
 .radio label { font-size: 1em; }
@@ -34,4 +34,8 @@ textarea {
 .btn-back {
     display: block;
     margin-bottom: 15px;
+}
+
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
 }

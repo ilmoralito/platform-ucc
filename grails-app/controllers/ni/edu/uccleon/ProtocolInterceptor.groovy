@@ -4,7 +4,7 @@ class ProtocolInterceptor {
     def springSecurityService
 
     public ProtocolInterceptor() {
-        match controller: "activity", action: ~/(printEvent|printActivity|setActivityToDone)/
+        match controller: "activity", action: ~/(printActivity)/
     }
 
     int order = HIGHEST_PRECEDENCE + 300
@@ -14,8 +14,8 @@ class ProtocolInterceptor {
         Set<Role> currentUserRoles = currentUser.authorities
 
         if (!("ROLE_PROTOCOL_SUPERVISOR" in currentUserRoles.authority)) {
-            log.info "Denied access to ${currentUser}"
-            render "No permitido"
+            log.info "Denied access to ${currentUser.username}"
+            render view: "/notAllowed"
 
             return false
         }

@@ -18,7 +18,45 @@
 
         <%-- <ucc:eventWidget eventWidget="${eventWidget}" position="${position}"/> --%>
 
+        <p>Detalle</p>
+        <hr>
+
+        <table class="table table-hover table-borderless">
+            <colgroup>
+                <col span="1" style="width: 26%;">
+                <col span="1" style="width: 74%;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>Fecha</td>
+                    <td><g:formatDate date="${events[position].date}" format="yyyy-MM-dd"/></td>
+                </tr>
+
+                <tr>
+                    <td>Lugar</td>
+                    <td><ucc:getClassroom id="${events[position].location}"/></td>
+                </tr>
+
+                <tr>
+                    <td>Hora de inicio</td>
+                    <td><ucc:getHour hour="${events[position].startTime}"/></td>
+                </tr>
+
+                <tr>
+                    <td>Hora final</td>
+                    <td><ucc:getHour hour="${events[position].endingTime}"/></td>
+                </tr>
+
+                <tr>
+                    <td>Numero de asistentes</td>
+                    <td>${events[position].numberOfPeople}</td>
+                </tr>
+            </tbody>
+        </table>
+
         <p>Requerimientos</p>
+        <hr>
+
         <div class="row">
             <div class="col-md-3">
                 <p>Medios</p>
@@ -121,16 +159,19 @@
                 <p>${events[position].dinner} Cena</p>
             </div>
         </div>
+
+
+        <g:if test="${events[position].observation}">
+            <p>Observacion</p>
+            <hr>
+
+            <p>${events[position].observation}</p>
+        </g:if>
     </content>
 
     <content tag="right-column">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="${!params.tab || params.tab == 'eventDetail' ? 'active' : ''}">
-                <g:link action="show" params="[id: activity.id, tab: 'eventDetail']">
-                    <i class="fa fa-file-text-o"></i>
-                </g:link>
-            </li>
-            <li role="presentation" class="${params.tab == 'activityInfo' ? 'active' : ''}">
+            <li role="presentation" class="${!params.tab || params.tab == 'activityInfo' ? 'active' : ''}">
                 <g:link action="show" params="[id: activity.id, tab: 'activityInfo']">
                     <i class="fa fa-info"></i>
                 </g:link>
@@ -140,31 +181,21 @@
                     <i class="fa fa-pencil"></i>
                 </g:link>
             </li>
+            <li role="presentation" class="${params.tab == 'notification' ? 'active' : ''}">
+                <g:link action="show" params="[id: activity.id, tab: 'notification']">
+                    <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                </g:link>
+            </li>
+            <sec:access expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
+                <li role="presentation" class="${params.tab == 'print' ? 'active' : ''}">
+                    <g:link action="show" params="[id: activity.id, tab: 'print']">
+                        <i class="fa fa-print" aria-hidden="true"></i>
+                    </g:link>
+                </li>
+            </sec:access>
         </ul>
 
-        <g:if test="${!params.tab || params.tab == 'eventDetail'}">
-            <label>Fecha</label>
-            <p><g:formatDate date="${events[position].date}" format="yyyy-MM-dd"/></p>
-
-            <label>Lugar</label>
-            <p><ucc:getClassroom id="${events[position].location}"/></p>
-
-            <label>Hora de inicio</label>
-            <p>${events[position].startTime}</p>
-
-            <label>Hora final</label>
-            <p>${events[position].endingTime}</p>
-
-            <label>Numero de asistentes</label>
-            <p>${events[position].numberOfPeople}</p>
-
-            <g:if test="${events[position].observation}">
-                <label>Observacion</label>
-                <p>${events[position].observation}</p>
-            </g:if>
-        </g:if>
-
-        <g:if test="${params.tab == 'activityInfo'}">
+        <g:if test="${!params.tab || params.tab == 'activityInfo'}">
             <div class="clearfix">
                 <div class="btn-group pull-right">
                     <g:link
@@ -198,5 +229,26 @@
         <g:if test="${params.tab == 'edit'}">
             <g:link action="edit" id="${activity.id}" class="btn btn-block btn-primary">Editar</g:link>
         </g:if>
+
+        <g:if test="${params.tab == 'notification'}">
+            <g:form action="sendNotification">
+                <g:hiddenField name="id" value="${activity.id}"/>
+
+                <button type="submit" class="btn btn-block btn-primary">
+                    <ucc:notificationMessage status="${activity.status}" location="${activity.location}" coordination="${activity.coordination}"/>
+                </button>
+            </g:form>
+        </g:if>
+
+        <sec:access expression="hasRole('ROLE_PROTOCOL_SUPERVISOR')">
+            <g:if test="${params.tab == 'print'}">
+                <g:link
+                    action="printActivity"
+                    params="[id: activity.id]"
+                    class="btn btn-block btn-primary">
+                    Imprimir
+                </g:link>
+            </g:if>
+        </sec:access>
     </content>
 </g:applyLayout>

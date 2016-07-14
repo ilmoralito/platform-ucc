@@ -431,9 +431,10 @@ class ActivityController {
         redirect action: "edit", params: [id: id, tab: tab, eventId: eventId]
     }
 
-    def sendNotification(Long id, String tab, Long eventId) {
+    def sendNotification(Long id) {
         Activity activity = Activity.get(id)
         User currentUser = springSecurityService.currentUser
+        String managerEmail = ""
 
         if (!activity) {
             response.sendError 404
@@ -444,21 +445,29 @@ class ActivityController {
                 activity.status = "notified"
                 activity.notifiedBy = currentUser
                 activity.notificationDate = new Date()
+
+                managerEmail = employeeService.getManagerMail(activity.location)
             break
             case { activity.status == "notified" && activity.location == "Academic" }:
                 activity.status = "granted"
                 activity.grantedBy = currentUser
                 activity.dateGranted = new Date()
+
+                managerEmail = "jorge.rojas@ucc.edu.ni"
             break
             case { activity.status == "notified" && activity.location == "Administrative" }:
                 activity.status = "approved"
                 activity.approvedBy = currentUser
                 activity.dateApproved = new Date()
+
+                managerEmail = "orlando.gaitan@ucc.edu.ni"
             break
             case "granted":
                 activity.status = "approved"
                 activity.approvedBy = currentUser
                 activity.dateApproved = new Date()
+
+                managerEmail = "orlando.gaitan@ucc.edu.ni"
             break
             case "approved":
                 activity.status = "done"
@@ -472,7 +481,7 @@ class ActivityController {
 
             flash.bean = activity
             flash.message = "A ocurrido un error"
-            redirect action: "edit", params: [id: id, tab: tab, eventId: eventId]
+            redirect action: "show", params: [id: id, tab: "notification"]
             return
         }
 
