@@ -45,7 +45,8 @@ class ActivityController {
     }
 
     def activityName(ActivityCommand command) {
-        def currentUser = springSecurityService.loadCurrentUser()
+        Integer currentUserId = springSecurityService.loadCurrentUser().id
+        List coordinations = employeeService.getEmployeeCoordinations(currentUserId)
 
         if (request.post) {
             if (command.hasErrors()) {
@@ -53,18 +54,19 @@ class ActivityController {
                     log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
                 }
 
+                flash.bag = command
                 flash.message = "Dato necesario"
-                return [bean: command]
+            } else {
+                session.activity.name = command.name
+                session.activity.externalCustomer = command.externalCustomer
+                session.coordination = command.coordination
+
+                redirect action: "events", params: [index: params.index]
+                return
             }
-
-            session.activity.name = command.name
-            session.activity.externalCustomer = command.externalCustomer
-            session.coordination = command.coordination
-
-            redirect action: "events", params: [index: params.index]
         }
 
-        [coordinations: employeeService.getEmployeeCoordinations(currentUser.id)]
+        [coordinations: coordinations]
     }
 
     def events(EventCommand command) {

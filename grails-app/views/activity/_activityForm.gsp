@@ -1,5 +1,5 @@
 <g:set var="name" value="${actionName == 'show' ? activity.name : session?.activity?.name}"/>
-<g:set var="externalCustomer" value="${actionName == 'show' ? activity?.externalCustomer?.id : session?.activity?.externalCustomer?.attach()?.id}"/>
+<g:set var="externalCustomer" value="${actionName == 'show' ? activity?.externalCustomer?.id : session?.activity?.externalCustomer?.id}"/>
 
 <div class="form-group">
     <label for="name">Nombre de la actividad</label>
