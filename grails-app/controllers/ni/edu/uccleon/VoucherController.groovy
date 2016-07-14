@@ -17,7 +17,7 @@ class VoucherController {
         update: "POST",
         delete: "GET",
         printIt: "GET",
-        printItAll: "GET",
+        printSetOfVouchers: "GET",
         sendAll: "GET"
     ]
 
@@ -216,15 +216,15 @@ class VoucherController {
         response.outputStream.flush()
     }
 
-    def printItAll(String date) {
-        Date nDate = params.date("date", "yyyy-MM-dd").clearTime()
+    def printSetOfVouchers(String date) {
+        Date nDate = params.date("date", "yyyy-MM-dd")
         List<Voucher> vouchers = Voucher.where {
             date >= nDate && date <= nDate
         }.list(params)
 
         PdfDocumentBuilder pdfBuilder = new PdfDocumentBuilder(response.outputStream)
         def customTemplate = {
-            "document" font: [family: "Courier", size: 9.pt], margin: [top: 0.5.inches]
+            "document" font: [family: "Courier", size: 9.pt], margin: [top: 0.5.inches, right: 0.5.inches, bottom: 0.5.inches, left: 0.5.inches]
             "cell.label" font: [bold: true]
             "cell.info" font: [size: 8.pt]
         }
@@ -232,23 +232,15 @@ class VoucherController {
         pdfBuilder.create {
             document(
                 template: customTemplate,
-                footer: { info ->
-                    table(border: [size: 0]) {
-                        row {
-                            cell "Impreso ${new Date().format('yyyy-MM-dd HH:mm:ss')}", align: "center", style: "info"
-                        }
-                    }
-                }
             ) {
                 vouchers.eachWithIndex { voucher, index ->
-                    if (index == 3) {
+                    if (index == 4) {
                         pageBreak()
                     }
 
-                    paragraph "Universidad de Ciencias Comerciales", align: "center", font: [bold: true, size: 7.pt], margin: [top: 0, bottom: 0]
                     paragraph "Vale de alimentacion(Cafetines)", align: "center", margin: [top: 1.px]
 
-                    table(columns: [1, 2], padding: 2.px, border: [size: 1], margin: [bottom: 5.px]) {
+                    table(columns: [1, 2], padding: 2.px, border: [size: 1], margin: [top : 0, bottom: 5.px]) {
                         row {
                             cell "Fecha", style: "label"
                             cell voucher.date.format("yyyy-MM-dd")
@@ -261,12 +253,7 @@ class VoucherController {
 
                         row {
                             cell "Coordinacion", style: "label"
-                            cell employeeService.getEmployeeCoordination(voucher.employee)
-                        }
-
-                        row {
-                            cell "Area", style: "label"
-                            cell employeeService.getEmployeeLocation(voucher.employee, true)
+                            cell employeeService.getEmployeeCoordinations(voucher.employee).name.join(", ")
                         }
 
                         row {
@@ -301,16 +288,14 @@ class VoucherController {
                         }
                     }
 
-                    String message = voucher.status == "approved" ? "Aprovado por: ${voucher.approvedBy.fullName}" : "SIN APROBAR"
-
-                    paragraph message, align: "center", margin: [top: 1.px]
+                    String message = voucher.status == "approved" ? "Aprovado por: ${voucher.approvedBy.username}" : "SIN APROBAR"
+                    paragraph message, align: "center", margin: [top: 1.px, bottom: 0]
                 }
             }
         }
 
         response.contentType = "application/pdf"
         response.setHeader("Content-disposition", "attachment;filename=test.pdf")
-        //response.outputStream << out.toByteArray()
         response.outputStream.flush()
     }
 

@@ -1,4 +1,4 @@
-package ni.edu.uccleon
+cpackage ni.edu.uccleon
 
 import grails.plugins.rest.client.RestResponse
 import grails.plugins.rest.client.RestBuilder
@@ -63,20 +63,5 @@ class EmployeeService {
 
     List getEmployeeCoordinations(Long id) {
         getEmployee(id).coordinations
-    }
-
-    // TODO: check of this is necesary
-    String getEmployeeLocation(Long id, Boolean translate = false) {
-        String location = getEmployee(id).coordination.location
-
-        if (!translate) {
-            location
-        } else {
-            if (location == "Administrative") {
-                "Administrativa"
-            } else {
-                "Academica"
-            }
-        }
     }
 }

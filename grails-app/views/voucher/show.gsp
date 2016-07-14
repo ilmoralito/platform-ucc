@@ -4,7 +4,7 @@
     </head>
 
     <content tag="main">
-        <g:link action="index" class="btn btn-default">Regresar</g:link>
+        <g:link action="index">Regresar</g:link>
 
         <g:if test="${vouchers}">
             <table class="table table-hover">
@@ -18,7 +18,9 @@
                     <col span="1" style="width: 35%;">
                 </colgroup>
                 <thead>
-                    <th style="text-align: center"><i class="fa fa-pencil"></i></th>
+                    <th style="text-align: center">
+                        <i class="fa fa-pencil"></i>
+                    </th>
                     <th>Empleado</th>
                     <th>Actividad</th>
                     <th>Valor</th>
@@ -56,19 +58,19 @@
     <content tag="right-column">
         <ul class="nav nav-tabs">
             <li role="presentation" class="${!params.tab || params.tab != 'send' ? 'active' : ''}">
-                <g:link action="edit" params="[date: params.date]">
-                    <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                <g:link action="show" params="[date: params.date]">
+                    <i class="fa fa-print" aria-hidden="true"></i>
                 </g:link>
             </li>
             <li role="presentation" class="${params.tab == 'send' ? 'active' : ''}">
-                <g:link action="edit" params="[date: params.date, tab: 'send']">
-                    <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                <g:link action="show" params="[date: params.date, tab: 'send']">
+                    <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
                 </g:link>
             </li>
         </ul>
 
         <g:if test="${!params.tab || params.tab != 'send' ? 'active' : ''}">
-            <g:link action="printItAll" params="[date: params.date]" class="btn btn-primary btn-block">
+            <g:link action="printSetOfVouchers" params="[date: params.date]" class="btn btn-primary btn-block">
                 Imprimir vales
             </g:link>
         </g:if>
