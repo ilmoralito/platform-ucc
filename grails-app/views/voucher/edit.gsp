@@ -9,7 +9,7 @@
         <div class="clearfix">
             <div class="btn-group pull-right">
                 <sec:ifAllGranted roles="ROLE_PROTOCOL_SUPERVISOR">
-                    <g:link action="printIt" id="${voucher.id}" class="btn btn-default">
+                    <g:link action="print" id="${voucher.id}" class="btn btn-default">
                         <i class="fa fa-print" aria-hidden="true"></i>
                     </g:link>
                 </sec:ifAllGranted>

@@ -16,7 +16,7 @@ class VoucherController {
         show: "GET",
         update: "POST",
         delete: "GET",
-        printIt: "GET",
+        print: "GET",
         printSetOfVouchers: "GET",
         sendAll: "GET"
     ]
@@ -120,7 +120,7 @@ class VoucherController {
         redirect action: "show", params: [date: voucher.date]
     }
 
-    def printIt(Long id) {
+    def print(Long id) {
         Voucher voucher = Voucher.get(id)
 
         if (!voucher) {
@@ -136,25 +136,11 @@ class VoucherController {
 
         pdfBuilder.create {
             document(
-                template: customTemplate,
-                header: { info ->
-                    table(border: [size: 0]) {
-                        row {
-                            cell "Universidad de Ciencias Comerciales", align: "center", style: "info"
-                        }
-                    }
-                },
-                footer: { info ->
-                    table(border: [size: 0]) {
-                        row {
-                            cell "Impreso ${new Date().format('yyyy-MM-dd HH:mm:ss')}", align: "center", style: "info"
-                        }
-                    }
-                }
+                template: customTemplate
             ) {
-                paragraph "Vale de alimentacion(Cafetines)", align: "center"
+                paragraph "Vale de alimentacion(Cafetines)", align: "center", margin: [top: 1.px]
 
-                table(columns: [1, 2], padding: 2.px, border: [size: 1]) {
+                table(columns: [1, 2], padding: 2.px, border: [size: 1], margin: [top : 0, bottom: 5.px]) {
                     row {
                         cell "Fecha", style: "label"
                         cell voucher.date.format("yyyy-MM-dd")
@@ -167,12 +153,7 @@ class VoucherController {
 
                     row {
                         cell "Coordinacion", style: "label"
-                        cell employeeService.getEmployeeCoordination(voucher.employee)
-                    }
-
-                    row {
-                        cell "Area", style: "label"
-                        cell employeeService.getEmployeeLocation(voucher.employee, true)
+                        cell employeeService.getEmployeeCoordinations(voucher.employee).name.join(", ")
                     }
 
                     row {
@@ -207,7 +188,8 @@ class VoucherController {
                     }
                 }
 
-                paragraph "${voucher.status == 'approved' ? 'Aprovado por: $voucher.approvedBy.fullName' : 'SIN APROBAR'}", align: "center"
+                String message = voucher.status == "approved" ? "Aprovado por: ${voucher.approvedBy.username}" : "SIN APROBAR"
+                paragraph message, align: "center", margin: [top: 1.px, bottom: 0]
             }
         }
 
