@@ -546,7 +546,7 @@ class ActivityController {
                     Map classroom = classroomService.getClassroom(event.location.toInteger())
                     String location = classroom.name ?: classroom.code
 
-                    paragraph "Actividad: $event.activity.name. Por: $event.activity.coordination"
+                    paragraph "$event.activity.name", align: "center"
 
                     paragraph(margin: [top: 0.inches, bottom: 0.inches]) {
                         text "Datos"
@@ -744,6 +744,28 @@ class ActivityController {
                                     }
                                 }
                             }
+                        }
+                    }
+
+                    paragraph ""
+                    paragraph ""
+                    paragraph ""
+
+                    table(border: [size: 0], padding: 0.px) {
+                        row {
+                            cell event.activity.createdBy.username, align: "center"
+                            if (event.activity.location == "Academic") {
+                                cell event.activity.grantedBy.username, align: "center"
+                            }
+                            cell event.activity.approvedBy.username, align: "center"
+                        }
+
+                        row {
+                            cell "Creado por", align: "center"
+                            if (event.activity.location == "Academic") {
+                                cell "Aprovado por", align: "center"
+                            }
+                            cell "Autorizado por", align: "center"
                         }
                     }
 
