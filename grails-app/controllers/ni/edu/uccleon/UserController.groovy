@@ -92,7 +92,7 @@ class UserController {
         [employee: employee]
     }
 
-    @Secured(["ROLE_ADMIN", "ROLE_SUPERVISOR", "ROLE_USER"])
+    @Secured(["ROLE_ADMIN", "ROLE_USER", "ROLE_ADMINISTRATIVE_SUPERVISOR", "ROLE_ACADEMIC_SUPERVISOR", "ROLE_PROTOCOL_SUPERVISOR"])
     def password(PasswordCommand command) {
         if (request.post) {
             if (command.hasErrors()) {
