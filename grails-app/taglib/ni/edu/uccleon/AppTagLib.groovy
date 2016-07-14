@@ -24,7 +24,6 @@ class AppTagLib {
         externalCustomers: "raw",
         activityStatus: "raw",
         activityWidget: "raw",
-        voucherStatus: "raw",
         getEmployeeList: "raw",
         getEmployees: "raw",
         getGuests: "raw",

@@ -26,7 +26,7 @@
                                 </g:link>
                             </td>
                             <td>${d.size}</td>
-                            <td>${d.status}</td>
+                            <td><ucc:voucherStatus status="${d.status.unique()[0]}"/></td>
                         </tr>
                     </g:each>
                 </tbody>

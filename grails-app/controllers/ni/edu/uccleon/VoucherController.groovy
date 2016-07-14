@@ -67,10 +67,11 @@ class VoucherController {
     @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])
     def show(String date) {
         Date nDate = params.date("date", "yyyy-MM-dd").clearTime()
+        List<Voucher> vouchers = voucherService.getVouchersByDate(nDate)
 
         [
-            vouchers: voucherService.getVouchersByDate(nDate),
-            foods: grailsApplication.config.ni.edu.uccleon.foods
+            vouchers: vouchers,
+            voucherViewModel: createVoucherViewModel(nDate, vouchers.status.unique()[0], vouchers.value.sum())
         ]
     }
 
@@ -306,7 +307,21 @@ class VoucherController {
             redirect controller: "panel"
         } else {
             flash.message = "$vouchers vales notificados"
-            redirect action: "show", params: [date: date]
+            redirect action: "show", params: [date: date, params: "notify"]
         }
     }
+
+    private createVoucherViewModel(Date date, String status, BigDecimal total) {
+        new VoucherViewModel(
+            date: date,
+            status: status,
+            total: total
+        )
+    }
+}
+
+class VoucherViewModel {
+    Date date
+    String status
+    BigDecimal total
 }
