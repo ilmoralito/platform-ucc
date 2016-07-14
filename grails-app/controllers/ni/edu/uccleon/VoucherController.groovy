@@ -116,7 +116,7 @@ class VoucherController {
 
         voucher.delete()
 
-        flash.message = "Vale eliminado"
+        flash.message = "Vale eliminado correctamente"
         redirect action: "show", params: [date: voucher.date]
     }
 

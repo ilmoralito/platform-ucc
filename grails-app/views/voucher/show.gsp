@@ -31,7 +31,7 @@
                     <g:each in="${vouchers}" var="v">
                         <tr>
                             <td style="text-align: center">
-                                <g:link action="edit" id="${v.id}" class="btn btn-default btn-xs">
+                                <g:link action="edit" params="[id: v.id]" class="btn btn-default btn-xs">
                                     <i class="fa fa-pencil"></i>
                                 </g:link>
                             </td>
