@@ -84,7 +84,7 @@
         </g:if>
 
         <g:if test="${params.tab == 'notify'}">
-            <g:link action="sendAll" params="[date: params.date]" class="btn btn-primary btn-block">
+            <g:link action="send" params="[date: params.date]" class="btn btn-primary btn-block">
                 <sec:ifAllGranted roles="ROLE_PROTOCOL_SUPERVISOR">
                     Notificar
                 </sec:ifAllGranted>

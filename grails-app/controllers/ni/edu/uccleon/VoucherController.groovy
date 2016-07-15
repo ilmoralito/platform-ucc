@@ -18,7 +18,7 @@ class VoucherController {
         delete: "GET",
         print: "GET",
         printSetOfVouchers: "GET",
-        sendAll: "GET"
+        send: "GET"
     ]
 
     def index() {
@@ -293,32 +293,27 @@ class VoucherController {
     }
 
     @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])
-    def sendAll(String date) {
-        Date nDate = params.date("date", "yyyy-MM-dd").clearTime()
-        User currentUser = springSecurityService.currentUser
+    def send(String date) {
+        Map parameters = [:]
+        Date nDate = params.date("date", "yyyy-MM-dd")
+        User currentUser = springSecurityService.loadCurrentUser()
         List<String> currentUserAuthorities = currentUser.authorities.authority
-        Map params = [:]
 
         if ("ROLE_ADMINISTRATIVE_SUPERVISOR" in currentUserAuthorities) {
-            params.status = "approved"
-            params.approvedBy = currentUser
-            params.approvalDate = new Date()
+            parameters.status = "approved"
+            parameters.approvedBy = currentUser
+            parameters.approvalDate = new Date()
         } else {
-            params.status = "notified"
-            params.dateNotification = new Date()
+            parameters.status = "notified"
+            parameters.dateNotification = new Date()
         }
 
         Integer vouchers = Voucher.where {
             date >= nDate && date <= nDate
-        }.updateAll(*:params)
+        }.updateAll(*:parameters)
 
-        if ("ROLE_ADMINISTRATIVE_SUPERVISOR" in currentUserAuthorities) {
-            flash.message = "$vouchers vales autorizados"
-            redirect controller: "panel"
-        } else {
-            flash.message = "$vouchers vales notificados"
-            redirect action: "show", params: [date: date, params: "notify"]
-        }
+        flash.message = "$vouchers vales notificados"
+        redirect action: "show", params: [date: date, tab: "notify"]
     }
 
     private createVoucherViewModel(Date date, String status, BigDecimal total) {
