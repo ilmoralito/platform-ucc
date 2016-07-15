@@ -82,7 +82,17 @@ class VoucherController {
             response.sendError 404
         }
 
-        [voucher: voucher, foods: grailsApplication.config.ni.edu.uccleon.foods]
+        List employees = employeeService.getEmployees()
+        List<Integer> intervalVoucherIds = voucherService.getVouchersByDate(voucher.date).employee - voucher.employee
+        List validEmployees = employees.findAll { employee ->
+            !(employee.id in intervalVoucherIds)
+        }
+
+        [
+            voucher: voucher,
+            employees: validEmployees,
+            foods: grailsApplication.config.ni.edu.uccleon.foods
+        ]
     }
 
     @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])

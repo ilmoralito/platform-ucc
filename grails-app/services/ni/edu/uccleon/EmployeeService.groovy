@@ -1,4 +1,4 @@
-cpackage ni.edu.uccleon
+package ni.edu.uccleon
 
 import grails.plugins.rest.client.RestResponse
 import grails.plugins.rest.client.RestBuilder

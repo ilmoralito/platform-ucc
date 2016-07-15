@@ -396,7 +396,7 @@ class AppTagLib {
 
     def getEmployees = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
-        List employees = employeeService.getEmployees()
+        List employees = attrs.employees ?: employeeService.getEmployees()
         String name = attrs.name ?: "employee"
         Integer currentEmployee = attrs?.currentEmployee
         Map<String, String> params = [id: name, name: name, class: "form-control"]

@@ -25,7 +25,7 @@
                <div class="col-md-9">
                    <div class="form-group">
                         <label for="employee">Empleado</label>
-                        <ucc:getEmployees currentEmployee="${voucher.employee}"/>
+                        <ucc:getEmployees employees="${employees}" currentEmployee="${voucher.employee}"/>
                     </div>
 
                     <div class="form-group">
