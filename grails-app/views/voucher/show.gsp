@@ -7,16 +7,18 @@
         <g:if test="${vouchers}">
             <table class="table table-hover">
                 <colgroup>
-                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 1%;">
                     <col span="1" style="width: 20%;">
-                    <col span="1" style="width: 40%;">
+                    <col span="1" style="width: 44%;">
                     <col span="1" style="width: 5%;">
-                    <col span="1" style="width: 35%;">
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 30%;">
                 </colgroup>
                 <thead>
                     <th class="text-center"><i class="fa fa-pencil"></i></th>
                     <th>Empleado</th>
                     <th>Actividad</th>
+                    <th>Estado</th>
                     <th>Valor</th>
                     <th>Servicios</th>
                 </thead>
@@ -30,6 +32,7 @@
                             </td>
                             <td><ucc:employee id="${v.employee}"/></td>
                             <td><g:fieldValue bean="${v}" field="activity"/></td>
+                            <td><ucc:voucherStatus status="${v.status}"/></td>
                             <td><g:fieldValue bean="${v}" field="value"/></td>
                             <td>
                                 <g:if test="${v.refreshment}">Refigerio</g:if>
@@ -39,6 +42,11 @@
                             </td>
                         </tr>
                     </g:each>
+                    <tr>
+                        <td colspan="4"></td>
+                        <td><strong>${vouchers.value.sum()}</strong></td>
+                        <td colspan="2"></td>
+                    </tr>
                 </tbody>
             </table>
         </g:if>
@@ -71,10 +79,9 @@
             <p><b><g:formatDate date="${voucherViewModel.date}" format="yyyy-MM-dd"/></b></p>
 
             <label>Estado</label>
-            <p><ucc:voucherStatus status="${voucherViewModel.status}"/></p>
-
-            <label>Total</label>
-            <p>${voucherViewModel.total}</p>
+            <g:each in="${voucherViewModel.status}" var="s">
+                <p>${s.size} <ucc:voucherStatus status="${s.status}"/></p>
+            </g:each>
         </g:if>
 
         <g:if test="${params.tab == 'print' ? 'active' : ''}">

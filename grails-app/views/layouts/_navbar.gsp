@@ -48,9 +48,11 @@
                             <g:if test="${voucherList}">
                                 <li class="dropdown-header">Vales</li>
                                 <g:each in="${voucherList}" var="voucher">
+                                    <g:set var="voucherDate" value="${voucher.date.format('yyyy-MM-dd')}"/>
+
                                     <li>
-                                        <g:link controller="voucher" action="show" params="[date: voucher.date]">
-                                            ${voucher.size} - ${voucher.date.format('yyyy-MM-dd')}
+                                        <g:link controller="voucher" action="show" params="[date: voucherDate]">
+                                            ${voucher.size} - ${voucherDate}
                                         </g:link>
                                     </li>
                                 </g:each>

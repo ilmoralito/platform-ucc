@@ -71,10 +71,14 @@ class VoucherController {
 
         [
             vouchers: vouchers,
-            voucherViewModel: createVoucherViewModel(nDate, vouchers.status.unique()[0], vouchers.value.sum())
+            voucherViewModel: createVoucherViewModel(
+                nDate,
+                vouchers.status.groupBy { it }.collect { [status: it.key, size: it.value.size()] }
+            )
         ]
     }
 
+    @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])
     def edit(Long id) {
         Voucher voucher = Voucher.get(id)
 
@@ -295,6 +299,7 @@ class VoucherController {
     @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])
     def send(String date) {
         Map parameters = [:]
+        String target = "pending"
         Date nDate = params.date("date", "yyyy-MM-dd")
         User currentUser = springSecurityService.loadCurrentUser()
         List<String> currentUserAuthorities = currentUser.authorities.authority
@@ -303,30 +308,30 @@ class VoucherController {
             parameters.status = "approved"
             parameters.approvedBy = currentUser
             parameters.approvalDate = new Date()
+
+            target = "notified"
         } else {
             parameters.status = "notified"
             parameters.dateNotification = new Date()
         }
 
         Integer vouchers = Voucher.where {
-            date >= nDate && date <= nDate
+            date >= nDate && date <= nDate && status == target
         }.updateAll(*:parameters)
 
         flash.message = "$vouchers vales notificados"
         redirect action: "show", params: [date: date, tab: "notify"]
     }
 
-    private createVoucherViewModel(Date date, String status, BigDecimal total) {
+    private createVoucherViewModel(Date date, List status) {
         new VoucherViewModel(
             date: date,
-            status: status,
-            total: total
+            status: status
         )
     }
 }
 
 class VoucherViewModel {
     Date date
-    String status
-    BigDecimal total
+    List status
 }
