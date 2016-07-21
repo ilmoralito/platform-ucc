@@ -9,10 +9,10 @@
                 <colgroup>
                     <col span="1" style="width: 1%;">
                     <col span="1" style="width: 20%;">
-                    <col span="1" style="width: 44%;">
+                    <col span="1" style="width: 40%;">
                     <col span="1" style="width: 5%;">
                     <col span="1" style="width: 5%;">
-                    <col span="1" style="width: 30%;">
+                    <col span="1" style="width: 34%;">
                 </colgroup>
                 <thead>
                     <th class="text-center"><i class="fa fa-pencil"></i></th>

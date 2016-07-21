@@ -2,6 +2,7 @@ package ni.edu.uccleon
 
 class NotificationInterceptor {
     def springSecurityService
+    def activityService
     def voucherService
 
     int order = HIGHEST_PRECEDENCE + 200
@@ -15,42 +16,23 @@ class NotificationInterceptor {
     }
 
     boolean before() {
-        User currentUser = springSecurityService.currentUser
-        Set<Role> authorities = currentUser.authorities
+        List<String> currentUserAuthorities = springSecurityService.loadCurrentUser().authorities.authority
 
-        if (authorities.authority.contains("ROLE_ADMINISTRATIVE_SUPERVISOR")) {
-            List<Activity> activityList = Activity.where {
-                (status == "notified" && location == "Administrative") || status == "granted"
-            }.list()
+        if ("ROLE_ADMINISTRATIVE_SUPERVISOR" in currentUserAuthorities) {
+            grailsApplication.config.ni.edu.uccleon.activityList = activityService.getActivitiesBySupervisor("ROLE_ADMINISTRATIVE_SUPERVISOR")
 
-            grailsApplication.config.ni.edu.uccleon.activityList = activityList
-
-            List<Voucher> vouchers = Voucher.where {
-                status == "notified"
-            }.list()
-
+            List<Voucher> vouchers = voucherService.getVouchersByStatus("notified")
             grailsApplication.config.ni.edu.uccleon.voucherList = voucherService.groupVouchersByDate(vouchers)
         }
 
-        if (authorities.authority.contains("ROLE_ACADEMIC_SUPERVISOR")) {
-            List<Activity> activityList = Activity.where {
-                status == "notified" && location == "Academic"
-            }.list()
-
-            grailsApplication.config.ni.edu.uccleon.activityList = activityList
+        if ("ROLE_ACADEMIC_SUPERVISOR" in currentUserAuthorities) {
+            grailsApplication.config.ni.edu.uccleon.activityList = activityService.getActivitiesBySupervisor("ROLE_ACADEMIC_SUPERVISOR")
         }
 
-        if (authorities.authority.contains("ROLE_PROTOCOL_SUPERVISOR")) {
-            List<Activity> activityList = Activity.where {
-                status == "approved"
-            }.list()
+        if ("ROLE_PROTOCOL_SUPERVISOR" in currentUserAuthorities) {
+            grailsApplication.config.ni.edu.uccleon.activityList = activityService.getActivitiesBySupervisor("ROLE_PROTOCOL_SUPERVISOR")
 
-            grailsApplication.config.ni.edu.uccleon.activityList = activityList
-
-            List<Voucher> vouchers = Voucher.where {
-                status == "approved"
-            }.list()
-
+            List<Voucher> vouchers = voucherService.getVouchersByStatus("approved")
             grailsApplication.config.ni.edu.uccleon.voucherList = voucherService.groupVouchersByDate(vouchers)
         }
 

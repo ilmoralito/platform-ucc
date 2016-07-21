@@ -10,7 +10,7 @@ class UrlMappings {
         }
 
         "/" controller: "birthday", action: "index"
-        "notallowed" view: "/notAllowed"
+        // "notAllowed" view: "/notAllowed"
         "500" view: "/error"
         "404" view: "/notFound"
     }

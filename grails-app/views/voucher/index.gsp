@@ -8,14 +8,12 @@
             <table class="table table-hover">
                 <caption>${data*.size.sum()} vales no aprobados</caption>
                 <colgroup>
-                    <col span="1" style="width: 15%;">
-                    <col span="1" style="width: 15%;">
-                    <col span="1" style="width: 70%;">
+                    <col span="1" style="width: 25%;">
+                    <col span="1" style="width: 75%;">
                 </colgroup>
                 <thead>
                     <th>Fecha</th>
                     <th>Vales</th>
-                    <th>Estado</th>
                 </thead>
                 <tbody>
                     <g:each in="${data}" var="d">
@@ -26,7 +24,6 @@
                                 </g:link>
                             </td>
                             <td>${d.size}</td>
-                            <td><ucc:voucherStatus status="${d.status.unique()[0]}"/></td>
                         </tr>
                     </g:each>
                 </tbody>
@@ -83,7 +80,6 @@
             </g:form>
         </g:if>
         <g:else>
-            <%--only show this if there are activities--%>
             <g:form action="create" params="[type: 'guest']" autocomplete="off">
                 <ucc:getGuests/>
             </g:form>

@@ -32,13 +32,38 @@ class VoucherController {
 
     def create() {
         if (params.type == "interval") {
+            Date date = params.date("date", "yyyy-MM-dd")
             List<Integer> employees = params.list("employees")*.toInteger()
+            List<Voucher> currentDateVouchers = voucherService.getVouchersByDate(date)
+            Integer internalVouchersAdded = 0
+            Integer internalVouchersUpdated = 0
 
-            if (employees) {
-                employees.each { employee ->
+            employees.each { employee ->
+                InternalVoucher currentInternalVoucher = currentDateVouchers.find {
+                    it.employee == employee
+                }
+
+                if (currentInternalVoucher && currentInternalVoucher.status == "pending") {
+                    currentInternalVoucher.activity = params.activity
+                    currentInternalVoucher.value = params.double("value")
+                    currentInternalVoucher.refreshment = params.boolean("refreshment")
+                    currentInternalVoucher.breakfast = params.boolean("breakfast")
+                    currentInternalVoucher.lunch = params.boolean("lunch")
+                    currentInternalVoucher.dinner = params.boolean("dinner")
+
+                    if (!currentInternalVoucher.save()) {
+                        internalVoucher.errors.allErrors.each { err ->
+                            log.error "[field: $err.field, defaultMessage: $err.defaultMessage]"
+                        }
+                    }
+
+                    internalVouchersUpdated++
+                }
+
+                if (!currentInternalVoucher) {
                     InternalVoucher internalVoucher = new InternalVoucher(
                         createdBy: springSecurityService.currentUser,
-                        date: params.date("date", "yyyy-MM-dd"),
+                        date: date,
                         employee: employee,
                         activity: params.activity,
                         value: params.double("value"),
@@ -52,13 +77,13 @@ class VoucherController {
                         internalVoucher.errors.allErrors.each { err ->
                             log.error "[field: $err.field, defaultMessage: $err.defaultMessage]"
                         }
-
-                        flash.bag = internalVoucher
                     }
 
-                    flash.message = internalVoucher.hasErrors() ? "Error" : "Accion concluida"
+                    internalVouchersAdded++
                 }
             }
+
+            flash.message = "Actualizados: $internalVouchersUpdated, creados: $internalVouchersAdded"
         }
 
         redirect action: "index"
