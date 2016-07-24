@@ -2,11 +2,24 @@ package ni.edu.uccleon
 
 import grails.plugin.springsecurity.annotation.Secured
 
-@Secured(["ROLE_ADMIN", "ROLE_USER"])
+@Secured("permitAll")
 class PhoneBookController {
+    def coordinationService
+    def phoneBookService
 
-    @Secured("permitAll")
+    def allowedMethods = [
+        index: "GET",
+        printPhoneBook: "GET"
+    ]
+
     def index() {
+        List coordinations = coordinationService.getCoordinations()
+        List phoneBook = phoneBookService.getPhoneBook(coordinations)
+
+        [phoneBook: phoneBook]
+    }
+
+    def printPhoneBook() {
 
     }
 }
