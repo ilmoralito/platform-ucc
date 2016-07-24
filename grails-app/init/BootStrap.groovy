@@ -108,6 +108,7 @@ class BootStrap {
         ).save failOnError: true
 
         UserRole.create jrUser, administrativeSupervisorRole, true
+        UserRole.create crUser, administrativeSupervisorRole, true
         UserRole.create crUser, userRole, true
         UserRole.create rlUser, academicSupervisorRole, true
         UserRole.create ogUser, protocolSupervisorRole, true
@@ -124,7 +125,7 @@ class BootStrap {
 
         assert User.count() == 9
         assert Role.count() == 5
-        assert UserRole.count() == 9
+        assert UserRole.count() == 10
 
         externalCustomers << builder.externalCustomer(
             name: "externalCustomer1",
