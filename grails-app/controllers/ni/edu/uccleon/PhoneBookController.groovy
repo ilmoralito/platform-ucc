@@ -27,7 +27,7 @@ class PhoneBookController {
 
         pdfBuilder.create {
             document(
-                font: [family: "Helvetica", size: 9.pt],
+                font: [family: "Helvetica", size: 8.pt],
                 margin: [top: 0.2.inch, right: 0.5.inch, bottom: 0.5.inch, left: 0.5.inch],
                 footer: { info ->
                     table(padding: 0, border: [size: 0]) {
@@ -48,11 +48,24 @@ class PhoneBookController {
                     }
 
                     phoneBook.each { pb ->
-                        row {
-                            cell pb.extensionNumber, align: "center"
-                            cell pb.coordinationName
-                            cell pb.manager
-                            cell pb.assistants
+                        if (pb.coordinations.size() == 1) {
+                            row {
+                                cell pb.extensionNumber, align: "center"
+                                cell pb.coordinations[0].name
+                                cell pb.coordinations[0].manager
+                                cell pb.coordinations[0].assistants
+                            }
+                        } else {
+                            pb.coordinations.eachWithIndex { coordination, index ->
+                                row {
+                                    if (index == 0) {
+                                        cell pb.extensionNumber, rowspan: pb.coordinations.size(), align: "center"
+                                    }
+                                    cell coordination.name
+                                    cell coordination.manager
+                                    cell coordination.assistants
+                                }
+                            }
                         }
                     }
                 }
