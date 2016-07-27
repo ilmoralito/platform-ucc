@@ -6,14 +6,18 @@ import grails.transaction.Transactional
 class PhoneBookService {
 
     List getPhoneBook(List coordinations) {
-        List phoneBook = coordinations.collect { a ->
+        List phoneBook = coordinations.groupBy { it.extensionNumber }.collect { a ->
             [
-                extensionNumber: a.extensionNumber,
-                coordinationName: a.name,
-                manager: a.employees.find { it.authority == "Manager" }.fullName,
-                assistants: a.employees.findAll { it.authority == "Assistant" }.fullName.join(", ")
+                extensionNumber: a.key,
+                coordinations: a.value.collect { b ->
+                    [
+                        name: b.name,
+                        manager: b.employees.find { it.authority == "Manager" }.fullName,
+                        assistants: b.employees.findAll { it.authority != "Manager" }.fullName.join(", ")
+                    ]
+                }
             ]
-        }
+        }.sort { it.extensionNumber }
 
         phoneBook
     }
