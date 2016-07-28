@@ -17,9 +17,9 @@ class EmployeeService {
         json
     }
 
-    def getEmployees() {
+    def getEmployees(Integer max = 200) {
         RestBuilder restBuilder = new RestBuilder()
-        def json = restBuilder.get(employeeURL).json
+        def json = restBuilder.get("$employeeURL?max=$max").json
 
         json
     }

@@ -2,27 +2,20 @@ package ni.edu.uccleon
 
 import grails.plugin.springsecurity.annotation.Secured
 
-@Secured(["ROLE_ADMIN"])
+@Secured("permitAll")
 class BirthdayController {
     def employeeService
+    def birthdayService
     def helperService
 
     static allowedMethods = [
-        index: "GET",
-        list: ["GET", "POST"]
+        index: "GET"
     ]
 
-    @Secured("permitAll")
     def index() {
         List employees = employeeService.getEmployees()
-        List<Date> interval = helperService.getInterval("month")
+        List birthdaysMonth = birthdayService.getBirthdaysMonth(employees)
 
-        [employees: employees, daysOfMonth: interval.size()]
-    }
-
-    def list() {
-        List employees = employeeService.getEmployees()//.groupBy { it. }
-
-        [employees: employees]
+        [birthdaysMonth: birthdaysMonth, today: helperService.getDayOfMonth()]
     }
 }

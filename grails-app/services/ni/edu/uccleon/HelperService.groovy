@@ -36,7 +36,7 @@ class HelperService {
             from.set(from.DAY_OF_WEEK, calendar.SUNDAY)
             to.set(to.DAY_OF_WEEK, 7)
         } else if (type == "day") {
-            
+
         } else {
 
         }
@@ -58,5 +58,9 @@ class HelperService {
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH))
 
         getDayOfWeek(calendar.getTime())
+    }
+
+    Integer getDayOfMonth(Date date = new Date()) {
+        date[Calendar.DAY_OF_MONTH]
     }
 }
