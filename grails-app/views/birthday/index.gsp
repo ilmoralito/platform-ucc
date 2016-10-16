@@ -8,9 +8,13 @@
 
         <g:if test="${birthdaysMonth}">
             <table class="table table-hover">
+                <colgroup>
+                    <col span="1" style="width: 10%;">
+                    <col span="1" style="width: 90%;">
+                </colgroup>
                 <thead>
                     <th>Dia</th>
-                    <th>Cumpleaneros</th>
+                    <th>Cumpleañeros</th>
                 </thead>
                 <tbody>
                     <g:each in="${birthdaysMonth}" var="b">

@@ -9,9 +9,12 @@ class UrlMappings {
             }
         }
 
-        "/" controller: "birthday", action: "index"
-        // "notAllowed" view: "/notAllowed"
-        "500" view: "/error"
-        "404" view: "/notFound"
+        '/' controller: 'birthday', action: 'index'
+        '/phonebook' controller: 'phoneBook', action: 'index'
+        '/news' controller: 'news', action: 'index'
+
+        // 'notAllowed' view: '/notAllowed'
+        '500' view: '/error'
+        '404' view: '/notFound'
     }
 }

@@ -3,11 +3,6 @@
 *= require_self
 */
 
-body {
-    padding-top: 70px;
-}
+body { padding-top: 70px; }
 
-label {
-    font-size: 0.9em;
-    font-weight: normal;
-}
+label { font-weight: normal; }

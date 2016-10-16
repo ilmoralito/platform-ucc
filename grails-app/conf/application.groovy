@@ -37,7 +37,7 @@ ni {
     edu {
         uccleon {
             companyInformation = [
-                name: "UCC Campus Leon",
+                name: "UCC Leon",
                 slogan: "Para la gente que trinufa",
                 address: "Frente al campus medico",
                 telephoneNumber: ["23110812", "23110814"],

@@ -49,7 +49,7 @@
             </tbody>
         </table>
 
-        <g:link action="printPhoneBook" class="btn btn-primary">
+        <g:link action="printPhoneBook" class="btn btn-default">
             <i class="fa fa-print" aria-hidden="true"></i>
         </g:link>
     </content>

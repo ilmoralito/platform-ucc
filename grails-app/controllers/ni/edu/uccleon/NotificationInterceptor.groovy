@@ -13,6 +13,7 @@ class NotificationInterceptor {
             .excludes(controller: "logout")
             .excludes(controller: "birthday")
             .excludes(controller: "phoneBook")
+            .excludes(controller: "news")
     }
 
     boolean before() {

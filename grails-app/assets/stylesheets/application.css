@@ -11,31 +11,8 @@
 
 body { padding-top: 70px; }
 
-a:focus { outline: 0; }
+section { margin-bottom: 5px; }
 
-label {
-    font-size: 0.9em;
-    font-weight: normal;
-}
+label { font-weight: normal; }
 
-textarea { resize: none; }
-
-hr { margin-top: 10px;  }
-
-.checkbox label,
-.radio label { font-size: 1em; }
-
-.nav-tabs {
-    margin-bottom: 10px;
-}
-
-.panel-default > .panel-heading { background: #FFF; }
-
-.btn-back {
-    display: block;
-    margin-bottom: 15px;
-}
-
-.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
-    border: none;
-}
+.nav-tabs { margin-bottom: 10px; }
