@@ -7,13 +7,6 @@ $(function() {
         minDate: moment().add(3, 'days')
     });
 
-    // VOUCHER
-    $('#voucherDate').datetimepicker({
-        format: 'YYYY-MM-DD',
-        useCurrent: false,
-        minDate: moment().add(-1, 'days')
-    });
-
     // BIRTHDAY
     $('#month').datetimepicker({
         viewMode: 'months',

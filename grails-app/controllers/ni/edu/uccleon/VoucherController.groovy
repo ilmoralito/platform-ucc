@@ -1,317 +1,300 @@
 package ni.edu.uccleon
 
-import grails.plugin.springsecurity.annotation.Secured
 import com.craigburke.document.builder.PdfDocumentBuilder
+import grails.plugin.springsecurity.SpringSecurityService
+import grails.plugin.springsecurity.annotation.Secured
+import grails.util.Environment
 
-@Secured("ROLE_PROTOCOL_SUPERVISOR")
+@Secured('ROLE_PROTOCOL_SUPERVISOR')
 class VoucherController {
-    def springSecurityService
-    def employeeService
-    def voucherService
+    SpringSecurityService springSecurityService
+    EmployeeService employeeService
+    VoucherService voucherService
 
     static allowedMethods = [
-        index: "GET",
-        create: "POST",
-        edit: "GET",
-        show: "GET",
-        update: "POST",
-        delete: "GET",
-        print: "GET",
-        printSetOfVouchers: "GET",
-        send: "GET"
+        index: 'GET',
+        approvalDates: 'GET',
+        approved: 'GET',
+        sendNotification: 'POST',
+        create: 'GET',
+        store: 'POST',
+        show: 'GET',
+        edit: 'GET',
+        update: 'POST',
+        delete: 'GET',
+        vouchersToApprove: 'GET',
+        approve: 'POST',
+        archive: 'POST',
+        summary: 'GET',
+        printVouchers: 'POST',
     ]
 
-    def index() {
-        List<Voucher> vouchers = Voucher.where { status != "approved" }.list()
+    def index(String status) {
+        List<Voucher> vouchers = voucherService.getVouchersByStatus(status ?: 'pending')
 
-        [
-            data: voucherService.groupVouchersByDate(vouchers),
-            foods: grailsApplication.config.ni.edu.uccleon.foods
-        ]
+        [vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers)]
     }
 
-    def create() {
-        if (params.type == "interval") {
-            Date date = params.date("date", "yyyy-MM-dd")
-            List<Integer> employees = params.list("employees")*.toInteger()
-            List<Voucher> currentDateVouchers = voucherService.getVouchersByDate(date)
-            Integer internalVouchersAdded = 0
-            Integer internalVouchersUpdated = 0
+    def approvalDates() {
+        [approvalDates: voucherService.getVouchersApprovalDates()]
+    }
 
-            employees.each { employee ->
-                InternalVoucher currentInternalVoucher = currentDateVouchers.find {
-                    it.employee == employee
-                }
+    def approved(String approvalDate) {
+        List<Voucher> vouchers = voucherService.getVouchersByApprovalDate(params.date('approvalDate', 'yyyy-MM-dd'))
 
-                if (currentInternalVoucher && currentInternalVoucher.status == "pending") {
-                    currentInternalVoucher.activity = params.activity
-                    currentInternalVoucher.value = params.double("value")
-                    currentInternalVoucher.refreshment = params.boolean("refreshment")
-                    currentInternalVoucher.breakfast = params.boolean("breakfast")
-                    currentInternalVoucher.lunch = params.boolean("lunch")
-                    currentInternalVoucher.dinner = params.boolean("dinner")
+        [vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers)]
+    }
 
-                    if (!currentInternalVoucher.save()) {
-                        internalVoucher.errors.allErrors.each { err ->
-                            log.error "[field: $err.field, defaultMessage: $err.defaultMessage]"
-                        }
-                    }
+    def sendNotification() {
+        Integer total = voucherService.updateVouchersStatus(params.list('vouchers')*.toLong(), 'notified')
 
-                    internalVouchersUpdated++
-                }
+        if (Environment.current == Environment.PRODUCTION) {
+            sendMail {
+                from 'orlando.gaitan@ucc.edu.ni'
+                to 'jorge.rojas@ucc.edu.ni'
+                subject 'Notificacion de vales pendientes de aprobacion'
+                html view: '/emails/voucher/notification', model: [total: total, url: createLink(controller: 'voucher', action: 'vouchersToApprove', absolute: true), label: 'notificado']
+            }
+        }
 
-                if (!currentInternalVoucher) {
-                    InternalVoucher internalVoucher = new InternalVoucher(
-                        createdBy: springSecurityService.currentUser,
-                        date: date,
-                        employee: employee,
-                        activity: params.activity,
-                        value: params.double("value"),
-                        refreshment: params.boolean("refreshment"),
-                        breakfast: params.boolean("breakfast"),
-                        lunch: params.boolean("lunch"),
-                        dinner: params.boolean("dinner")
-                    )
+        flash.message = "${total} vales notificados"
+        redirect action: 'index', params: [status: 'pending']
+    }
 
-                    if (!internalVoucher.save()) {
-                        internalVoucher.errors.allErrors.each { err ->
-                            log.error "[field: $err.field, defaultMessage: $err.defaultMessage]"
-                        }
-                    }
-
-                    internalVouchersAdded++
-                }
+    def create(CreateCommand command) {
+        if (command.hasErrors()) {
+            command.errors.allErrors.each { error ->
+                log.error "$error.field: $error.defaultMessage"
             }
 
-            flash.message = "Actualizados: $internalVouchersUpdated, creados: $internalVouchersAdded"
+            flash.message = 'Parametros incorrectos'
+            redirect uri: request.getHeader('referer')
+            return
         }
 
-        redirect action: "index"
-    }
-
-    @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])
-    def show(String date) {
-        Date nDate = params.date("date", "yyyy-MM-dd").clearTime()
-        List<Voucher> vouchers = voucherService.getVouchersByDate(nDate)
+        List<Voucher> vouchers = voucherService.getVouchersByDateAndActivity(command.date, command.activity)
 
         [
-            vouchers: vouchers,
-            voucherViewModel: createVoucherViewModel(
-                nDate,
-                vouchers.status.groupBy { it }.collect { [status: it.key, size: it.value.size()] }
-            )
+            users: command.type == 'user' ? User.list() : Guest.list(), // TODO: only get users or guests not in voucher activity
+            foods: voucherService.getFoods(),
+            activity: command.activity,
+            type: command.type,
+            date: command.date,
+            vouchers: vouchers
         ]
     }
 
-    @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])
-    def edit(Long id) {
-        Voucher voucher = Voucher.get(id)
+    def store() {
+        Closure getUserOrGuest = {
+            Integer id = params.int('user')
 
-        if (!voucher) {
+            params.type == 'user' ? User.get(id) : Guest.get(id)
+        }
+
+        def person = getUserOrGuest()
+
+        if (!person) {
             response.sendError 404
         }
 
-        List employees = employeeService.getEmployees()
-        List<Integer> intervalVoucherIds = voucherService.getVouchersByDate(voucher.date).employee - voucher.employee
-        List validEmployees = employees.findAll { employee ->
-            !(employee.id in intervalVoucherIds)
+        Voucher voucher = new Voucher(
+            user: person instanceof User ? person : null,
+            guest: person instanceof Guest ? person : null,
+            date: params.date('date', 'yyyy-MM-dd'),
+            activity: params.activity,
+            value: params.double('value')
+        )
+
+        params.list('foods').each { food ->
+            voucher.addToFoods(new Food(name: food))
         }
-
-        [
-            voucher: voucher,
-            employees: validEmployees,
-            foods: grailsApplication.config.ni.edu.uccleon.foods
-        ]
-    }
-
-    @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])
-    def update(Long id) {
-        Voucher voucher = Voucher.get(id)
-
-        if (!voucher) {
-            response.sendError 404
-        }
-
-        voucher.properties["employee", "activity", "value", "refreshment", "breakfast", "lunch", "dinner"] = params
 
         if (!voucher.save()) {
             voucher.errors.allErrors.each { error ->
-                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+                log.error "$error.field: $error.defaultMessage"
             }
 
-            flash.bag = voucher
+            flash.message = 'Parametros incorrectos'
+        } else {
+            flash.message = 'Vale creado'
         }
 
-        flash.message = voucher.hasErrors() ? "A ocurrido un error" : "Tarea concluida"
-        redirect action: "edit", id: id
+        redirect action: 'create', params: params.subMap(['type', 'date', 'activity', 'value', 'foods'])
     }
 
-    @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])
-    def delete(Long id) {
-        Voucher voucher = Voucher.get(id)
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    def show(Voucher voucher) {
+        respond voucher
+    }
 
-        if (!voucher) {
-            response.sendError 404
-        }
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    def edit(Voucher voucher) {
+        respond voucher
+    }
+
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    def update(Voucher voucher) {
+
+    }
+
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    def delete(Voucher voucher) {
+        User currentUser = springSecurityService.getCurrentUser()
+        List<String> currentUserAuthorities = currentUser.authorities.authority
 
         voucher.delete()
+        flash.message = 'Vale eliminado'
 
-        flash.message = "Vale eliminado correctamente"
-        redirect action: "show", params: [date: voucher.date]
+        if ('ROLE_PROTOCOL_SUPERVISOR' in currentUserAuthorities) {
+            redirect action: 'index', params: [status: 'pending']
+        } else {
+            redirect action: 'vouchersToApprove'
+        }
     }
 
-    def print(Long id) {
-        Voucher voucher = Voucher.get(id)
+    @Secured('ROLE_ADMINISTRATIVE_SUPERVISOR')
+    def vouchersToApprove() {
+        List<Voucher> vouchers = voucherService.getVouchersByStatus('notified')
 
-        if (!voucher) {
-            response.sendError 404
+        [vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers)]
+    }
+
+    @Secured('ROLE_ADMINISTRATIVE_SUPERVISOR')
+    def approve() {
+        Integer total = voucherService.updateVouchersStatus(params.list('vouchers')*.toLong(), 'approved')
+
+        if (Environment.current == Environment.PRODUCTION) {
+            sendMail {
+                from 'jorge.rojas@ucc.edu.ni'
+                to 'orlando.gaitan@ucc.edu.ni'
+                subject 'Notificacion de vales aprobados'
+                html view: '/emails/voucher/notification', model: [
+                    total: total,
+                    url: createLink(controller: 'voucher', action: 'approved', params: [approvalDate: new Date().format('yyyy-MM-dd')], absolute: true),
+                    label: 'aprobado'
+                ]
+            }
         }
 
-        PdfDocumentBuilder pdfBuilder = new PdfDocumentBuilder(response.outputStream)
-        def customTemplate = {
-            "document" font: [family: "Courier", size: 9.pt], margin: [top: 0.5.inches]
-            "cell.label" font: [bold: true]
-            "cell.info" font: [size: 8.pt]
-        }
+        flash.message = "${total} vales aprobados"
+        redirect action: 'vouchersToApprove'
+    }
 
-        pdfBuilder.create {
+    @Secured('ROLE_ADMINISTRATIVE_SUPERVISOR')
+    def summary() {
+        [vouchers: voucherService.generateSummary()]
+    }
+
+    @Secured('ROLE_ADMINISTRATIVE_SUPERVISOR')
+    def printSummary() {
+        List<Voucher> vouchers = voucherService.generateSummary()
+
+        PdfDocumentBuilder builder = new PdfDocumentBuilder(response.outputStream)
+
+        builder.create {
             document(
-                template: customTemplate
+                font: [family: 'Courier', size: 9.pt],
+                margin: [top: 0.5.inches, right: 0.5.inches, bottom: 0.5.inches, left: 0.5.inches],
+                header: { info ->
+                    paragraph 'Resumen de vales'
+                },
+                footer: { info ->
+                    paragraph "Fecha y hora de impresion ${info.dateGenerated.format('yyyy-MM-dd hh:mm a')}"
+                }
             ) {
-                paragraph "Vale de alimentacion(Cafetines)", align: "center", margin: [top: 1.px]
+                vouchers.each { voucher ->
+                    paragraph voucher.year, margin: [bottom: 0]
 
-                table(columns: [1, 2], padding: 2.px, border: [size: 1], margin: [top : 0, bottom: 5.px]) {
-                    row {
-                        cell "Fecha", style: "label"
-                        cell voucher.date.format("yyyy-MM-dd")
-                    }
+                    table {
+                        row {
+                            cell colspan: 3
+                            cell 'Visita', colspan: 2
+                            cell 'Interno', colspan: 2
+                        }
+                        row {
+                            cell 'Mes'
+                            cell 'Total'
+                            cell 'Total NIO'
+                            cell 'Total'
+                            cell 'Total NIO'
+                            cell 'Total'
+                            cell 'Total NIO'
+                        }
 
-                    row {
-                        cell "A nombre de", style: "label"
-                        cell employeeService.getEmployee(voucher.employee).fullName
-                    }
-
-                    row {
-                        cell "Coordinacion", style: "label"
-                        cell employeeService.getEmployeeCoordinations(voucher.employee).name.join(", ")
-                    }
-
-                    row {
-                        cell "Actividad", style: "label"
-                        cell voucher.activity
-                    }
-
-                    row {
-                        cell "Valor", style: "label"
-                        cell voucher.value
-                    }
-
-                    row {
-                        cell "Alimentos", style: "label"
-                        cell {
-                            if (voucher.refreshment) {
-                                text "Refresco, "
-                            }
-
-                            if (voucher.breakfast) {
-                                text "Desayuno, "
-                            }
-
-                            if (voucher.lunch) {
-                                text "Almuerzo, "
-                            }
-
-                            if (voucher.dinner) {
-                                text "Cena"
+                        voucher.summary.each { summary ->
+                            row {
+                                cell summary.month
+                                cell summary.total
+                                cell summary.totalNIO
+                                cell summary.totalGuest.toString()
+                                cell summary.totalGuestNIO.toString()
+                                cell summary.totalInternal.toString()
+                                cell summary.totalInternalNIO.toString()
                             }
                         }
                     }
-                }
 
-                String message = voucher.status == "approved" ? "Aprovado por: ${voucher.approvedBy.username}" : "SIN APROBAR"
-                paragraph message, align: "center", margin: [top: 1.px, bottom: 0]
+                    pageBreak()
+                }
             }
         }
 
         response.contentType = "application/pdf"
-        response.setHeader("Content-disposition", "attachment;filename=test.pdf")
+        response.setHeader("Content-disposition", "attachment;filename=summary.pdf")
         response.outputStream.flush()
     }
 
-    def printSetOfVouchers(String date) {
-        Date nDate = params.date("date", "yyyy-MM-dd")
-        List<Voucher> vouchers = Voucher.where {
-            date >= nDate && date <= nDate
-        }.list(params)
+    def printVouchers() {
+        List<Voucher> vouchers = voucherService.getVouchers(params.list('vouchers')*.toLong()) //.collate(8)
+        PdfDocumentBuilder builder = new PdfDocumentBuilder(response.outputStream)
+        // Integer pages =  (int)Math.ceil(vouchers.size() / 8)
 
-        PdfDocumentBuilder pdfBuilder = new PdfDocumentBuilder(response.outputStream)
-        def customTemplate = {
-            "document" font: [family: "Courier", size: 9.pt], margin: [top: 0.5.inches, right: 0.5.inches, bottom: 0.5.inches, left: 0.5.inches]
-            "cell.label" font: [bold: true]
-            "cell.info" font: [size: 8.pt]
-        }
-
-        pdfBuilder.create {
-            document(
-                template: customTemplate,
+        builder.create {
+            document (
+                font: [family: 'Courier', size: 9.pt],
+                margin: [top: 0.inches, right: 0.2.inches, bottom: 0.2.inches, left: 0.2.inches]
             ) {
                 vouchers.eachWithIndex { voucher, index ->
-                    if (index == 4) {
+                    if ((index != 0) && (index % 5 == 0)) {
                         pageBreak()
                     }
 
-                    paragraph "Vale de alimentacion(Cafetines)", align: "center", margin: [top: 1.px]
+                    paragraph 'Vale de alimentacion(Cafetines)', align: 'center', margin: [bottom: 0]
 
-                    table(columns: [1, 2], padding: 2.px, border: [size: 1], margin: [top : 0, bottom: 5.px]) {
+                    table(columns: [1, 2], margin: [top: 0, bottom: 0], padding: 2) {
                         row {
-                            cell "Fecha", style: "label"
-                            cell voucher.date.format("yyyy-MM-dd")
+                            cell 'Fecha'
+                            cell voucher.date.format('yyyy-MM-dd')
                         }
-
-                        row {
-                            cell "A nombre de", style: "label"
-                            cell employeeService.getEmployee(voucher.employee).fullName
+                        if (voucher.user) {
+                            row {
+                                cell 'A nombre de'
+                                cell "${voucher.user.username}, ${employeeService.getEmployeeCoordinations(voucher.user.employee).name.join(', ')}"
+                            }
+                        } else {
+                            row {
+                                cell 'A nombre de'
+                                cell voucher.guest.fullName
+                            }
                         }
-
                         row {
-                            cell "Coordinacion", style: "label"
-                            cell employeeService.getEmployeeCoordinations(voucher.employee).name.join(", ")
-                        }
-
-                        row {
-                            cell "Actividad", style: "label"
+                            cell 'Actividad'
                             cell voucher.activity
                         }
-
                         row {
-                            cell "Valor", style: "label"
+                            cell 'Valor'
                             cell voucher.value
                         }
-
                         row {
-                            cell "Alimentos", style: "label"
-                            cell {
-                                if (voucher.refreshment) {
-                                    text "Refresco, "
-                                }
-
-                                if (voucher.breakfast) {
-                                    text "Desayuno, "
-                                }
-
-                                if (voucher.lunch) {
-                                    text "Almuerzo, "
-                                }
-
-                                if (voucher.dinner) {
-                                    text "Cena"
-                                }
-                            }
+                            cell 'Alimentos'
+                            cell voucherService.getFoodInSpanish(voucher.foods.name).join(', ')
                         }
                     }
 
-                    String message = voucher.status == "approved" ? "Aprovado por: ${voucher.approvedBy.username}" : "SIN APROBAR"
-                    paragraph message, align: "center", margin: [top: 1.px, bottom: 0]
+                    paragraph(align: 'center', margin: [top: 0, bottom: 0], font: [size: 8.pt]) {
+                        text "Creado por: Orlando Gaitan ${voucher.dateCreated.format('yyyy-MM-dd HH:mm')} "
+                        text "Autorizado por: Jorge Rojas ${voucher.approvalDate.format('yyyy-MM-dd HH:mm')}"
+                    }
                 }
             }
         }
@@ -320,43 +303,18 @@ class VoucherController {
         response.setHeader("Content-disposition", "attachment;filename=test.pdf")
         response.outputStream.flush()
     }
-
-    @Secured(["ROLE_PROTOCOL_SUPERVISOR", "ROLE_ADMINISTRATIVE_SUPERVISOR"])
-    def send(String date) {
-        Map parameters = [:]
-        String target = "pending"
-        Date nDate = params.date("date", "yyyy-MM-dd")
-        User currentUser = springSecurityService.loadCurrentUser()
-        List<String> currentUserAuthorities = currentUser.authorities.authority
-
-        if ("ROLE_ADMINISTRATIVE_SUPERVISOR" in currentUserAuthorities) {
-            parameters.status = "approved"
-            parameters.approvedBy = currentUser
-            parameters.approvalDate = new Date()
-
-            target = "notified"
-        } else {
-            parameters.status = "notified"
-            parameters.dateNotification = new Date()
-        }
-
-        Integer vouchers = Voucher.where {
-            date >= nDate && date <= nDate && status == target
-        }.updateAll(*:parameters)
-
-        flash.message = "$vouchers vales notificados"
-        redirect action: "show", params: [date: date, tab: "notify"]
-    }
-
-    private createVoucherViewModel(Date date, List status) {
-        new VoucherViewModel(
-            date: date,
-            status: status
-        )
-    }
 }
 
-class VoucherViewModel {
+class CreateCommand {
     Date date
-    List status
+    String activity
+    String type
+
+    static constraints = {
+        date nullable: false, validator: { date ->
+            date >= new Date().clearTime()
+        }
+        activity blank: false
+        type inList: ['user', 'guest']
+    }
 }

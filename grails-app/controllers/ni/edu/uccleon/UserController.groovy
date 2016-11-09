@@ -4,18 +4,18 @@ import grails.plugin.springsecurity.annotation.Secured
 import org.springframework.http.ResponseEntity
 import grails.plugins.rest.client.RestResponse
 
-@Secured(["ROLE_ADMIN"])
+@Secured(['ROLE_ADMIN'])
 class UserController {
     def springSecurityService
     def employeeService
 
     static allowedMethods = [
-        index: "GET",
-        create: "POST",
-        show: "GET",
-        update: "POST",
-        profile: "GET",
-        password: ["GET", "POST"]
+        index: 'GET',
+        create: 'POST',
+        show: 'GET',
+        update: 'POST',
+        profile: 'GET',
+        password: ['GET', 'POST']
     ]
 
     def index() {
@@ -45,14 +45,8 @@ class UserController {
         redirect action: "index"
     }
 
-    def show(Long id) {
-        User user = User.get(id)
-
-        if (!user) {
-            response.sendError 404
-        }
-
-        [user: user, employee: employeeService.getEmployee(id)]
+    def show(User user) {
+        respond user, model: [employee: employeeService.getEmployee(user.id)]
     }
 
     def update(Long id) {
@@ -84,23 +78,22 @@ class UserController {
         redirect action: "show", id: id
     }
 
-    @Secured(["ROLE_ADMIN", "ROLE_USER", "ROLE_ADMINISTRATIVE_SUPERVISOR", "ROLE_ACADEMIC_SUPERVISOR", "ROLE_PROTOCOL_SUPERVISOR"])
+    @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR'])
     def profile() {
-        Integer currentUserId = springSecurityService.loadCurrentUser().id
-        Map employee = employeeService.getEmployee(currentUserId)
+        Map employee = employeeService.getEmployee(springSecurityService.loadCurrentUser().id)
 
         [employee: employee]
     }
 
-    @Secured(["ROLE_ADMIN", "ROLE_USER", "ROLE_ADMINISTRATIVE_SUPERVISOR", "ROLE_ACADEMIC_SUPERVISOR", "ROLE_PROTOCOL_SUPERVISOR"])
+    @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR'])
     def password(PasswordCommand command) {
         if (request.post) {
             if (command.hasErrors()) {
                 command.errors.allErrors.each { error ->
-                    log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+                    log.error "$error.field: $error.defaultMessage"
                 }
 
-                flash.message = "Datos incorrectos"
+                flash.message = 'Datos incorrectos'
                 return
             }
 
@@ -109,9 +102,7 @@ class UserController {
             user.password = command.newPassword
             user.save()
 
-            flash.message = "Clave actualizada"
-            redirect action: "password"
-            return
+            flash.message = 'Clave actualizada'
         }
     }
 }

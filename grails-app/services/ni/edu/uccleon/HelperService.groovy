@@ -63,4 +63,8 @@ class HelperService {
     Integer getDayOfMonth(Date date = new Date()) {
         date[Calendar.DAY_OF_MONTH]
     }
+
+    Integer getMonth(Date date = new Date()) {
+        date[Calendar.MONTH] + 1
+    }
 }

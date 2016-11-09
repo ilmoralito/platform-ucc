@@ -12,7 +12,7 @@
         <g:form id="form" action="events" params="[index: params?.index]" autocomplete="off">
             <g:render template="form"/>
 
-            <g:submitButton name="send" value="Guardar" class="btn btn-primary"/> 
+            <g:submitButton name="send" value="Guardar" class="btn btn-primary"/>
         </g:form>
     </content>
 

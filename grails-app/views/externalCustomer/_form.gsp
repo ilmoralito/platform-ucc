@@ -25,9 +25,7 @@
             <label for="telephoneNumber">Numero telefonico</label>
             <g:field type="tel" minlength="8" maxlength="8" name="telephoneNumber" value="${externalCustomer?.telephoneNumber}" class="form-control"/>
         </div>
-    </div>
 
-    <div class="col-md-6">
         <p>Datos de contacto</p>
         <div class="form-group">
             <label for="contact.fullName">Nombre y apellido</label>

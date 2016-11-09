@@ -9,21 +9,30 @@
     <g:layoutHead/>
 </head>
 <body>
-    <g:set var="companyInformation" value="${grailsApplication.config.ni.edu.uccleon.companyInformation}"/>
+    <g:render template="/layouts/navbar"/>
 
     <div class="container">
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-4">
-                <h4>${companyInformation.name}</h4>
-                <g:layoutBody/>
+                <div class="well">
+                    <div class="text-center">
+                        <asset:image src="logoucc.png"/>
+                    </div>
 
-                <g:if test="${flash?.message}">
-                    <br>${flash.message}
-                </g:if>
+                    <br>
+                    <g:layoutBody/>
+
+                    <g:if test="${flash?.message}">
+                        <br>
+                        <p>${flash.message}</p>
+                    </g:if>
+                </div>
             </div>
             <div class="col-md-4"></div>
         </div>
     </div>
+
+    <asset:javascript src="app.js"/>
 </body>
 </html>

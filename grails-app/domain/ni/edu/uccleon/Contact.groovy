@@ -6,7 +6,7 @@ import org.grails.databinding.BindUsing
 @ToString
 class Contact {
     @BindUsing({ obj, source ->
-        source["fullName"]?.toLowerCase()?.tokenize(" ")*.capitalize().join(" ")
+        source['fullName']?.toLowerCase()?.tokenize(' ')*.capitalize().join(' ')
     })
     String fullName
     String identityCard

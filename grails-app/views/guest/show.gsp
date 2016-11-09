@@ -9,7 +9,7 @@
 
             <g:render template="form"/>
 
-            <g:submitButton name="send" value="Agregar" class="btn btn-primary"/>
+            <g:submitButton name="send" value="Confirmar" class="btn btn-primary"/>
         </g:form>
     </content>
 </g:applyLayout>

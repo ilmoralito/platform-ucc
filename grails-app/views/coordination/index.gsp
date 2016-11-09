@@ -5,20 +5,16 @@
 
     <content tag="main">
         <table class="table table-hover">
-            <colgroup>
-                <col span="1" style="width: 5%;">
-                <col span="1" style="width: 95%;">
-            </colgroup>
             <thead>
-                <th style="text-align: center;">#</th>
-                <th>Nombre de coordinacion</th>
+                <th>Coordinaciones</th>
             </thead>
             <tbody>
-                <g:each in="${coordinations}" var="c" status="idx">
+                <g:each in="${coordinations}" var="coordination">
                     <tr>
-                        <td style="text-align: center;">${idx + 1}</td>
                         <td>
-                            <g:link action="show" id="${c.id}">${c.name}</g:link>
+                            <g:link action="show" id="${coordination.id}">
+                                ${coordination.name}
+                            </g:link>
                         </td>
                     </tr>
                 </g:each>

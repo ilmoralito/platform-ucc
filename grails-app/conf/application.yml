@@ -3,6 +3,18 @@ server:
     port: 8181
 
 ---
+environments:
+    development:
+        grails:
+            serverURL: http://localhost:8181
+    test:
+        grails:
+            serverURL: http://localhost:8181
+    production:
+        grails:
+            serverURL: http://192.168.7.99:8181
+
+---
 beans:
     classroomService:
         classroomURL: "http://localhost:9090/classrooms"
@@ -23,16 +35,17 @@ hibernate:
 
 dataSource:
     pooled: true
+    username: root
+    password: hotch
     jmxExport: true
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
+    driverClassName: com.mysql.jdbc.Driver
+    dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
 environments:
     development:
         dataSource:
             dbCreate: create-drop
-            url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+            url: jdbc:mysql://localhost/development_platform_ucc?autoReconnect=true&useSSL=false
     test:
         dataSource:
             dbCreate: update
@@ -40,7 +53,7 @@ environments:
     production:
         dataSource:
             dbCreate: update
-            url: jdbc:h2:./prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+            url: jdbc:mysql://localhost/production_platform_ucc?autoReconnect=true&useSSL=false
             properties:
                 jmxEnabled: true
                 initialSize: 5

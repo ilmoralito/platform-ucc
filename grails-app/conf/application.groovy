@@ -19,8 +19,9 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
     [pattern: "/**/css/**",      access: ["permitAll"]],
     [pattern: "/**/images/**",   access: ["permitAll"]],
     [pattern: "/**/favicon.ico", access: ["permitAll"]],
-    [pattern: "/dbconsole/**", access: ["permitAll"]],
-    [pattern: "/console/**", access: ["ROLE_ADMIN"]],
+    [pattern: "/dbconsole/**",   access: ["permitAll"]],
+    [pattern: "/console/**",     access: ["ROLE_ADMIN"]],
+    [pattern: "/static/console/**", access: ['ROLE_ADMIN']],
     [pattern: "/plugins/console*/**", access: ["ROLE_ADMIN"]]
 ]
 
@@ -59,7 +60,7 @@ ni {
             ]
 
             foods = [
-                [spanish: "Refresco", english: "refreshment"],
+                [spanish: "Refrigerio", english: "refreshment"],
                 [spanish: "Desayuno", english: "breakfast"],
                 [spanish: "Almuerzo", english: "lunch"],
                 [spanish: "Cena", english: "dinner"]
@@ -68,8 +69,6 @@ ni {
             serverUrl = "192.168.7.99:8181"
 
             activityList = []
-
-            voucherList = []
         }
     }
 }

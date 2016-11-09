@@ -7,8 +7,8 @@ import spock.lang.Specification
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
-@TestFor(VoucherInterceptor)
-class VoucherInterceptorSpec extends Specification {
+@TestFor(VocuherInterceptor)
+class VocuherInterceptorSpec extends Specification {
 
     def setup() {
     }
@@ -17,9 +17,9 @@ class VoucherInterceptorSpec extends Specification {
 
     }
 
-    void "Test voucher interceptor matching"() {
+    void "Test vocuher interceptor matching"() {
         when:"A request matches the interceptor"
-            withRequest(controller:"voucher")
+            withRequest(controller:"vocuher")
 
         then:"The interceptor does match"
             interceptor.doesMatch()

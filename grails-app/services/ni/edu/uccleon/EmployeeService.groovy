@@ -45,13 +45,13 @@ class EmployeeService {
     }
 
     String getManagerMail(String location) {
-        String email = ""
+        String email = ''
 
         if (Environment.current == Environment.DEVELOPMENT) {
-            email = location == "Administrative" ? "mario.martinez@ucc.edu.ni" : "amakenadog@gmail.com"
+            email = location == 'Administrative' ? 'mario.martinez@ucc.edu.ni' : 'amakenadog@gmail.com'
         } else {
             List employees = getEmployees()
-            String coordination = location == "Administrative" ? "Administracion" : "Direccion academica"
+            String coordination = location == 'Administrative' ? 'Administracion' : 'Direccion academica'
 
             email = employees.find {
                 it.authority == "Manager" && coordination in it.coordinations.name
@@ -63,5 +63,20 @@ class EmployeeService {
 
     List getEmployeeCoordinations(Long id) {
         getEmployee(id).coordinations
+    }
+
+    Integer countEmployeesByCoordinationLocation(List<Integer> employeeList, String location) {
+        this.getEmployees().findAll {
+            it.id in employeeList && location in it.coordinations.location
+        }.size()
+    }
+
+    List<Map> getEmployeeCoordinationsPrintQuota(Long id) {
+        List coordinations = this.getEmployeeCoordinations(id).collect {
+            [
+                coordination: it.name,
+                printQuota: it.printQuota
+            ]
+        }
     }
 }

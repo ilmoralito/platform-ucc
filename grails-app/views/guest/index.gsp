@@ -41,10 +41,12 @@
     </content>
 
     <content tag="right-column">
-        <g:form action="create" autocomplete="off">
-            <g:render template="form"/>
+        <div class="well well-sm">
+            <g:form action="create" autocomplete="off">
+                <g:render template="form"/>
 
-            <g:submitButton name="createGuest" value="Agregar" class="btn btn-primary btn-block"/>
-        </g:form>
+                <g:submitButton name="createGuest" value="Confirmar" class="btn btn-primary btn-block"/>
+            </g:form>
+        </div>
     </content>
 </g:applyLayout>

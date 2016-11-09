@@ -10,7 +10,6 @@
 //= require_tree .
 //= require_self
 
-
 $(function() {
     $('#employee, #employees').select2({
         theme: "bootstrap"

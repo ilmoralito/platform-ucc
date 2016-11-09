@@ -7,7 +7,12 @@
         <g:form action="create" autocomplete="off">
             <g:render template="form"/>
 
-            <g:submitButton name="send" value="Agregar" class="btn btn-primary pull-right"/>
+            <g:submitButton name="send" value="Confirmar" class="btn btn-primary"/>
         </g:form>
+
+        <br>
+        <g:hasErrors bean="${externalCustomer}">
+            <g:renderErrors bean="${externalCustomer}"/>
+        </g:hasErrors>
     </content>
 </g:applyLayout>

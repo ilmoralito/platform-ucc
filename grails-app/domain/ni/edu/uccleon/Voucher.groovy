@@ -1,45 +1,42 @@
 package ni.edu.uccleon
 
 class Voucher {
-    def employeeService
-
+    User user
+    Guest guest
     Date date
-    User createdBy
-    User approvedBy
+    String activity
     BigDecimal value
+    String status = 'pending'
     Date approvalDate
-    Date dateNotification
-    String status = "pending"
-
-    Boolean refreshment
-    Boolean breakfast
-    Boolean dinner
-    Boolean lunch
+    List<Food> foods
 
     Date dateCreated
     Date lastUpdated
 
     static constraints = {
-        date validator: { date -> date >= new Date().clearTime() }
+        user nullable: true
+        guest nullable: true, validator: { guest, obj ->
+            obj.user || guest
+        }
+        date validator: { date ->
+            date >= new Date().clearTime()
+        }
+        activity blank: false
         value min: 1.0
-        createdBy nullable: false
-        dateNotification nullable: true
-        approvedBy nullable: true, validator: { approvedBy ->
-            if (approvedBy) {
-                return "Administracion" in employeeService.getEmployeeCoordinations(approvedBy.id).name
-            }
-        }
+        status inList: ['pending', 'notified', 'approved'], maxSize: 100
         approvalDate nullable: true, validator: { approvalDate, obj ->
-            if (obj.approvedBy) {
-                approvalDate >= new Date()
+            if (obj.status == 'approved') {
+                approvalDate != null
             }
         }
-        status inList: ["pending", "notified", "approved"], maxSize: 255
-        refreshment nullable: true
-        breakfast nullable: true
-        lunch nullable: true
-        dinner nullable: true, validator: { dinner, obj ->
-            obj.refreshment || obj.breakfast || obj.lunch || dinner
-        }
+        foods nullable: false, minSize: 1
+    }
+
+    static hasMany = [foods: Food]
+
+    static mapping = {
+        version false
+        foods cascade: "all-delete-orphan"
+        foods lazy: false
     }
 }

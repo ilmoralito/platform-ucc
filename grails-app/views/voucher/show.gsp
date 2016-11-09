@@ -1,104 +1,52 @@
-<g:applyLayout name="threeColumns">
+<g:applyLayout name="twoColumns">
     <head>
-        <title>Vales</title>
+        <title>Vale</title>
     </head>
 
     <content tag="main">
-        <g:if test="${vouchers}">
-            <table class="table table-hover">
-                <colgroup>
-                    <col span="1" style="width: 1%;">
-                    <col span="1" style="width: 20%;">
-                    <col span="1" style="width: 40%;">
-                    <col span="1" style="width: 5%;">
-                    <col span="1" style="width: 5%;">
-                    <col span="1" style="width: 34%;">
-                </colgroup>
-                <thead>
-                    <th class="text-center"><i class="fa fa-pencil"></i></th>
-                    <th>Empleado</th>
-                    <th>Actividad</th>
-                    <th>Estado</th>
-                    <th>Valor</th>
-                    <th>Servicios</th>
-                </thead>
-                <tbody>
-                    <g:each in="${vouchers}" var="v">
-                        <tr>
-                            <td style="text-align: center">
-                                <g:link action="edit" params="[id: v.id]" class="btn btn-default btn-xs">
-                                    <i class="fa fa-pencil"></i>
-                                </g:link>
-                            </td>
-                            <td><ucc:employee id="${v.employee}"/></td>
-                            <td><g:fieldValue bean="${v}" field="activity"/></td>
-                            <td><ucc:voucherStatus status="${v.status}"/></td>
-                            <td><g:fieldValue bean="${v}" field="value"/></td>
-                            <td>
-                                <g:if test="${v.refreshment}">Refigerio</g:if>
-                                <g:if test="${v.breakfast}">Desayuno</g:if>
-                                <g:if test="${v.lunch}">Almuerzo</g:if>
-                                <g:if test="${v.dinner}">Cena</g:if>
-                            </td>
-                        </tr>
-                    </g:each>
-                    <tr>
-                        <td colspan="4"></td>
-                        <td><strong>${vouchers.value.sum()}</strong></td>
-                        <td colspan="2"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </g:if>
-        <g:else>
-            <p>Sin datos que mostrar</p>
-        </g:else>
-    </content>
-
-    <content tag="right-column">
-        <ul class="nav nav-tabs">
-            <li role="presentation" class="${!params.tab || params.tab == 'resume' ? 'active' : ''}">
-                <g:link action="show" params="[date: params.date]">
-                    <i class="fa fa-info" aria-hidden="true"></i>
-                </g:link>
-            </li>
-            <li role="presentation" class="${params.tab == 'print' ? 'active' : ''}">
-                <g:link action="show" params="[date: params.date, tab: 'print']">
-                    <i class="fa fa-print" aria-hidden="true"></i>
-                </g:link>
-            </li>
-            <li role="presentation" class="${params.tab == 'notify' ? 'active' : ''}">
-                <g:link action="show" params="[date: params.date, tab: 'notify']">
-                    <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
-                </g:link>
-            </li>
-        </ul>
-
-        <g:if test="${!params.tab || params.tab == 'resume'}">
-            <label>Fecha</label>
-            <p><b><g:formatDate date="${voucherViewModel.date}" format="yyyy-MM-dd"/></b></p>
-
-            <label>Estado</label>
-            <g:each in="${voucherViewModel.status}" var="s">
-                <p>${s.size} <ucc:voucherStatus status="${s.status}"/></p>
-            </g:each>
-        </g:if>
-
-        <g:if test="${params.tab == 'print' ? 'active' : ''}">
-            <g:link action="printSetOfVouchers" params="[date: params.date]" class="btn btn-primary btn-block">
-                Imprimir vales
-            </g:link>
-        </g:if>
-
-        <g:if test="${params.tab == 'notify'}">
-            <g:link action="send" params="[date: params.date]" class="btn btn-primary btn-block">
-                <sec:ifAllGranted roles="ROLE_PROTOCOL_SUPERVISOR">
-                    Notificar
-                </sec:ifAllGranted>
-                <sec:ifAllGranted roles="ROLE_ADMINISTRATIVE_SUPERVISOR">
-                    Autorizar
-                </sec:ifAllGranted>
-            </g:link>
-        </g:if>
+        <section>
+            <div class="clearfix">
+                <div class="pull-right">
+                    <g:link action="delete" id="${voucher?.id}" class="btn btn-warning">Eliminar</g:link>
+                    <!--<g:link action="edit" id="${voucher?.id}" class="btn btn-primary">Editar</g:link>-->
+                </div>
+            </div>
+        </section>
+        <table class="table table-hover">
+            <colgroup>
+                <col span="1" style="width: 25%;">
+                <col span="1" style="width: 75%;">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>A nombre de</td>
+                    <td>
+                        <g:formatBoolean boolean="${voucher.user != null}" true="${voucher?.user?.username}" false="${voucher?.guest?.fullName}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nombre de la actividad</td>
+                    <td>${voucher.activity}</td>
+                </tr>
+                <tr>
+                    <td>Fecha</td>
+                    <td>
+                        <g:formatDate date="${voucher.date}" format="yyyy-MM-dd"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Alimentos</td>
+                    <td>
+                        <ucc:foodInSpanish foods="${voucher.foods.name}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Valor de vale</td>
+                    <td>
+                        <g:formatNumber number="${voucher.value}" type="currency" currencyCode="NIO"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </content>
 </g:applyLayout>

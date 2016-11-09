@@ -6,3 +6,9 @@
 body { padding-top: 70px; }
 
 label { font-weight: normal; }
+
+.well {
+    border: 0;
+    box-shadow: none;
+    margin-bottom: 10px;
+}

@@ -4,18 +4,17 @@ import groovy.xml.MarkupBuilder
 import groovy.json.JsonOutput
 
 class AppTagLib {
-    def springSecurityService
-    def employeeService
-    def classroomService
     def externalCustomerService
-    def guestService
-    def voucherService
+    def springSecurityService
     def coordinationService
+    def classroomService
+    def employeeService
+    def voucherService
+    def guestService
 
     static defaultEncodeAs = [taglib: "html"]
     static namespace = "ucc"
     static encodeAsForTags = [
-        profile: "raw",
         classrooms: "raw",
         mountingType: "raw",
         tableType: "raw",
@@ -63,47 +62,6 @@ class AppTagLib {
         }
 
         out << message
-    }
-
-    def profile = { attrs ->
-        MarkupBuilder mb = new MarkupBuilder(out)
-        Map employee = attrs.employee
-
-        mb.div {
-            label "Nombre y apellido"
-            p employee.fullName
-
-            label "Correo institucional"
-            p employee.institutionalMail
-
-            label "Cargo"
-            p employee.position
-
-            label "Rol"
-            p employee.authority
-
-            label "Cedula"
-            p employee.identityCard
-
-            label "INSS"
-            p employee.inss
-
-            employee.coordinations.each { coordination ->
-                label "Coordinacion"
-                p coordination.name
-
-                label "Numero de extension"
-                p coordination.extensionNumber
-
-                label "Area"
-                p coordination.location
-
-                label "Colores de coordinacion"
-                coordination.colors.each { color ->
-                    p color.name
-                }
-            }
-        }
     }
 
     def classrooms = { attrs ->
@@ -363,18 +321,6 @@ class AppTagLib {
         }
     }
 
-    def voucherStatus = { attrs ->
-        String status = attrs.status
-
-        if (status == "pending") {
-            out << "Pendiente"
-        } else if (status == "notified") {
-            out << "Notificado"
-        } else {
-            out << "Aprovado"
-        }
-    }
-
     def getEmployeeList = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
         List employees = attrs.employees
@@ -432,41 +378,13 @@ class AppTagLib {
         out << employeeFullName
     }
 
-    def getGuests = { attrs ->
-        MarkupBuilder mb = new MarkupBuilder(out)
-        List<Guest> guests = guestService.getGuests()
-        Integer guestId = attrs.guestId ?: 1
-        Map<String, String> params = [:]
-
-        mb.div {
-            label(for: "guests") {
-                mkp.yield "Invitados"
-            }
-
-            delegate.select(name: "guests", id: "guests", class: "form-control") {
-                guests.each { guest ->
-                    if (guest.id == guestId) {
-                        params.selected = true
-                    } else {
-                        params.remove("selected")
-                    }
-
-                    option(value: guest.id) {
-                        mkp.yield guest.fullName
-                    }
-                }
-            }
-
-        }
-    }
-
     def getColors = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
         List colorList = attrs.colorList
         List colorParamList = attrs.colorParamList
         Map params = [type: "checkbox", name: "colors"]
 
-        mb {
+        mb.div {
             label "Colores"
 
             colorList.each { color ->
@@ -490,6 +408,7 @@ class AppTagLib {
 
     def getClassroom = { attrs ->
         Integer id = attrs.int("id")
+        println attrs.id
         Map classroom = classroomService.getClassroom(id)
 
         out << classroom?.name ?: classroom.code
@@ -540,5 +459,9 @@ class AppTagLib {
         ]
 
         out << hours.find { it.time == hour }.value
+    }
+
+    def foodInSpanish = { attrs ->
+        out << voucherService.getFoodInSpanish(attrs.list('foods')).join(', ')
     }
 }

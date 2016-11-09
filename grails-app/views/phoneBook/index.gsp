@@ -33,7 +33,7 @@
                     </g:if>
                     <g:else>
                         <g:each in="${pb.coordinations}" var="c" status="index">
-                            <tr>
+                            <tr class="macguiver">
                                 <g:if test="${index == 0}">
                                     <td class="text-center" style="vertical-align: middle;" rowspan="${pb.coordinations.size()}">
                                         ${pb.extensionNumber}
@@ -49,8 +49,8 @@
             </tbody>
         </table>
 
-        <g:link action="printPhoneBook" class="btn btn-default">
-            <i class="fa fa-print" aria-hidden="true"></i>
+        <g:link action="printPhoneBook" class="btn btn-primary">
+            <i class="fa fa-print" aria-hidden="true"></i> Imprimir
         </g:link>
     </content>
 </g:applyLayout>

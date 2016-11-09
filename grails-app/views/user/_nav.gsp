@@ -3,6 +3,6 @@
         <g:link action="profile">Perfil</g:link>
     </li>
     <li role="presentation" class="${actionName == 'password' ? 'active' : ''}">
-        <g:link action="password">Contrasena</g:link>
+        <g:link action="password">Clave</g:link>
     </li>
 </ul>

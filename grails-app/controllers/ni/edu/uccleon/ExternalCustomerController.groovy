@@ -2,28 +2,20 @@ package ni.edu.uccleon
 
 import grails.plugin.springsecurity.annotation.Secured
 
-@Secured(["ROLE_PROTOCOL_SUPERVISOR"])
+@Secured(['ROLE_PROTOCOL_SUPERVISOR'])
 class ExternalCustomerController {
     def externalCustomerService
 
     def allowedMethods = [
-        index: ["GET", "POST"],
-        create: ["GET","POST"],
-        edit: "GET",
-        update: "POST"
+        index: 'GET',
+        create: ['GET','POST'],
+        show: 'GET',
+        edit: 'GET',
+        update: 'POST'
     ]
 
     def index() {
-        List<ExternalCustomer> externalCustomers = []
-
-        if (request.post) {
-            externalCustomers = ExternalCustomer.where {
-                name =~ "%params?.name%" ||
-                city in params.list("cities")
-            }.list(params)
-        } else {
-            externalCustomers = ExternalCustomer.list(params)
-        }
+        List<ExternalCustomer> externalCustomers = ExternalCustomer.list(params)
 
         [externalCustomers: externalCustomers]
     }
@@ -34,47 +26,39 @@ class ExternalCustomerController {
         if (request.post) {
             if (!externalCustomer.save()) {
                 externalCustomer.errors.allErrors.each { error ->
-                    log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+                    log.error "$error.field: $error.defaultMessage"
                 }
 
-                flash.bag = externalCustomer
+                flash.message = 'Paramteros incorrectos'
+                return [externalCustomer: externalCustomer]
             }
 
-            flash.message = externalCustomer.hasErrors() ? "Error" : "Tarea correcta"
-            return
+            flash.message = 'Tarea concluida correctamente'
         }
 
         [externalCustomer: externalCustomer]
     }
 
-    def edit(Long id) {
-        ExternalCustomer externalCustomer = externalCustomerService.get(id)
-
-        if (!externalCustomer) {
-            response.sendError 404
-        }
-
-        [externalCustomer: externalCustomer]
+    def show(ExternalCustomer externalCustomer) {
+        respond externalCustomer
     }
 
-    def update(Long id) {
-        ExternalCustomer externalCustomer = externalCustomerService.get(id)
+    def edit(ExternalCustomer externalCustomer) {
+        respond externalCustomer
+    }
 
-        if (!externalCustomer) {
-            response.sendError 404
-        }
-
+    def update(ExternalCustomer externalCustomer) {
         externalCustomer.properties = params
 
         if (!externalCustomer.save()) {
             externalCustomer.errors.allErrors.each { error ->
-                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+                log.error "$error.field: $error.defaultMessage"
             }
 
             flash.bag = externalCustomer
         }
 
-        flash.message = externalCustomer.hasErrors() ? "Error" : "Cliente externo actualizado"
-        redirect action: "edit", id: id
+        flash.message = externalCustomer.hasErrors() ? 'Paramteros incorrectos' : 'Tarea concluida correctamente'
+        redirect action: 'edit', id: externalCustomer.id
     }
 }

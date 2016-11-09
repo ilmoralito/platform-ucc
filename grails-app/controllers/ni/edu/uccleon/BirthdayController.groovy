@@ -2,20 +2,19 @@ package ni.edu.uccleon
 
 import grails.plugin.springsecurity.annotation.Secured
 
-@Secured("permitAll")
+@Secured('permitAll')
 class BirthdayController {
-    def employeeService
-    def birthdayService
-    def helperService
+    BirthdayService birthdayService
+    HelperService helperService
 
     static allowedMethods = [
-        index: "GET"
+        index: 'GET'
     ]
 
     def index() {
-        List employees = employeeService.getEmployees()
-        List birthdaysMonth = birthdayService.getBirthdaysMonth(employees)
-
-        [birthdaysMonth: birthdaysMonth, today: helperService.getDayOfMonth()]
+        [
+            birthdaysMonth: birthdayService.getBirthdaysMonth(),
+            today: helperService.getDayOfMonth()
+        ]
     }
 }

@@ -11,8 +11,17 @@
 
 body { padding-top: 70px; }
 
-section { margin-bottom: 5px; }
+section, .clearfix { margin-bottom: 5px; }
 
-label { font-weight: normal; }
+label, table th { font-weight: normal; }
 
 .nav-tabs { margin-bottom: 10px; }
+
+.btn { border-radius: 2px; }
+
+.well {
+    border: 0;
+    box-shadow: none;
+    margin-bottom: 10px;
+}
+

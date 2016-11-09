@@ -6,166 +6,149 @@
     <content tag="main">
         <g:set var="position" value="${params.int('event') ?: 0}"/>
 
-        <ul id="nav" class="nav nav-tabs">
-            <g:each in="${events}" var="event" status="idx">
-                <li role="presentation" class="${params.int('event') == idx || !params.event && idx == 0 ? 'active' : ''}">
-                    <g:link action="show" params="[id: params.id, event: idx]">
-                        ${idx + 1}
-                    </g:link>
-                </li>
-            </g:each>
-        </ul>
+        <section>
+            <ul id="nav" class="nav nav-tabs">
+                <g:each in="${events}" var="event" status="idx">
+                    <li role="presentation" class="${params.int('event') == idx || !params.event && idx == 0 ? 'active' : ''}">
+                        <g:link action="show" params="[id: params.id, event: idx]">
+                            ${idx + 1}
+                        </g:link>
+                    </li>
+                </g:each>
+            </ul>
+        </section>
 
-        <%-- <ucc:eventWidget eventWidget="${eventWidget}" position="${position}"/> --%>
+        <section>
+            <p>Detalle</p>
 
-        <p>Detalle</p>
-        <hr>
+            <label>Fecha</label>
+            <p><g:formatDate date="${events[position].date}" format="yyyy-MM-dd"/></p>
 
-        <table class="table table-hover table-borderless">
-            <colgroup>
-                <col span="1" style="width: 26%;">
-                <col span="1" style="width: 74%;">
-            </colgroup>
-            <tbody>
-                <tr>
-                    <td>Fecha</td>
-                    <td><g:formatDate date="${events[position].date}" format="yyyy-MM-dd"/></td>
-                </tr>
+            <label>Lugar</label>
+            <p><ucc:getClassroom id="${events[position].location}"/></p>
 
-                <tr>
-                    <td>Lugar</td>
-                    <td><ucc:getClassroom id="${events[position].location}"/></td>
-                </tr>
+            <label>Hora de inicio</label>
+            <p><ucc:getHour hour="${events[position].startTime}"/></p>
 
-                <tr>
-                    <td>Hora de inicio</td>
-                    <td><ucc:getHour hour="${events[position].startTime}"/></td>
-                </tr>
+            <label>Hora final</label>
+            <p><ucc:getHour hour="${events[position].endingTime}"/></p>
 
-                <tr>
-                    <td>Hora final</td>
-                    <td><ucc:getHour hour="${events[position].endingTime}"/></td>
-                </tr>
+            <label>Numero de asistentes</label>
+            <p>${events[position].numberOfPeople}</p>
+        </section>
 
-                <tr>
-                    <td>Numero de asistentes</td>
-                    <td>${events[position].numberOfPeople}</td>
-                </tr>
-            </tbody>
-        </table>
+        <section>
+            <p>Requerimientos</p>
 
-        <p>Requerimientos</p>
-        <hr>
+            <div class="row">
+                <div class="col-md-3">
+                    <p>Medios</p>
 
-        <div class="row">
-            <div class="col-md-3">
-                <p>Medios</p>
+                    <g:each in="${means}" var="m">
+                        <p>
+                            <g:if test="${events[position][m.key]}">
+                                <i class="fa fa-check-square-o"></i>
+                            </g:if>
+                            <g:else>
+                                <i class="fa fa-square-o"></i>
+                            </g:else>
+                            ${m.value}
+                        </p>
+                    </g:each>
+                </div>
+                <div class="col-md-3">
+                    <p>Refrescos</p>
 
-                <g:each in="${means}" var="m">
                     <p>
-                        <g:if test="${events[position][m.key]}">
+                        <g:if test="${events[position].water}">
                             <i class="fa fa-check-square-o"></i>
                         </g:if>
                         <g:else>
                             <i class="fa fa-square-o"></i>
                         </g:else>
-                        ${m.value}
+                        Agua
                     </p>
-                </g:each>
-            </div>
-            <div class="col-md-3">
-                <p>Refrescos</p>
 
-                <p>
-                    <g:if test="${events[position].water}">
-                        <i class="fa fa-check-square-o"></i>
-                    </g:if>
-                    <g:else>
-                        <i class="fa fa-square-o"></i>
-                    </g:else>
-                    Agua
-                </p>
-
-                <p>
-                    <g:if test="${events[position].coffee}">
-                        <i class="fa fa-check-square-o"></i>
-                    </g:if>
-                    <g:else>
-                        <i class="fa fa-square-o"></i>
-                    </g:else>
-                    Cafe
-                </p>
-
-                <p>${events[position].cookies} Galletas</p>
-
-                <p>${events[position].waterBottles} Botellas de agua</p>
-            </div>
-            <div class="col-md-3">
-                <p>Montaje</p>
-
-                <label>Tipo de montaje</label>
-                <p><i class="fa fa-dot-circle-o"></i> ${events[position].mountingType}</p>
-
-                <label>Elementos</label>
-                <g:each in="${elements}" var="property">
                     <p>
-                        <g:if test="${events[position][property.key]}">
+                        <g:if test="${events[position].coffee}">
                             <i class="fa fa-check-square-o"></i>
                         </g:if>
                         <g:else>
                             <i class="fa fa-square-o"></i>
                         </g:else>
-                        ${property.value}
+                        Cafe
                     </p>
-                </g:each>
 
-                <label>Tipo de mesas</label>
-                <g:each in="${tableTypes}" var="property">
-                    <p>
-                        <g:if test="${property in events[position].tableTypes.name}">
-                            <i class="fa fa-check-square-o"></i>
-                        </g:if>
-                        <g:else>
-                            <i class="fa fa-square-o"></i>
-                        </g:else>
-                        ${property}
-                    </p>
-                </g:each>
+                    <p>${events[position].cookies} Galletas</p>
 
-                <label>Tipo de sillas</label>
-                <g:each in="${chairTypes}" var="property">
-                    <p>
-                        <g:if test="${property in events[position].chairTypes.name}">
-                            <i class="fa fa-check-square-o"></i>
-                        </g:if>
-                        <g:else>
-                            <i class="fa fa-square-o"></i>
-                        </g:else>
-                        ${property}
-                    </p>
-                </g:each>
+                    <p>${events[position].waterBottles} Botellas de agua</p>
+                </div>
+                <div class="col-md-3">
+                    <p>Montaje</p>
 
-                <p>${events[position].presidiumTable} Mesa presidium</p>
+                    <label>Tipo de montaje</label>
+                    <p><i class="fa fa-dot-circle-o"></i> ${events[position].mountingType}</p>
+
+                    <label>Elementos</label>
+                    <g:each in="${elements}" var="property">
+                        <p>
+                            <g:if test="${events[position][property.key]}">
+                                <i class="fa fa-check-square-o"></i>
+                            </g:if>
+                            <g:else>
+                                <i class="fa fa-square-o"></i>
+                            </g:else>
+                            ${property.value}
+                        </p>
+                    </g:each>
+
+                    <label>Tipo de mesas</label>
+                    <g:each in="${tableTypes}" var="property">
+                        <p>
+                            <g:if test="${property in events[position].tableTypes.name}">
+                                <i class="fa fa-check-square-o"></i>
+                            </g:if>
+                            <g:else>
+                                <i class="fa fa-square-o"></i>
+                            </g:else>
+                            ${property}
+                        </p>
+                    </g:each>
+
+                    <label>Tipo de sillas</label>
+                    <g:each in="${chairTypes}" var="property">
+                        <p>
+                            <g:if test="${property in events[position].chairTypes.name}">
+                                <i class="fa fa-check-square-o"></i>
+                            </g:if>
+                            <g:else>
+                                <i class="fa fa-square-o"></i>
+                            </g:else>
+                            ${property}
+                        </p>
+                    </g:each>
+
+                    <p>${events[position].presidiumTable} Mesa presidium</p>
+                </div>
+                <div class="col-md-3">
+                    <p>Alimentos</p>
+
+                    <p>${events[position].refreshment} Refrigerios</p>
+
+                    <p>${events[position].breakfast} Desayuno</p>
+
+                    <p>${events[position].lunch} Almuerzo</p>
+
+                    <p>${events[position].dinner} Cena</p>
+                </div>
             </div>
-            <div class="col-md-3">
-                <p>Alimentos</p>
-
-                <p>${events[position].refreshment} Refrigerios</p>
-
-                <p>${events[position].breakfast} Desayuno</p>
-
-                <p>${events[position].lunch} Almuerzo</p>
-
-                <p>${events[position].dinner} Cena</p>
-            </div>
-        </div>
-
+        </section>
 
         <g:if test="${events[position].observation}">
-            <p>Observacion</p>
-            <hr>
-
-            <p>${events[position].observation}</p>
+            <section>
+                <label>Observacion</label>
+                <p>${events[position].observation}</p>
+            </section>
         </g:if>
     </content>
 
