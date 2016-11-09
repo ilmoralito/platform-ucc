@@ -10,11 +10,11 @@
         <g:if test="${approvalDates}">
             <table class="table table-hover">
                 <tbody>
-                    <g:each in="${approvalDates}" var="approvalDate" status="index">
+                    <g:each in="${approvalDates}" var="date">
                         <tr>
                             <td>
-                                <g:link action="approved" params="[approvalDate: approvalDate.format('yyyy-MM-dd')]">
-                                    <g:formatDate date="${approvalDate}" format="yyyy-MM-dd"/>
+                                <g:link action="approved" params="[approvalDate: date.format('yyyy-MM-dd')]">
+                                    <g:formatDate date="${date}" format="yyyy-MM-dd"/>
                                 </g:link>
                             </td>
                         </tr>

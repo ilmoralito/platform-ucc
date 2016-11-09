@@ -1,40 +1,56 @@
 <table class="table table-hover">
-    <g:if test="${params.status == 'pending' || actionName == 'approved' || actionName == 'vouchersToApprove'}">
-        <thead>
-            <tr>
-                <th colspan="2">
-                    <input type="checkbox" id="trigger">
-                </th>
-            </tr>
-        </thead>
-    </g:if>
+    <colgroup>
+        <col span="1" style="width: 5%;">
+        <col span="1" style="width: 20%;">
+        <col span="1" style="width: 70%;">
+        <col span="1" style="width: 5%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th class="text-center">
+                <input type="checkbox" id="trigger">
+            </th>
+            <th colspan="3"></th>
+        </tr>
+    </thead>
     <tbody>
         <g:each in="${vouchers}" var="voucher">
             <tr>
-                <td colspan="2">
+                <td colspan="4">
                     <g:formatDate date="${voucher.date}" format="yyyy-MM-dd"/>
                 </td>
             </tr>
             <g:each in="${voucher.activities}" var="activity">
                 <tr>
-                    <td colspan="2">${activity.name}</td>
+                    <td colspan="4">
+                        ${activity.name}
+                    </td>
                 </tr>
                 <g:each in="${activity.vouchers}" var="instance">
                     <tr>
-                        <!--Show only vouchers whit pending and approved status-->
-                        <g:if test="${!params?.status || params?.status in ['pending', 'approved']}">
-                            <td width="1">
-                                <input type="checkbox" name="vouchers" form="${form}" value="${instance.id}">
-                            </td>
-                        </g:if>
+                        <td width="1" class="text-center">
+                            <input type="checkbox" name="vouchers" form="${form}" value="${instance.id}">
+                        </td>
                         <td>
                             <g:link action="show" id="${instance.id}">
                                 <g:formatBoolean boolean="${instance.user == null}" true="${instance?.guest?.fullName}" false="${instance?.user?.username}"/>
                             </g:link>
                         </td>
+                        <td>
+                            <ucc:foodInSpanish foods="${instance.foods.name}"/>
+                        </td>
+                        <td>
+                            <g:fieldValue bean="${instance}" field="value"/>
+                        </td>
                     </tr>
                 </g:each>
             </g:each>
         </g:each>
+        <tr>
+            <td colspan="3"></td>
+            <td>
+                <b>${vouchers.activities.vouchers.value.flatten().sum()}</b>
+            </td>
+        </tr>
     </tbody>
 </table>

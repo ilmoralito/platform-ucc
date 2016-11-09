@@ -7,13 +7,16 @@
         <g:render template="nav"/>
 
         <g:if test="${vouchers}">
-            <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}" model="[form: 'notify']"/>
+            <g:if test="${params.status == 'pending'}">
+                <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}" model="[form: 'notify']"/>
 
-            <g:if test="${params?.status == 'pending'}">
                 <g:form name="notify" action="sendNotification">
                     <g:submitButton name="send" value="Notificar" class="btn btn-primary"/>
                 </g:form>
             </g:if>
+            <g:elseif test="${params.status == 'notified'}">
+                <g:render template="vouchers" vouchers="${vouchers}"/>
+            </g:elseif>
         </g:if>
         <g:else>
             <p>No hay vales que mostrar</p>
