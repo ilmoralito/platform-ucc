@@ -245,55 +245,60 @@ class VoucherController {
     }
 
     def printVouchers() {
-        List<Voucher> vouchers = voucherService.getVouchers(params.list('vouchers')*.toLong()) //.collate(8)
+        List<Long> vouchers = params.list('vouchers')*.toLong()
         PdfDocumentBuilder builder = new PdfDocumentBuilder(response.outputStream)
-        // Integer pages =  (int)Math.ceil(vouchers.size() / 8)
+        // List<Voucher> voucherList = voucherService.getVouchers(vouchers).collate(10)*.collate(2)
+        List<Voucher> voucherList = voucherService.getVouchers(vouchers)
 
         builder.create {
-            document (
-                font: [family: 'Courier', size: 9.pt],
-                margin: [top: 0.inches, right: 0.2.inches, bottom: 0.2.inches, left: 0.2.inches]
+            document(
+                font: [family: 'Courier', size: 8.pt],
+                margin: [top: 0.1.inches, right: 0.1.inches, bottom: 0.1.inches, left: 0.1.inches]
             ) {
-                vouchers.eachWithIndex { voucher, index ->
-                    if ((index != 0) && (index % 5 == 0)) {
-                        pageBreak()
-                    }
+                voucherList.each { voucher ->
+                    table(columns: [1,2], padding: 3.px, margin: [top: 0.1.inch, bottom: 0.1.inch]) {
+                        row {
+                            cell 'Vale de alimentacion', align: 'center', colspan: 2
+                        }
 
-                    paragraph 'Vale de alimentacion(Cafetines)', align: 'center', margin: [bottom: 0]
-
-                    table(columns: [1, 2], margin: [top: 0, bottom: 0], padding: 2) {
                         row {
                             cell 'Fecha'
                             cell voucher.date.format('yyyy-MM-dd')
                         }
+
                         if (voucher.user) {
-                            row {
-                                cell 'A nombre de'
-                                cell "${voucher.user.username}, ${employeeService.getEmployeeCoordinations(voucher.user.employee).name.join(', ')}"
-                            }
+                                row {
+                                    cell 'A nombre de'
+                                    cell "${voucher.user.username}, ${employeeService.getEmployeeCoordinations(voucher.user.employee).name.join(', ')}"
+                                }
                         } else {
                             row {
                                 cell 'A nombre de'
                                 cell voucher.guest.fullName
                             }
                         }
+
                         row {
                             cell 'Actividad'
                             cell voucher.activity
                         }
+
                         row {
                             cell 'Valor'
                             cell voucher.value
                         }
+
                         row {
                             cell 'Alimentos'
                             cell voucherService.getFoodInSpanish(voucher.foods.name).join(', ')
                         }
-                    }
 
-                    paragraph(align: 'center', margin: [top: 0, bottom: 0], font: [size: 8.pt]) {
-                        text "Creado por: Orlando Gaitan ${voucher.dateCreated.format('yyyy-MM-dd HH:mm')} "
-                        text "Autorizado por: Jorge Rojas ${voucher.approvalDate.format('yyyy-MM-dd HH:mm')}"
+                        row {
+                            cell(colspan: 2, align: 'center') {
+                                text "Creado por Orlando Gaitan ${voucher.dateCreated.format('yyyy-MM-dd HH:mm')} "
+                                text "Autorizado por Jorge Rojas ${voucher.approvalDate.format('yyyy-MM-dd HH:mm')}"
+                            }
+                        }
                     }
                 }
             }
@@ -311,9 +316,7 @@ class CreateCommand {
     String type
 
     static constraints = {
-        date nullable: false, validator: { date ->
-            date >= new Date().clearTime()
-        }
+        date blank: false
         activity blank: false
         type inList: ['user', 'guest']
     }

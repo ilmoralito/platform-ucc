@@ -12,7 +12,6 @@
 
     $('#voucherDate').datetimepicker({
         format: 'YYYY-MM-DD',
-        useCurrent: false,
-        minDate: moment().millisecond(0).second(0).minute(0).hour(0)
+        useCurrent: false
     });
 })();

@@ -8,6 +8,7 @@ class Voucher {
     BigDecimal value
     String status = 'pending'
     Date approvalDate
+
     List<Food> foods
 
     Date dateCreated
@@ -18,9 +19,7 @@ class Voucher {
         guest nullable: true, validator: { guest, obj ->
             obj.user || guest
         }
-        date validator: { date ->
-            date >= new Date().clearTime()
-        }
+        date blank: false
         activity blank: false
         value min: 1.0
         status inList: ['pending', 'notified', 'approved'], maxSize: 100
@@ -36,7 +35,7 @@ class Voucher {
 
     static mapping = {
         version false
-        foods cascade: "all-delete-orphan"
         foods lazy: false
+        foods cascade: "all-delete-orphan"
     }
 }
