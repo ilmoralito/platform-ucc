@@ -39,14 +39,6 @@ class VoucherService implements GrailsConfigurationAware {
         Voucher.findAll('FROM Voucher as b WHERE DATE(b.approvalDate) = :approvalDate', [approvalDate: approvalDate])
     }
 
-    List<Voucher> getVouchers(List<Long> vouchers) {
-        DetachedCriteria query = Voucher.where {
-            id in vouchers
-        }
-
-        query.list()
-    }
-
     Integer updateVouchersStatus(List<Long> vouchers, String status) {
         Date approvalDate = status == 'approved' ? new Date() : null
 

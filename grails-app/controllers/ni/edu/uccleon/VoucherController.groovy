@@ -46,18 +46,25 @@ class VoucherController {
     }
 
     def sendNotification() {
-        Integer total = voucherService.updateVouchersStatus(params.list('vouchers')*.toLong(), 'notified')
+        List<Long> voucherList = params.list('vouchers')
 
-        if (Environment.current == Environment.PRODUCTION) {
-            sendMail {
-                from 'orlando.gaitan@ucc.edu.ni'
-                to 'jorge.rojas@ucc.edu.ni'
-                subject 'Notificacion de vales pendientes de aprobacion'
-                html view: '/emails/voucher/notification', model: [total: total, url: createLink(controller: 'voucher', action: 'vouchersToApprove', absolute: true), label: 'notificado']
+        if (voucherList) {
+            Integer total = voucherService.updateVouchersStatus(voucherList*.toLong(), 'notified')
+
+            if (Environment.current == Environment.PRODUCTION) {
+                sendMail {
+                    from 'orlando.gaitan@ucc.edu.ni'
+                    to 'jorge.rojas@ucc.edu.ni'
+                    subject 'Notificacion de vales pendientes de aprobacion'
+                    html view: '/emails/voucher/notification', model: [total: total, url: createLink(controller: 'voucher', action: 'vouchersToApprove', absolute: true), label: 'notificado']
+                }
             }
+
+            flash.message = "${total} vales notificados"
+        } else {
+            flash.message = 'Parametros incorrectos'
         }
 
-        flash.message = "${total} vales notificados"
         redirect action: 'index', params: [status: 'pending']
     }
 
@@ -161,22 +168,29 @@ class VoucherController {
 
     @Secured('ROLE_ADMINISTRATIVE_SUPERVISOR')
     def approve() {
-        Integer total = voucherService.updateVouchersStatus(params.list('vouchers')*.toLong(), 'approved')
+        List<Long> voucherList = params.list('vouchers')
 
-        if (Environment.current == Environment.PRODUCTION) {
-            sendMail {
-                from 'jorge.rojas@ucc.edu.ni'
-                to 'orlando.gaitan@ucc.edu.ni'
-                subject 'Notificacion de vales aprobados'
-                html view: '/emails/voucher/notification', model: [
-                    total: total,
-                    url: createLink(controller: 'voucher', action: 'approved', params: [approvalDate: new Date().format('yyyy-MM-dd')], absolute: true),
-                    label: 'aprobado'
-                ]
+        if (voucherList) {
+            Integer total = voucherService.updateVouchersStatus(voucherList*.toLong(), 'approved')
+
+            if (Environment.current == Environment.PRODUCTION) {
+                sendMail {
+                    from 'jorge.rojas@ucc.edu.ni'
+                    to 'orlando.gaitan@ucc.edu.ni'
+                    subject 'Notificacion de vales aprobados'
+                    html view: '/emails/voucher/notification', model: [
+                        total: total,
+                        url: createLink(controller: 'voucher', action: 'approved', params: [approvalDate: new Date().format('yyyy-MM-dd')], absolute: true),
+                        label: 'aprobado'
+                    ]
+                }
             }
+
+            flash.message = "${total} vales aprobados"
+        } else {
+            flash.message = 'Parametros incorrectos'
         }
 
-        flash.message = "${total} vales aprobados"
         redirect action: 'vouchersToApprove'
     }
 
@@ -245,10 +259,8 @@ class VoucherController {
     }
 
     def printVouchers() {
-        List<Long> vouchers = params.list('vouchers')*.toLong()
+        List<Voucher> voucherList = Voucher.getAll(params.list('vouchers')).collate(5)
         PdfDocumentBuilder builder = new PdfDocumentBuilder(response.outputStream)
-        //List<Voucher> voucherList = voucherService.getVouchers(vouchers).collate(10)*.collate(2)
-        List<Voucher> voucherList = voucherService.getVouchers(vouchers).collate(5)
 
         builder.create {
             document(

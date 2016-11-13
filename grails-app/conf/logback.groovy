@@ -8,6 +8,9 @@ appender('STDOUT', ConsoleAppender) {
     }
 }
 
+logger 'org.hibernate.type.descriptor.sql.BasicBinder', TRACE, ['STDOUT']
+logger 'org.hibernate.SQL', TRACE, ['STDOUT']
+
 root(ERROR, ['STDOUT'])
 
 def targetDir = BuildSettings.TARGET_DIR
