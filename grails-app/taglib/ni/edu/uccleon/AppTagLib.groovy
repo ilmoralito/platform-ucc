@@ -12,22 +12,23 @@ class AppTagLib {
     def voucherService
     def guestService
 
-    static defaultEncodeAs = [taglib: "html"]
-    static namespace = "ucc"
+        static defaultEncodeAs = [taglib: 'html']
+    static namespace = 'ucc'
     static encodeAsForTags = [
-        classrooms: "raw",
-        mountingType: "raw",
-        tableType: "raw",
-        chairs: "raw",
-        tableclothColor: "raw",
-        externalCustomers: "raw",
-        activityStatus: "raw",
-        activityWidget: "raw",
-        getEmployeeList: "raw",
-        getEmployees: "raw",
-        getGuests: "raw",
-        getColors: "raw",
-        eventWidget: "raw"
+        classrooms: 'raw',
+        mountingType: 'raw',
+        tableType: 'raw',
+        chairs: 'raw',
+        tableclothColor: 'raw',
+        externalCustomers: 'raw',
+        activityStatus: 'raw',
+        activityWidget: 'raw',
+        getEmployeeList: 'raw',
+        getEmployees: 'raw',
+        getGuests: 'raw',
+        getColors: 'raw',
+        eventWidget: 'raw',
+        activityDatalist: 'raw'
     ]
 
     def notificationMessage = { attrs ->
@@ -463,5 +464,24 @@ class AppTagLib {
 
     def foodInSpanish = { attrs ->
         out << voucherService.getFoodInSpanish(attrs.list('foods')).join(', ')
+    }
+
+    def activityDatalist = { attrs ->
+        MarkupBuilder builder = new MarkupBuilder(out)
+
+        builder.div(class: 'form-group') {
+            label(for: 'activity') {
+                mkp.yield 'Actividad'
+            }
+
+            input(list: 'activities', name: 'activity', id: 'activity', value: attrs.activity, class: 'form-control')
+            datalist(id: 'activities') {
+                attrs.activities.each { activity ->
+                    option(value: activity) {
+                        mkp.yield activity
+                    }
+                }
+            }
+        }
     }
 }

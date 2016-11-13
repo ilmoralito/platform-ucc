@@ -5,10 +5,7 @@
             <g:textField name="date" id="voucherDate" value="${params?.date}" class="form-control"/>
         </div>
 
-        <div class="form-group">
-            <label for="activity">Nombre de la actividad</label>
-            <g:textField name="activity" value="${params?.activity}" class="form-control"/>
-        </div>
+        <ucc:activityDatalist activities="${activities}" activity="${params?.activity}"/>
 
         <label style="margin-bottom: 0;">Tipo de vale</label>
         <div class="radio">

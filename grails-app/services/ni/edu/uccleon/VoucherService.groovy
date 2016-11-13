@@ -20,6 +20,10 @@ class VoucherService implements GrailsConfigurationAware {
         foods
     }
 
+    List<String> getVoucherActivities() {
+        Voucher.executeQuery('SELECT DISTINCT v.activity FROM Voucher as v')
+    }
+
     List<String> getFoodInSpanish(List<String> foodList) {
         foods.findAll { it.english in foodList }.spanish
     }

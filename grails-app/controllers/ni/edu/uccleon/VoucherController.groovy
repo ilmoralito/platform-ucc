@@ -32,17 +32,26 @@ class VoucherController {
     def index(String status) {
         List<Voucher> vouchers = voucherService.getVouchersByStatus(status ?: 'pending')
 
-        [vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers)]
+        [
+            vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers),
+            activities: voucherService.getVoucherActivities()
+        ]
     }
 
     def approvalDates() {
-        [approvalDates: voucherService.getVouchersApprovalDates()]
+        [
+            approvalDates: voucherService.getVouchersApprovalDates(),
+            activities: voucherService.getVoucherActivities()
+        ]
     }
 
     def approved(String approvalDate) {
         List<Voucher> vouchers = voucherService.getVouchersByApprovalDate(params.date('approvalDate', 'yyyy-MM-dd'))
 
-        [vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers)]
+        [
+            vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers),
+            activities: voucherService.getVoucherActivities()
+        ]
     }
 
     def sendNotification() {
