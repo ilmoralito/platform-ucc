@@ -1,7 +1,6 @@
 <g:applyLayout name="twoColumns">
     <head>
         <title>Vales a aprobar</title>
-        </style>
     </head>
 
     <content tag="main">

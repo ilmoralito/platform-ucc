@@ -1,7 +1,6 @@
 <g:applyLayout name="threeColumns">
     <head>
         <title>Vales</title>
-        </style>
     </head>
 
     <content tag="main">
@@ -22,6 +21,17 @@
     </content>
 
     <content tag="right-column">
+        <div class="well well-sm">
+            <label>Fecha de aprobacion</label>
+            <g:link action="approved" params="[approvalDate: params.approvalDate]">
+                ${params.approvalDate}
+            </g:link>
+        </div>
+
         <g:render template="createVoucher"/>
+
+        <g:render template="filterForm" model="[label: 'Internos', members: users, property: 'username', type: 'user']"/>
+
+        <g:render template="filterForm" model="[label: 'Visitas', members: guests, property: 'fullName', type: 'guest']"/>
     </content>
 </g:applyLayout>

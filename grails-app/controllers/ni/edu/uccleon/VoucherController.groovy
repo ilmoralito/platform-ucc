@@ -27,6 +27,7 @@ class VoucherController {
         archive: 'POST',
         summary: 'GET',
         printVouchers: 'POST',
+        filter: 'POST'
     ]
 
     def index(String status) {
@@ -46,11 +47,15 @@ class VoucherController {
     }
 
     def approved(String approvalDate) {
-        List<Voucher> vouchers = voucherService.getVouchersByApprovalDate(params.date('approvalDate', 'yyyy-MM-dd'))
+        Date date = params.date('approvalDate', 'yyyy-MM-dd')
+        List<Voucher> vouchers = voucherService.getVouchersByApprovalDate(date)
+        def(users, guests) = voucherService.getMembersInApprovalDate(date)
 
-        [
+        render view: 'approvedList', model: [
             vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers),
-            activities: voucherService.getVoucherActivities()
+            activities: voucherService.getVoucherActivities(),
+            guests: guests,
+            users: users
         ]
     }
 
@@ -328,6 +333,19 @@ class VoucherController {
         response.contentType = "application/pdf"
         response.setHeader("Content-disposition", "attachment;filename=test.pdf")
         response.outputStream.flush()
+    }
+
+    def filter() {
+        Date date = params.date('approvalDate', 'yyyy-MM-dd')
+        List<Voucher> vouchers = voucherService.getVouchersByMemberInApprovalDate(params.type, params.long('id'), date)
+        def(users, guests) = voucherService.getMembersInApprovalDate(date)
+
+        render view: 'approvedList', model: [
+            vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers),
+            activities: voucherService.getVoucherActivities(),
+            guests: guests,
+            users: users
+        ]
     }
 }
 

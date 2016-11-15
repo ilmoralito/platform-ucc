@@ -1,7 +1,6 @@
 <g:applyLayout name="threeColumns">
     <head>
         <title>Vales</title>
-        </style>
     </head>
 
     <content tag="main">

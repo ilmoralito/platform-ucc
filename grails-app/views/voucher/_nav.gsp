@@ -11,7 +11,7 @@
             Notificados
         </g:link>
     </li>
-    <li role="presentation" class="${actionName == 'approvalDates' || actionName == 'approved' ? 'active' : ''}">
+    <li role="presentation" class="${actionName in ['approvalDates', 'approved', 'filter'] ? 'active' : ''}">
         <g:link action="approvalDates">
             Aprobados
         </g:link>

@@ -40,7 +40,51 @@ class VoucherService implements GrailsConfigurationAware {
     }
 
     List<Voucher> getVouchersByApprovalDate(Date approvalDate) {
-        Voucher.findAll('FROM Voucher as b WHERE DATE(b.approvalDate) = :approvalDate', [approvalDate: approvalDate])
+        Date fromDate = approvalDate.clearTime()
+        Date toDate = fromDate.clone()
+
+        toDate.set(hourOfDay: 23, minute: 59, second: 59)
+
+        Voucher.findAll('''
+            FROM Voucher as v
+            WHERE v.approvalDate
+            BETWEEN :fromDate AND :toDate''',
+        [fromDate: fromDate, toDate: toDate])
+    }
+
+    List getMembersInApprovalDate(Date approvalDate) {
+        Date fromDate = approvalDate
+        Date toDate = fromDate.clone()
+
+        toDate.set(hourOfDay: 23, minute: 59, second: 59)
+
+        List<User> users = Voucher.executeQuery('''
+            SELECT v.user FROM Voucher AS v
+            WHERE v.approvalDate BETWEEN :fromDate AND :toDate GROUP BY v.user'''
+        , [fromDate: fromDate, toDate: toDate])
+
+        List<Guest> guests = Voucher.executeQuery('''
+            SELECT v.guest FROM Voucher AS v
+            WHERE v.approvalDate BETWEEN :fromDate AND :toDate GROUP BY v.guest'''
+        , [fromDate: fromDate, toDate: toDate])
+
+        [users, guests]
+    }
+
+    List<Voucher> getVouchersByMemberInApprovalDate(final String type, final Long id, final Date approvalDate) {
+        String query = ''
+        Date fromDate = approvalDate
+        Date toDate = fromDate.clone()
+
+        toDate.set(hourOfDay: 23, minute: 59, second: 59)
+
+        if (type == 'user') {
+            query = 'FROM Voucher as v WHERE v.user.id = :id AND v.approvalDate BETWEEN :fromDate AND :toDate'
+        } else {
+            query = 'FROM Voucher as v WHERE v.guest.id = :id AND v.approvalDate BETWEEN :fromDate AND :toDate'
+        }
+
+        Voucher.executeQuery(query, [id: id, fromDate: fromDate, toDate: toDate])
     }
 
     Integer updateVouchersStatus(List<Long> vouchers, String status) {
