@@ -18,7 +18,7 @@ class VocuherInterceptor {
         /*
         Constraints
         +--------------+----------------------+----------------------+----------+
-        | Valid users  |       Pending        |       Notified       | Approved |
+        | Users        |       Pending        |       Notified       | Approved |
         +--------------+----------------------+----------------------+----------+
         | Adminitrator | x                    | edit, update, delete | x        |
         | Protocol     | edit, update, delete | x                    | x        |

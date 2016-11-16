@@ -29,7 +29,7 @@
                 <g:each in="${activity.vouchers}" var="instance">
                     <tr>
                         <td width="1" class="text-center">
-                            <input type="checkbox" name="vouchers" form="${form}" value="${instance.id}">
+                            <input type="checkbox" name="vouchers" form="notify" value="${instance.id}">
                         </td>
                         <td>
                             <g:link action="show" id="${instance.id}">

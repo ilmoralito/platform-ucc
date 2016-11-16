@@ -35,7 +35,6 @@ class Voucher {
 
     static mapping = {
         version false
-        foods lazy: false
-        foods cascade: "all-delete-orphan"
+        foods cascade: "all-delete-orphan", lazy: false
     }
 }

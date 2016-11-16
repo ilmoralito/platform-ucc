@@ -27,7 +27,8 @@ class VoucherController {
         archive: 'POST',
         summary: 'GET',
         printVouchers: 'POST',
-        filter: 'POST'
+        filter: 'POST',
+        batchDelete: 'POST'
     ]
 
     def index(String status) {
@@ -346,6 +347,25 @@ class VoucherController {
             guests: guests,
             users: users
         ]
+    }
+
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    def batchDelete() {
+        Integer totalAffected = 0
+        String returnPlace = params?.returnPlace
+        List<Long> voucherList = params.list('vouchers')*.toLong()
+
+        if (voucherList) {
+            totalAffected = voucherService.batchDelete(voucherList)
+        }
+
+        flash.message = totalAffected ? "${totalAffected} vales eliminados" : 'Parametros incorrectos'
+
+        if (returnPlace) {
+            redirect action: returnPlace, params: [status: 'pending']
+        } else {
+            redirect action: 'vouchersToApprove'
+        }
     }
 }
 

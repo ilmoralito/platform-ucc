@@ -8,11 +8,19 @@
 
         <g:if test="${vouchers}">
             <g:if test="${params.status == 'pending'}">
-                <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}" model="[form: 'notify']"/>
+                <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}"/>
 
-                <g:form name="notify" action="sendNotification">
-                    <g:submitButton name="send" value="Notificar" class="btn btn-primary"/>
-                </g:form>
+                <div class="clearfix">
+                    <g:form name="notify" action="sendNotification" class="pull-left">
+                        <g:submitButton name="send" value="Notificar" class="btn btn-primary"/>
+                    </g:form>
+
+                    <g:form name="batch" action="batchDelete" class="pull-right">
+                        <g:hiddenField name="returnPlace" value="index"/>
+
+                        <g:submitButton name="send" value="Eliminar" class="btn btn-primary btn-danger"/>
+                    </g:form>
+                </div>
             </g:if>
             <g:elseif test="${params.status == 'notified'}">
                 <g:render template="vouchers" vouchers="${vouchers}"/>

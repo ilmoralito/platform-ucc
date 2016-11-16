@@ -173,6 +173,14 @@ class VoucherService implements GrailsConfigurationAware {
         result.sort { -it.year }
     }
 
+    Integer batchDelete(List<Long> voucherList) {
+        List<Voucher> vouchers = Voucher.getAll(voucherList)
+
+        vouchers*.delete()
+
+        vouchers.size()
+    }
+
     @Override
     void setConfiguration(Config co) {
         foods = co.getProperty('ni.edu.uccleon.foods', List)

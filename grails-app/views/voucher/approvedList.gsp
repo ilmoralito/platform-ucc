@@ -7,7 +7,7 @@
         <g:render template="nav"/>
 
         <g:if test="${vouchers}">
-            <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}" model="[form: 'notify']"/>
+            <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}"/>
 
              <g:form name="notify" action="printVouchers">
                 <button type="submit" class="btn btn-primary">

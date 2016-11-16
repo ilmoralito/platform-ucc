@@ -7,11 +7,17 @@
         <g:render template="toApproveNav"/>
 
         <g:if test="${vouchers}">
-            <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}"  model="[form: 'approve']"/>
+            <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}"/>
 
-            <g:form name="approve" action="approve">
-                <g:submitButton name="send" value="Aprobar" class="btn btn-primary"/>
-            </g:form>
+            <div class="clearfix">
+                <g:form name="notify" action="approve" class="pull-left">
+                    <g:submitButton name="send" value="Aprobar" class="btn btn-primary"/>
+                </g:form>
+
+                <g:form name="batch" action="batchDelete" class="pull-right">
+                    <g:submitButton name="send" value="Eliminar" class="btn btn-primary btn-danger"/>
+                </g:form>
+            </div>
         </g:if>
         <g:else>
             <p>No hay vales que aprobar</p>

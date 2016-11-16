@@ -6,4 +6,6 @@
 
 body { padding-top: 70px; }
 
+label, table th { font-weight: normal; }
+
 .nav-tabs { margin-bottom: 10px; }

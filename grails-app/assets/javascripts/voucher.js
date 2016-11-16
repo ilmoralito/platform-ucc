@@ -14,4 +14,13 @@
         format: 'YYYY-MM-DD',
         useCurrent: false
     });
+
+    $('form#batch').hover(
+        function() {
+            $('tbody input:checkbox').attr('form', 'batch');
+        },
+        function() {
+            $('tbody input:checkbox').attr('form', 'notify');
+        }
+    );
 })();
