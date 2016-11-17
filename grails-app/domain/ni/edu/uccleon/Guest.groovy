@@ -1,6 +1,11 @@
 package ni.edu.uccleon
 
-class Guest {
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
+@EqualsAndHashCode(includes='fullName')
+@ToString(includes='fullName', includeNames=true, includePackage=false)
+class Guest implements Serializable {
     String fullName
     Boolean enabled = true
 

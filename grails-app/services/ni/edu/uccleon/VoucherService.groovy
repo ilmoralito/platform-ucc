@@ -9,6 +9,8 @@ import grails.core.support.GrailsConfigurationAware
 @Transactional
 class VoucherService implements GrailsConfigurationAware {
     EmployeeService employeeService
+    GuestService guestService
+    UserService userService
 
     private enum MONTHS {
         ENERO, FEBRERO, MARZO, ABRIL, MAYO, JUNIO, JULIO, AGOSTO, SEPTIEMBRE, OCTUBRE, NOVIEMBRE, DICIEMBRE
@@ -179,6 +181,13 @@ class VoucherService implements GrailsConfigurationAware {
         vouchers*.delete()
 
         vouchers.size()
+    }
+
+    def getValidUsers(final String type, final String activity, final Date date) {
+        def members = type == 'user' ? userService.getAllByEnabled() : guestService.getAllByEnabled()
+        List<Voucher> membersInActivity = this.getVouchersByDateAndActivity(date, activity)[type]
+
+        members - membersInActivity
     }
 
     @Override

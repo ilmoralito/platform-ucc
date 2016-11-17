@@ -1,6 +1,14 @@
 <div class="form-group">
     <label for="value">A nombre de</label>
-    <g:select name="user" from="${users}" optionKey="id" optionValue="${type == 'user' ? 'username' : 'fullName'}" class="form-control"/>
+    <select name="user" class="form-control">
+        <g:each in="${users}" var="user">
+            <g:set var="selected" value="${user.id == params.int('user')}"/>
+
+            <option value="${user.id}" ${selected ? 'selected=selected' : ''}>
+                ${type == 'user' ? user['username'] : user['fullName']}
+            </option>
+        </g:each>
+    </select>
 </div>
 
 <div class="form-group">
@@ -14,7 +22,7 @@
     <g:each in="${foods}" var="food">
         <div class="checkbox">
             <label>
-                <g:checkBox name="foods" value="${food.english}" checked="${food in params.list('foods')}"/>
+                <g:checkBox name="foods" value="${food.english}" checked="${food.english in params.list('foods')}"/>
                 ${food.spanish}
             </label>
         </div>

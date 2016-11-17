@@ -97,7 +97,7 @@ class VoucherController {
         List<Voucher> vouchers = voucherService.getVouchersByDateAndActivity(command.date, command.activity)
 
         [
-            users: command.type == 'user' ? User.list() : Guest.list(), // TODO: only get users or guests not in voucher activity
+            users: voucherService.getValidUsers(command.type, command.activity, command.date),
             foods: voucherService.getFoods(),
             activity: command.activity,
             type: command.type,
@@ -107,21 +107,16 @@ class VoucherController {
     }
 
     def store() {
-        Closure getUserOrGuest = {
-            Integer id = params.int('user')
+        Integer id = params.int('user')
+        def member = params.type == 'user' ? User.get(id) : Guest.get(id)
 
-            params.type == 'user' ? User.get(id) : Guest.get(id)
-        }
-
-        def person = getUserOrGuest()
-
-        if (!person) {
+        if (!member) {
             response.sendError 404
         }
 
         Voucher voucher = new Voucher(
-            user: person instanceof User ? person : null,
-            guest: person instanceof Guest ? person : null,
+            user: member instanceof User ? member : null,
+            guest: member instanceof Guest ? member : null,
             date: params.date('date', 'yyyy-MM-dd'),
             activity: params.activity,
             value: params.double('value')
@@ -141,7 +136,7 @@ class VoucherController {
             flash.message = 'Vale creado'
         }
 
-        redirect action: 'create', params: params.subMap(['type', 'date', 'activity', 'value', 'foods'])
+        redirect action: 'create', params: params
     }
 
     @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])

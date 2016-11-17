@@ -5,7 +5,11 @@ import grails.transaction.Transactional
 @Transactional
 class UserService {
 
-    List<User> getUsers(Boolean enabled = true) {
+    List<User> getAll() {
+        User.list()
+    }
+
+    List<User> getAllByEnabled(final Boolean enabled = true) {
         User.findAllByEnabled(enabled)
     }
 }

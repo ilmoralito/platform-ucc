@@ -6,7 +6,6 @@
     <content tag="main">
         <g:if test="${vouchers}">
             <table class="table table-hover">
-                <!--<caption>Vales</caption>-->
                 <colgroup>
                     <col span="1" style="width: 40%;">
                     <col span="1" style="width: 50%;">
