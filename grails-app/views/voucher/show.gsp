@@ -7,8 +7,8 @@
         <section>
             <div class="clearfix">
                 <div class="pull-right">
-                    <g:link action="delete" id="${voucher?.id}" class="btn btn-warning">Eliminar</g:link>
-                    <!--<g:link action="edit" id="${voucher?.id}" class="btn btn-primary">Editar</g:link>-->
+                    <g:link action="delete" id="${voucher?.id}" class="btn btn-danger">Eliminar</g:link>
+                    <g:link action="edit" id="${voucher?.id}" class="btn btn-primary">Editar</g:link>
                 </div>
             </div>
         </section>
@@ -46,6 +46,23 @@
                         <g:formatNumber number="${voucher.value}" type="currency" currencyCode="NIO"/>
                     </td>
                 </tr>
+                <tr>
+                    <td colspan="2" class="label-data">Metadata</td>
+                </tr>
+                <tr>
+                    <td>Fecha de creacion</td>
+                    <td><g:formatDate date="${voucher.dateCreated}" format="yyyy-MM-dd HH:mm"/></td>
+                </tr>
+                <tr>
+                    <td>Mas reciente actualizacion</td>
+                    <td><g:formatDate date="${voucher.lastUpdated}" format="yyyy-MM-dd HH:mm"/></td>
+                </tr>
+                <g:if test="${voucher?.approvalDate}">
+                    <tr>
+                        <td>Fecha de autorizacion</td>
+                        <td><g:formatDate date="${voucher.approvalDate}" format="yyyy-MM-dd HH:mm"/></td>
+                    </tr>
+                </g:if>
             </tbody>
         </table>
     </content>

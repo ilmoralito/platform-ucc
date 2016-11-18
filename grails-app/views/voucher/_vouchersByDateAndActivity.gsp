@@ -31,15 +31,15 @@
                         <td width="1" class="text-center">
                             <input type="checkbox" name="vouchers" form="notify" value="${instance.id}">
                         </td>
-                        <td>
+                        <td style="vertical-align: middle;">
                             <g:link action="show" id="${instance.id}">
                                 <g:formatBoolean boolean="${instance.user == null}" true="${instance?.guest?.fullName}" false="${instance?.user?.username}"/>
                             </g:link>
                         </td>
-                        <td>
+                        <td style="vertical-align: middle;">
                             <ucc:foodInSpanish foods="${instance.foods.name}"/>
                         </td>
-                        <td>
+                        <td style="vertical-align: middle;">
                             <g:fieldValue bean="${instance}" field="value"/>
                         </td>
                     </tr>

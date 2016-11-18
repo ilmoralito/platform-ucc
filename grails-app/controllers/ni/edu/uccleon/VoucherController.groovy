@@ -146,12 +146,51 @@ class VoucherController {
 
     @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
     def edit(Voucher voucher) {
-        respond voucher
+        def member = voucher?.user ?: voucher.guest
+        String type = member.class.name.tokenize('.')[-1].toLowerCase()
+
+        respond voucher, model: [
+            users: voucherService.getValidUsers(type, voucher.activity, voucher.date) + member,
+            activities: voucherService.getVoucherActivities(),
+            foods: voucherService.getFoods(),
+            type: type
+        ]
     }
 
     @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
-    def update(Voucher voucher) {
+    def update() {
+        Voucher voucher = Voucher.get(params.int('id'))
+        List<String> foodList = params.list('foods')
+        String type = params.type
 
+        if (!voucher) {
+            response.sendError 404
+        }
+
+        voucher[type] = type == 'user' ? User.get(params.int('user')) : Guest.get(params.int('user'))
+        voucher.date = params.date('voucherDate', 'yyyy-MM-dd')
+        voucher.value = params.double('value')
+        voucher.activity = params.activity
+
+        if (!voucher.save() || !foodList) {
+            voucher.errors.allErrors.each { error ->
+                log.error "$error.field: $error.defaultMessage"
+            }
+
+            flash.message = 'Parametros incorrectos'
+            redirect action: 'edit', id: voucher.id
+            return
+        }
+
+        voucher.foods.clear()
+
+        foodList.each { food ->
+            Food foodInstance = new Food(name: food)
+            voucher.addToFoods(foodInstance)
+        }
+
+        flash.message = 'Vale actualizado'
+        redirect action: 'show', id: voucher.id
     }
 
     @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
