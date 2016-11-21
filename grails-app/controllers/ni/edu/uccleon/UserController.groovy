@@ -80,7 +80,8 @@ class UserController {
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR'])
     def profile() {
-        Map employee = employeeService.getEmployee(springSecurityService.loadCurrentUser().id)
+        User currentUser = springSecurityService.loadCurrentUser()
+        Map employee = employeeService.getEmployee(currentUser.employee)
 
         [employee: employee]
     }
