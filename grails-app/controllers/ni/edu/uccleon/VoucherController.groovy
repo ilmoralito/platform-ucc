@@ -314,7 +314,7 @@ class VoucherController {
         builder.create {
             document(
                 font: [family: 'Courier', size: 10.pt],
-                margin: [top: 0.2.inches, right: 0.2.inches, bottom: 0.2.inches, left: 0.2.inches]
+                margin: [top: 0.1.inches, right: 0.2.inches, bottom: 0.1.inches, left: 0.2.inches]
             ) {
                 voucherList.each { setOfVouchers ->
                     setOfVouchers.each { voucher ->
@@ -352,10 +352,10 @@ class VoucherController {
                             }
                         }
 
-                        paragraph(font: [size: 8.pt], margin: [top: 0.1.inches, bottom: 0.1.inches], align: 'center') {
-                            text 'VALE DE ALIMENTACION - '
-                            text "Creado por Orlando Gaitan ${voucher.dateCreated.format('yyyy-MM-dd HH:mm')}, "
-                            text "Autorizado por Jorge Rojas ${voucher.approvalDate.format('yyyy-MM-dd HH:mm')}"
+                        paragraph(font: [size: 8.pt], margin: [top: 0.inches, bottom: 0.1.inches], align: 'center') {
+                            text "VALE DE ALIMENTACION [ #${voucher.id} ]", font: [bold: true]
+                            text " - Creado por Orlando Gaitan ${voucher.dateCreated.format('yyyy-MM-dd HH:mm')}, ", font: [size: 7.pt]
+                            text "Autorizado por Jorge Rojas ${voucher.approvalDate.format('yyyy-MM-dd HH:mm')}", font: [size: 7.pt]
                         }
 
                     }
