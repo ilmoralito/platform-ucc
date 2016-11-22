@@ -1,8 +1,8 @@
 <table class="table table-hover">
     <colgroup>
         <col span="1" style="width: 5%;">
-        <col span="1" style="width: 20%;">
-        <col span="1" style="width: 70%;">
+        <col span="1" style="width: 25%;">
+        <col span="1" style="width: 65%;">
         <col span="1" style="width: 5%;">
     </colgroup>
     <thead>

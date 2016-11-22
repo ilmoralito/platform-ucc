@@ -11,11 +11,11 @@
                 <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}"/>
 
                 <div class="clearfix">
-                    <g:form name="notify" action="sendNotification" class="pull-left">
+                    <g:form name="notify" action="sendNotification" class="pull-left" style="margin-right: 5px;">
                         <g:submitButton name="send" value="Notificar" class="btn btn-primary"/>
                     </g:form>
 
-                    <g:form name="batch" action="batchDelete" class="pull-right">
+                    <g:form name="batch" action="batchDelete">
                         <g:hiddenField name="returnPlace" value="index"/>
 
                         <g:submitButton name="send" value="Eliminar" class="btn btn-primary btn-danger"/>
