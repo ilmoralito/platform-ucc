@@ -22,144 +22,57 @@ class BootStrap {
     }
 
     private void development() {
-        DomainBuilder builder = new DomainBuilder()
         Date today = new Date()
-        List<ExternalCustomer> externalCustomers = []
 
-        builder.classNameResolver = 'ni.edu.uccleon'
-
+        Role userRole = new Role('ROLE_USER').save failOnError: true
         Role adminRole = new Role('ROLE_ADMIN').save failOnError: true
-        Role administrativeSupervisorRole = new Role('ROLE_ADMINISTRATIVE_SUPERVISOR').save failOnError: true
         Role academicSupervisorRole = new Role('ROLE_ACADEMIC_SUPERVISOR').save failOnError: true
         Role protocolSupervisorRole = new Role('ROLE_PROTOCOL_SUPERVISOR').save failOnError: true
-        Role userRole = new Role('ROLE_USER').save failOnError: true
+        Role administrativeSupervisorRole = new Role('ROLE_ADMINISTRATIVE_SUPERVISOR').save failOnError: true
 
-        Map MM = employeeService.getEmployee(1)
-        Map JR = employeeService.getEmployee(2)
-        Map CR = employeeService.getEmployee(3)
-        Map RL = employeeService.getEmployee(4)
-        Map WJ = employeeService.getEmployee(5)
-        Map NC = employeeService.getEmployee(6)
-        Map NN = employeeService.getEmployee(7)
-        Map OG = employeeService.getEmployee(8)
+        Map protocolManager = employeeService.getEmployee(1)
+        Map technicalSupportAssistant = employeeService.getEmployee(2)
+        Map administrator = employeeService.getEmployee(3)
+        Map sportManager = employeeService.getEmployee(4)
+
+        User orlandoGaitan = new User (
+            username: protocolManager.fullName,
+            email: protocolManager.institutionalMail,
+            employee: protocolManager.id
+        ).save failOnError: true
 
         User marioMartinez = new User (
-            username: MM.fullName,
-            email: MM.institutionalMail,
-            employee: MM.id
+            username: technicalSupportAssistant.fullName,
+            email: technicalSupportAssistant.institutionalMail,
+            employee: technicalSupportAssistant.id
         ).save failOnError: true
 
         User jorgeRojas = new User (
-            username: JR.fullName,
-            email: JR.institutionalMail,
-            employee: JR.id
+            username: administrator.fullName,
+            email: administrator.institutionalMail,
+            employee: administrator.id
         ).save failOnError: true
 
-        User cristinaRojas = new User (
-            username: CR.fullName,
-            email: CR.institutionalMail,
-            employee: CR.id
+        User robertoNesme = new User (
+            username: sportManager.fullName,
+            email: sportManager.institutionalMail,
+            employee: sportManager.id
         ).save failOnError: true
 
-        User rositaMollineda = new User (
-            username: RL.fullName,
-            email: RL.institutionalMail,
-            employee: RL.id
-        ).save failOnError: true
 
-        User williamsJuarez = new User (
-            username: WJ.fullName,
-            email: WJ.institutionalMail,
-            employee: WJ.id
-        ).save failOnError: true
-
-        User neylingCarrero = new User (
-            username: NC.fullName,
-            email: NC.institutionalMail,
-            employee: NC.id
-        ).save failOnError: true
-
-        User nejamaNarvaez = new User (
-            username: NN.fullName,
-            email: NN.institutionalMail,
-            employee: NN.id
-        ).save failOnError: true
-
-        User orlandoGaitan = new User (
-            username: OG.fullName,
-            email: OG.institutionalMail,
-            employee: OG.id
-        ).save failOnError: true
-
+        UserRole.create orlandoGaitan, protocolSupervisorRole, true
         UserRole.create marioMartinez, adminRole, true
         UserRole.create jorgeRojas, administrativeSupervisorRole, true
-        UserRole.create cristinaRojas, administrativeSupervisorRole, true
-        UserRole.create rositaMollineda, academicSupervisorRole, true
-        UserRole.create williamsJuarez, userRole, true
-        UserRole.create neylingCarrero, userRole, true
-        UserRole.create nejamaNarvaez, userRole, true
-        UserRole.create orlandoGaitan, protocolSupervisorRole, true
+        UserRole.create robertoNesme, userRole, true
 
         UserRole.withSession {
             it.flush()
             it.clear()
         }
 
-        assert User.count() == 8
+        assert User.count() == 4
         assert Role.count() == 5
-        assert UserRole.count() == 8
-
-        externalCustomers << builder.externalCustomer(
-            name: 'externalCustomer1',
-            city: 'Leon',
-            email: 'externalCustomer1@domain.com',
-            telephoneNumber: '12345678',
-            id: 'externalCustomer1'
-        ) {
-            contact(
-                fullName: 'contact1 name',
-                identityCard: '291-290180-0001W',
-                address: 'Some address',
-                email: 'contact1@domain.com',
-                telephoneNumber: '87894565'
-            )
-        }
-
-        externalCustomers << builder.externalCustomer(
-            name: 'externalCustomer2',
-            city: 'Leon',
-            email: 'externalCustomer2@domain.com',
-            telephoneNumber: '12345679',
-            id: 'externalCustomer2'
-        ) {
-            contact(
-                fullName: 'contact2 name',
-                identityCard: '291-290180-0002W',
-                address: 'Some other address',
-                email: 'contact2@domain.com',
-                telephoneNumber: '98894565'
-            )
-        }
-
-        externalCustomers << builder.externalCustomer(
-            name: 'externalCustomer3',
-            city: 'Chinandega',
-            email: 'externalCustomer3@domain.com',
-            telephoneNumber: '82385679',
-            id: 'externalCustomer3'
-        ) {
-            contact(
-                fullName: 'contact3 name',
-                identityCard: '291-290180-0003W',
-                address: 'Yet another address',
-                email: 'contact3@domain.com',
-                telephoneNumber: '56894565'
-            )
-        }
-
-        externalCustomers.each { externalCustomer ->
-            externalCustomer.save failOnError: true
-        }
+        assert UserRole.count() == 4
 
         Guest guest1 = new Guest(fullName: 'John Doe').save failOnError: true
         Guest guest2 = new Guest(fullName: 'Juan Perez').save failOnError: true

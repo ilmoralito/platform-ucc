@@ -7,23 +7,39 @@ environments:
     development:
         grails:
             serverURL: http://localhost:8181
+        beans:
+            classroomService:
+                classroomURL: 'http://localhost:9090/classrooms'
+            coordinationService:
+                coordinationURL: 'http://localhost:9090/coordinations'
+            employeeService:
+                employeeURL: 'http://localhost:9090/employees'
+            colorService:
+                colorURL: 'http://localhost:9090/colors'
     test:
         grails:
             serverURL: http://localhost:8181
+        beans:
+            classroomService:
+                classroomURL: 'http://localhost:9090/classrooms'
+            coordinationService:
+                coordinationURL: 'http://localhost:9090/coordinations'
+            employeeService:
+                employeeURL: 'http://localhost:9090/employees'
+            colorService:
+                colorURL: 'http://localhost:9090/colors'
     production:
         grails:
-            serverURL: http://192.168.7.99:8181
-
----
-beans:
-    classroomService:
-        classroomURL: "http://localhost:9090/classrooms"
-    coordinationService:
-        coordinationURL: "http://localhost:9090/coordinations"
-    employeeService:
-        employeeURL: "http://localhost:9090/employees"
-    colorService:
-        colorURL: "http://localhost:9090/colors"
+            serverURL: http://192.168.7.254:8080/platform-ucc
+        beans:
+            classroomService:
+                classroomURL: 'http://192.168.7.254:8080/uapi/classrooms'
+            coordinationService:
+                coordinationURL: 'http://192.168.7.254:8080/uapi/coordinations'
+            employeeService:
+                employeeURL: 'http://192.168.7.254:8080/uapi/employees'
+            colorService:
+                colorURL: 'http://192.168.7.254:8080/uapi/colors'
 
 ---
 hibernate:
@@ -80,7 +96,7 @@ environments:
 grails:
     profile: web
     codegen:
-        defaultPackage: "ni.edu.uccleon"
+        defaultPackage: 'ni.edu.uccleon'
     spring:
         transactionManagement:
             proxies: false
