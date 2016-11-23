@@ -30,16 +30,16 @@ environments:
                 colorURL: 'http://localhost:9090/colors'
     production:
         grails:
-            serverURL: http://192.168.7.254:8080/platform-ucc
+            serverURL: http://192.168.7.254/platform-ucc
         beans:
             classroomService:
-                classroomURL: 'http://192.168.7.254:8080/uapi/classrooms'
+                classroomURL: 'http://192.168.7.254/uapi/classrooms'
             coordinationService:
-                coordinationURL: 'http://192.168.7.254:8080/uapi/coordinations'
+                coordinationURL: 'http://192.168.7.254/uapi/coordinations'
             employeeService:
-                employeeURL: 'http://192.168.7.254:8080/uapi/employees'
+                employeeURL: 'http://192.168.7.254/uapi/employees'
             colorService:
-                colorURL: 'http://192.168.7.254:8080/uapi/colors'
+                colorURL: 'http://192.168.7.254/uapi/colors'
 
 ---
 hibernate:
