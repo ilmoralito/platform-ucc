@@ -1,12 +1,12 @@
 grails.databinding.dateFormats = ["yyyy-MM-dd"]
 
-grails.plugin.springsecurity.userLookup.usernamePropertyName = "email"
-grails.plugin.springsecurity.logout.postOnly = false
 grails.plugin.springsecurity.successHandler.defaultTargetUrl = "/panel"
+grails.plugin.springsecurity.userLookup.usernamePropertyName = "email"
+grails.plugin.springsecurity.logout.afterLogoutUrl = '/login/auth'
+grails.plugin.springsecurity.logout.postOnly = false
 
-// Added by the Spring Security Core plugin:
-grails.plugin.springsecurity.userLookup.userDomainClassName = "ni.edu.uccleon.User"
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = "ni.edu.uccleon.UserRole"
+grails.plugin.springsecurity.userLookup.userDomainClassName = "ni.edu.uccleon.User"
 grails.plugin.springsecurity.authority.className = "ni.edu.uccleon.Role"
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
     [pattern: "/",               access: ["permitAll"]],
