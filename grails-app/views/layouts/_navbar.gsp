@@ -70,9 +70,11 @@
                     </li>
                 </sec:ifLoggedIn>
                 <sec:ifNotLoggedIn>
-                    <li>
-                        <g:link controller="login" action="auth">Iniciar sesion</g:link>
-                    </li>
+                    <g:if test="${controllerName != 'login'}">
+                        <li>
+                            <g:link controller="login" action="auth">Iniciar sesion</g:link>
+                        </li>
+                    </g:if>
                 </sec:ifNotLoggedIn>
             </ul>
         </div>
