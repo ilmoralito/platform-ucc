@@ -5,20 +5,14 @@
 
     <content tag="main">
         <table class="table table-hover">
-            <colgroup>
-                <col span="1" style="width: 5%;">
-                <col span="1" style="width: 95%;">
-            </colgroup>
             <thead>
-                <th style="text-align: center;">#</th>
-                <th>Nombre y apellido</th>
+                <th>Usuarios</th>
             </thead>
             <tbody>
-                <g:each in="${users}" var="user" status="idx">
+                <g:each in="${users}" var="user">
                     <tr>
-                        <td style="text-align: center;">${idx + 1}</td>
                         <td>
-                            <g:link action="show" id="${user.id}">${user.username}</g:link>
+                            <g:link action="edit" id="${user.id}">${user.username}</g:link>
                         </td>
                     </tr>
                 </g:each>

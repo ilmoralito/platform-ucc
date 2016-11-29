@@ -60,7 +60,6 @@
                             <sec:loggedInUserInfo field="username"/> <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <g:render template="/layouts/administration"/>
                             <li class="${controllerName == 'user' && actionName == 'profile' ? 'active' : ''}">
                                 <g:link controller="user" action="profile">Perfil</g:link>
                             </li>

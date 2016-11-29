@@ -1,18 +1,22 @@
 package ni.edu.uccleon
 
-import grails.plugin.springsecurity.annotation.Secured
-import org.springframework.http.ResponseEntity
+import grails.transaction.*
 import grails.plugins.rest.client.RestResponse
+import org.springframework.http.ResponseEntity
+import static org.springframework.http.HttpStatus.*
+import static org.springframework.http.HttpMethod.*
+import grails.plugin.springsecurity.SpringSecurityService
+import grails.plugin.springsecurity.annotation.Secured
 
 @Secured(['ROLE_ADMIN'])
 class UserController {
-    def springSecurityService
-    def employeeService
+    SpringSecurityService springSecurityService
+    EmployeeService employeeService
 
     static allowedMethods = [
         index: 'GET',
         create: 'POST',
-        show: 'GET',
+        edit: 'GET',
         update: 'POST',
         profile: 'GET',
         password: ['GET', 'POST']
@@ -45,37 +49,40 @@ class UserController {
         redirect action: "index"
     }
 
-    def show(User user) {
-        respond user, model: [employee: employeeService.getEmployee(user.id)]
+    def edit(User user) {
+        respond user, model: [
+            roles: Role.list()
+        ]
     }
 
-    def update(Long id) {
-        User user = User.get(id)
-        def result
+    def update(User user) {
+        List<String> authorities = params.list('authorities')
 
         if (!user) {
-            response.sendError 404
+            render status: NOT_FOUND
         }
 
-        user.properties = params
+        if (!authorities) {
+            flash.message = 'Parametros incorrectos'
 
-        if (!user.save()) {
-            user.errors.allErrors.each { error ->
-                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
-            }
-
-            flash.bag = user
-        } else {
-            result = employeeService.updateEmployee(id, params?.fullName, params?.institutionalMail, params?.position, params?.authority, params?.identityCard, params?.inss)
-
-            if (result.json.message) {
-                flash.employeeBag = result.json
-                log.error "A ocurrido el error $result.json.message"
-            }
+            redirect action: 'edit', id: user.id
+            return
         }
 
-        flash.message = user.hasErrors() || result.json.message ? "A ocurrido un error" : "Tarea completada"
-        redirect action: "show", id: id
+        if (user.hasErrors()) {
+            flash.message = 'A ocurrido un error'
+
+            respond user.errors, view: 'edit', model: [roles: Role.list()]
+        }
+
+        user.save()
+        UserRole.removeAll(user, true)
+
+        authorities.each { authority ->
+            UserRole.create(user, Role.findByAuthority(authority), true)
+        }
+
+        redirect action: 'edit', id: user.id
     }
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR'])

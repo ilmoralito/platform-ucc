@@ -38,7 +38,5 @@
                 </tr>
             </tbody>
         </table>
-
-        <%--<ucc:profile employee="${employee}"/>--%>
     </content>
 </g:applyLayout>
