@@ -23,10 +23,8 @@ class AppTagLib {
         externalCustomers: 'raw',
         activityStatus: 'raw',
         activityWidget: 'raw',
-        getEmployeeList: 'raw',
         getEmployees: 'raw',
         getGuests: 'raw',
-        getColors: 'raw',
         eventWidget: 'raw',
         activityDatalist: 'raw'
     ]
@@ -322,25 +320,6 @@ class AppTagLib {
         }
     }
 
-    def getEmployeeList = { attrs ->
-        MarkupBuilder mb = new MarkupBuilder(out)
-        List employees = attrs.employees
-        Map<String, String> params = [:]
-
-        mb.div(class: "form-group") {
-            delegate.select(name: "employee", id: "employee", class: "form-control") {
-                employees.each { e ->
-                    params.value = e.id
-                    params["data-information"] = JsonOutput.toJson(e)
-
-                    option(params) {
-                        mkp.yield e.fullName
-                    }
-                }
-            }
-        }
-    }
-
     def getEmployees = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
         List employees = attrs.employees ?: employeeService.getEmployees()
@@ -377,34 +356,6 @@ class AppTagLib {
         String employeeFullName = employeeService.getEmployee(attrs.id).fullName
 
         out << employeeFullName
-    }
-
-    def getColors = { attrs ->
-        MarkupBuilder mb = new MarkupBuilder(out)
-        List colorList = attrs.colorList
-        List colorParamList = attrs.colorParamList
-        Map params = [type: "checkbox", name: "colors"]
-
-        mb.div {
-            label "Colores"
-
-            colorList.each { color ->
-                params.value = color.name
-
-                if (color.name in colorParamList) {
-                    params.selected = true
-                } else {
-                    params.remove("selected")
-                }
-
-                div(class: "checkbox") {
-                    label {
-                        input(params)
-                        mkp color.name
-                    }
-                }
-            }
-        }
     }
 
     def getClassroom = { attrs ->
