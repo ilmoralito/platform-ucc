@@ -24,102 +24,150 @@ class BootStrap {
     private void development() {
         Date today = new Date()
 
-        Role userRole = new Role('ROLE_USER').save failOnError: true
-        Role adminRole = new Role('ROLE_ADMIN').save failOnError: true
-        Role academicSupervisorRole = new Role('ROLE_ACADEMIC_SUPERVISOR').save failOnError: true
-        Role protocolSupervisorRole = new Role('ROLE_PROTOCOL_SUPERVISOR').save failOnError: true
-        Role administrativeSupervisorRole = new Role('ROLE_ADMINISTRATIVE_SUPERVISOR').save failOnError: true
+        // Roles
+        Role assistantAdministrativeSupervisorRole = Role.findOrSaveByAuthority('ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR')
+        Role administrativeSupervisorRole = Role.findOrSaveByAuthority('ROLE_ADMINISTRATIVE_SUPERVISOR')
+        Role academicSupervisorRole = Role.findOrSaveByAuthority('ROLE_ACADEMIC_SUPERVISOR')
+        Role protocolSupervisorRole = Role.findOrSaveByAuthority('ROLE_PROTOCOL_SUPERVISOR')
+        Role adminRole = Role.findOrSaveByAuthority('ROLE_ADMIN')
+        Role userRole = Role.findOrSaveByAuthority('ROLE_USER')
 
+        // Employees
         Map protocolManager = employeeService.getEmployee(1)
         Map technicalSupportAssistant = employeeService.getEmployee(2)
         Map administrator = employeeService.getEmployee(3)
         Map sportManager = employeeService.getEmployee(4)
+        Map assistantAdministration = employeeService.getEmployee(5)
 
-        User orlandoGaitan = new User (
-            username: protocolManager.fullName,
-            email: protocolManager.institutionalMail,
-            employee: protocolManager.id
-        ).save failOnError: true
+        // Users
+        User orlandoGaitan = User.findByEmail(protocolManager.institutionalMail)
+        if (!orlandoGaitan) {
+            orlandoGaitan = new User (
+                username: protocolManager.fullName,
+                email: protocolManager.institutionalMail,
+                employee: protocolManager.id
+            ).save failOnError: true
+        }
 
-        User marioMartinez = new User (
-            username: technicalSupportAssistant.fullName,
-            email: technicalSupportAssistant.institutionalMail,
-            employee: technicalSupportAssistant.id
-        ).save failOnError: true
+        User marioMartinez = User.findByEmail(technicalSupportAssistant.institutionalMail)
+        if (!marioMartinez) {
+            marioMartinez = new User (
+                username: technicalSupportAssistant.fullName,
+                email: technicalSupportAssistant.institutionalMail,
+                employee: technicalSupportAssistant.id
+            ).save failOnError: true
+        }
 
-        User jorgeRojas = new User (
-            username: administrator.fullName,
-            email: administrator.institutionalMail,
-            employee: administrator.id
-        ).save failOnError: true
+        User jorgeRojas = User.findByEmail(administrator.institutionalMail)
+        if (!jorgeRojas) {
+            jorgeRojas = new User (
+                username: administrator.fullName,
+                email: administrator.institutionalMail,
+                employee: administrator.id
+            ).save failOnError: true
+        }
 
-        User robertoNesme = new User (
-            username: sportManager.fullName,
-            email: sportManager.institutionalMail,
-            employee: sportManager.id
-        ).save failOnError: true
+        User robertoNesme = User.findByEmail(sportManager.institutionalMail)
+        if (!robertoNesme) {
+            robertoNesme = new User (
+                username: sportManager.fullName,
+                email: sportManager.institutionalMail,
+                employee: sportManager.id
+            ).save failOnError: true
+        }
 
+        User cristinaRojas = User.findByEmail(assistantAdministration.institutionalMail)
+        if (!cristinaRojas) {
+            cristinaRojas = new User(
+                username: assistantAdministration.fullName,
+                email: assistantAdministration.institutionalMail,
+                employee: assistantAdministration.id
+            ).save failOnError: true
+        }
 
-        UserRole.create orlandoGaitan, protocolSupervisorRole, true
-        UserRole.create marioMartinez, adminRole, true
-        UserRole.create jorgeRojas, administrativeSupervisorRole, true
-        UserRole.create robertoNesme, userRole, true
+        // UserRoles
+        if (!UserRole.exists(orlandoGaitan.id, protocolSupervisorRole.id)) {
+            UserRole.create orlandoGaitan, protocolSupervisorRole, true
+        }
+
+        if (!UserRole.exists(marioMartinez.id, adminRole.id)) {
+            UserRole.create marioMartinez, adminRole, true
+        }
+
+        if (!UserRole.exists(jorgeRojas.id, administrativeSupervisorRole.id)) {
+            UserRole.create jorgeRojas, administrativeSupervisorRole, true
+        }
+
+        if (!UserRole.exists(robertoNesme.id, userRole.id)) {
+            UserRole.create robertoNesme, userRole, true
+        }
+
+        if (!UserRole.exists(cristinaRojas.id, userRole.id)) {
+            UserRole.create cristinaRojas, userRole, true
+        }
+
+        if (!UserRole.exists(cristinaRojas.id, assistantAdministrativeSupervisorRole.id)) {
+            UserRole.create cristinaRojas, assistantAdministrativeSupervisorRole, true
+        }
 
         UserRole.withSession {
             it.flush()
             it.clear()
         }
 
-        assert User.count() == 4
-        assert Role.count() == 5
-        assert UserRole.count() == 4
+        // Guests
+        Guest guest1 = Guest.findOrSaveByFullName('John Doe')
+        Guest guest2 = Guest.findOrSaveByFullName('Juan Perez')
+        Guest guest4 = Guest.findOrSaveByFullName('Donald Trump')
+        Guest guest3 = Guest.findOrSaveByFullName('Miguel de Cervantes')
 
-        Guest guest1 = new Guest(fullName: 'John Doe').save failOnError: true
-        Guest guest2 = new Guest(fullName: 'Juan Perez').save failOnError: true
-        Guest guest3 = new Guest(fullName: 'Miguel de Cervantes').save failOnError: true
-        Guest guest4 = new Guest(fullName: 'Donald Trump').save failOnError: true
+        // Vouchers
+        if (!Voucher.count()) {
+            Voucher voucher1 = new Voucher(
+                date: today,
+                guest: guest1,
+                activity: 'Activity#1',
+                value: 200,
+                createdBy: orlandoGaitan
+            )
 
-        Voucher voucher1 = new Voucher(
-            date: today,
-            guest: guest1,
-            activity: 'Activity#1',
-            value: 200
-        )
+            voucher1
+                .addToFoods(new Food(name: 'breakfast'))
+                .addToFoods(new Food(name: 'lunch'))
+                .addToFoods(new Food(name: 'dinner'))
 
-        voucher1
-            .addToFoods(new Food(name: 'breakfast'))
-            .addToFoods(new Food(name: 'lunch'))
-            .addToFoods(new Food(name: 'dinner'))
+            voucher1.save(failOnError: true)
 
-        voucher1.save(failOnError: true)
+            Voucher voucher2 = new Voucher(
+                date: today + 5,
+                guest: guest1,
+                activity: 'Activity#2',
+                value: 200,
+                status: 'notified',
+                createdBy: orlandoGaitan
+            )
 
-        Voucher voucher2 = new Voucher(
-            date: today + 5,
-            guest: guest1,
-            activity: 'Activity#2',
-            value: 200,
-            status: 'notified'
-        )
+            voucher2
+                .addToFoods(new Food(name: 'breakfast'))
+                .addToFoods(new Food(name: 'dinner'))
 
-        voucher2
-            .addToFoods(new Food(name: 'breakfast'))
-            .addToFoods(new Food(name: 'dinner'))
+            voucher2.save(failOnError: true)
 
-        voucher2.save(failOnError: true)
+            Voucher voucher3 = new Voucher(
+                date: today,
+                guest: guest3,
+                activity: 'Activity#3',
+                value: 250,
+                status: 'approved',
+                approvalDate: today,
+                createdBy: orlandoGaitan
+            )
 
-        Voucher voucher3 = new Voucher(
-            date: today,
-            guest: guest3,
-            activity: 'Activity#3',
-            value: 250,
-            status: 'approved',
-            approvalDate: today
-        )
+            voucher3
+                .addToFoods(new Food(name: 'dinner'))
 
-        voucher3
-            .addToFoods(new Food(name: 'dinner'))
-
-        voucher3.save(failOnError: true)
+            voucher3.save(failOnError: true)
+        }
     }
 
     private void production() {
