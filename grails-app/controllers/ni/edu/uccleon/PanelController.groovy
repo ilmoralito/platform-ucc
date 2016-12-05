@@ -17,7 +17,7 @@ class PanelController {
         User currentUser = springSecurityService.getCurrentUser()
 
         [
-            printQuota: employeeService.getEmployeeCoordinationsPrintQuota(currentUser.id),
+            printQuota: employeeService.getEmployeeCoordinationsPrintQuota(currentUser.employee),
             birthdaysMonth: birthdayService.getBirthdaysMonth()
         ]
     }
