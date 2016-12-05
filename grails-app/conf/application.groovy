@@ -75,14 +75,14 @@ ni {
 
 grails {
    mail {
-        host = "smtp.gmail.com"
+        host = 'smtp.gmail.com'
         port = 465
-        username = "mario.martinez@ucc.edu.ni" // System.env.GMAIL_USERNAME
-        password = "hotch^peluso" // System.env.GMAIL_PASSWORD
-        props = ["mail.smtp.auth":"true",
-              "mail.smtp.socketFactory.port":"465",
-              "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
-              "mail.smtp.socketFactory.fallback":"false"]
+        username = System.env.GMAIL_USERNAME
+        password = System.env.GMAIL_PASSWORD
+        props = ['mail.smtp.auth':'true',
+              'mail.smtp.socketFactory.port':'465',
+              'mail.smtp.socketFactory.class':'javax.net.ssl.SSLSocketFactory',
+              'mail.smtp.socketFactory.fallback':'false']
    }
 }
 

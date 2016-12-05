@@ -52,8 +52,8 @@ hibernate:
 
 dataSource:
     pooled: true
-    username: root
-    password: hotch
+    username: ${JDBC_USERNAME}
+    password: ${JDBC_PASSWORD}
     jmxExport: true
     driverClassName: com.mysql.jdbc.Driver
     dialect: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -62,7 +62,7 @@ environments:
     development:
         dataSource:
             logSql: true
-            dbCreate: create-drop
+            dbCreate: update
             url: jdbc:mysql://localhost/development_platform_ucc?autoReconnect=true&useSSL=false
     test:
         dataSource:
