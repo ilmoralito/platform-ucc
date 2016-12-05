@@ -30,8 +30,8 @@ class ClassroomService {
 
         RestResponse response = restBuilder.post(classroomURL) {
             contentType MediaType.APPLICATION_JSON_VALUE
-            header("Accept-Language", "en")
-            header("Accept", MediaType.APPLICATION_JSON_VALUE)
+            header('Accept-Language', 'en')
+            header('Accept', MediaType.APPLICATION_JSON_VALUE)
             json data
         }
 
@@ -44,8 +44,8 @@ class ClassroomService {
 
         RestResponse response = restBuilder.put("$classroomURL/$id") {
             contentType MediaType.APPLICATION_JSON_VALUE
-            header("Accept-Language", "en")
-            header("Accept", MediaType.APPLICATION_JSON_VALUE)
+            header('Accept-Language', 'en')
+            header('Accept', MediaType.APPLICATION_JSON_VALUE)
             json data
         }
 

@@ -9,8 +9,37 @@
 </div>
 
 <div class="form-group">
-    <label for="location">Area</label>
-    <g:select name="location" from="['Administrative', 'Academic']" class="form-control"/>
+    <label for="printQuota">Cuota de impresion</label>
+    <g:textField name="printQuota" value="${params?.printQuota}" class="form-control"/>
 </div>
 
-<ucc:getColors colorList="${colorList}" colorParamList="${params.colors}"/>
+<div class="form-group">
+    <label style="margin-bottom: 0;">Area</label>
+
+    <div class="radio">
+        <label>
+            <g:radio name="location" value="Administrative"/>
+            Administrativa
+        </label>
+    </div>
+
+    <div class="radio">
+        <label>
+            <g:radio name="location" value="Academic"/>
+            Academica
+        </label>
+    </div>
+</div>
+
+<div class="form-group">
+    <label style="margin-bottom: 0;">Colores</label>
+
+    <g:each in="${colors}" var="color">
+        <div class="checkbox">
+            <label>
+                <g:checkBox name="colors" value="${color.id}" checked="false"/>
+                ${color.name}
+            </label>
+        </div>
+    </g:each>
+</div>
