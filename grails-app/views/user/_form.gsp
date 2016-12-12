@@ -1,11 +1,21 @@
 <div class="form-group">
     <label for="fullName">Nombre y apellido</label>
-    <g:textField name="fullName" class="form-control"/>
+    <g:textField name="fullName" value="${employee?.fullName}" class="form-control"/>
 </div>
 
 <div class="form-group">
     <label for="institutionalMail">Correo institucional</label>
-    <g:field type="email" name="institutionalMail" class="form-control"/>
+    <g:field type="email" name="institutionalMail" value="${employee?.institutionalMail}" class="form-control"/>
+</div>
+
+<div class="form-group">
+    <label for="identityCard">Cedula</label>
+    <g:textField name="identityCard" value="${employee?.identityCard}" class="form-control"/>
+</div>
+
+<div class="form-group">
+    <label for="inss">INSS</label>
+    <g:textField name="inss" value="${employee?.inss}" class="form-control"/>
 </div>
 
 <div class="form-group">
@@ -13,27 +23,17 @@
     
     <div class="radio">
         <label>
-            <g:radio name="authority" value="Manager"/>
+            <g:radio name="authority" value="Manager" checked="${employee?.authority == 'Manager'}"/>
             Coordinador
         </label>
     </div>
 
     <div class="radio">
         <label>
-            <g:radio name="authority" value="Assistant"/>
+            <g:radio name="authority" value="Assistant" checked="${employee?.authority == 'Assistant'}"/>
             Asistente
         </label>
     </div>
-</div>
-
-<div class="form-group">
-    <label for="identityCard">Cedular</label>
-    <g:textField name="identityCard" class="form-control"/>
-</div>
-
-<div class="form-group">
-    <label for="inss">INSS</label>
-    <g:textField name="inss" class="form-control"/>
 </div>
 
 <div class="form-group">
@@ -42,9 +42,24 @@
     <g:each in="${coordinations}" var="coordination">
         <div class="checkbox">
             <label>
-                <g:checkBox name="coordinations" value="${coordination.id}" checked="false"/>
+                <g:checkBox name="coordinations" value="${coordination.name}" checked="${coordination.name in employee?.coordinations?.name}"/>
                 ${coordination.name}
             </label>
         </div>
     </g:each>
 </div>
+
+<g:if test="${actionName == 'index'}">
+    <div class="form-group">
+        <label style="margin-bottom: 0;">Roles</label>
+
+        <g:each in="${roles}" var="role">
+            <div class="checkbox">
+                <label>
+                    <g:checkBox name="authorities" value="${role.authority}" checked="false"/>
+                    ${role.authority.toLowerCase().tokenize('_')[1..-1].join(' ').capitalize()}
+                </label>
+            </div>
+        </g:each>
+    </div>
+</g:if>

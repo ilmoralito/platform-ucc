@@ -4,40 +4,72 @@ import grails.plugins.rest.client.RestResponse
 import grails.plugins.rest.client.RestBuilder
 import org.springframework.http.MediaType
 import grails.transaction.Transactional
+import grails.gorm.DetachedCriteria
 import grails.util.Environment
 
 @Transactional
 class EmployeeService {
     String employeeURL
 
-    def getEmployee(Long id) {
+    Map getEmployee(Long id) {
         RestBuilder restBuilder = new RestBuilder()
         def json = restBuilder.get("$employeeURL/$id").json
 
         json
     }
 
-    def getEmployees(Integer max = 200) {
+    List getEmployees(Integer max = 200) {
         RestBuilder restBuilder = new RestBuilder()
         def json = restBuilder.get("$employeeURL?max=$max").json
 
         json
     }
 
-    def updateEmployee(Long id, String fullName, String institutionalMail, String position, String authority, String identityCard, String inss) {
+    Map getEmployeeByInstitutionalMail(final String institutionalMail) {
         RestBuilder restBuilder = new RestBuilder()
-        Map jsonMap = [
+        def response = restBuilder.get("${employeeURL}/getEmployeeByInstitutionalMail?institutionalMail={institutionalMail}") {
+            urlVariables institutionalMail: institutionalMail
+        }.json
+
+        response
+    }
+
+    RestResponse postEmployee(final String fullName, final String institutionalMail, final String authority, final String identityCard, final String inss, final List<String> coordinations) {
+        RestBuilder restBuilder = new RestBuilder()
+        final Map data = [
             fullName: fullName,
             institutionalMail: institutionalMail,
-            position: position,
             authority: authority,
-            identityCar: identityCard,
-            inss: inss
+            identityCard: identityCard,
+            inss: inss,
+            coordinations: coordinations
+        ]
+
+        RestResponse response = restBuilder.post(employeeURL) {
+            contentType MediaType.APPLICATION_JSON_VALUE
+            header 'Accept-Language', 'en'
+            header 'Accept', MediaType.APPLICATION_JSON_VALUE
+            json data
+        }
+
+        response
+    }
+
+    RestResponse putEmployee(final Integer id, final String fullName, final String institutionalMail, final String authority, final String identityCard, final String inss, final List<String> coordinations) {
+        RestBuilder restBuilder = new RestBuilder()
+        Map jsonMap = [
+            id: id,
+            fullName: fullName,
+            institutionalMail: institutionalMail,
+            authority: authority,
+            identityCard: identityCard,
+            inss: inss,
+            coordinations: coordinations
         ]
         RestResponse response = restBuilder.put("$employeeURL/$id") {
             contentType MediaType.APPLICATION_JSON_VALUE
-            header("Accept-Language", "en")
-            header("Accept", MediaType.APPLICATION_JSON_VALUE)
+            header('Accept-Language', 'en')
+            header('Accept', MediaType.APPLICATION_JSON_VALUE)
             json jsonMap
         }
 

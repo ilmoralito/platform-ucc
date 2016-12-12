@@ -12,7 +12,9 @@
                 <g:each in="${users}" var="user">
                     <tr>
                         <td>
-                            <g:link action="edit" id="${user.id}">${user.username}</g:link>
+                            <g:link action="edit" id="${user.id}">
+                                <g:fieldValue bean="${user}" field="username"/>
+                            </g:link>
                         </td>
                     </tr>
                 </g:each>
@@ -21,50 +23,12 @@
     </content>
 
     <content tag="right-column">
-        <g:if test="${employees}">
-            <g:form action="create" autocomplete="off">
-                <div class="form-group">
-                    <ucc:getEmployeeList employees="${employees}"/>
-                </div>
-
-                <div id="target"></div>
+        <div class="well well-sm">
+            <g:form action="save" autocomplete="off">
+                <g:render template="form"/>
 
                 <g:submitButton name="send" value="Confirmar" class="btn btn-primary btn-block"/>
             </g:form>
-
-            <script id="template" type="x-tmpl-mustache">
-                <label>Nombre</label>
-                <p>{{ fullName }}</p>
-
-                <label>Mail</label>
-                <p>{{ institutionalMail }}</p>
-
-                <label>Puesto</label>
-                <p>{{ position }}</p>
-
-                <label>Rol</label>
-                <p>{{ authority }}</p>
-
-                <label>Numero de cedula</label>
-                <p>{{ identityCard }}</p>
-
-                <label>Numero de INSS</label>
-                <p>{{ inss }}</p>
-
-                {{ #coordinations }}
-                    <label>Coordinacion</label>
-                    <p>{{ name }}</p>
-
-                    <label>Numero de extension</label>
-                    <p>{{ extensionNumber }}</p>
-
-                    <label>Direccion</label>
-                    <p>{{ location }}</p>
-                {{ /coordinations }}
-            </script>
-        </g:if>
-        <g:else>
-            <p>Todos los empleados fueron agregados</p>
-        </g:else>
+        </div>
     </content>
 </g:applyLayout>

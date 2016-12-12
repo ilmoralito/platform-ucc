@@ -1,57 +1,78 @@
 package ni.edu.uccleon
 
-import grails.transaction.*
-import grails.plugins.rest.client.RestResponse
-import org.springframework.http.ResponseEntity
-import static org.springframework.http.HttpStatus.*
-import static org.springframework.http.HttpMethod.*
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.annotation.Secured
+import static org.springframework.http.HttpMethod.*
+import static org.springframework.http.HttpStatus.*
+import grails.plugins.rest.client.RestResponse
+import org.springframework.http.ResponseEntity
+import org.grails.web.json.JSONObject
+import grails.transaction.*
 
-@Secured(['ROLE_ADMIN'])
+@Secured('ROLE_ADMIN')
 class UserController {
     SpringSecurityService springSecurityService
+    CoordinationService coordinationService
     EmployeeService employeeService
 
     static allowedMethods = [
         index: 'GET',
-        create: 'POST',
+        save: 'POST',
         edit: 'GET',
         update: 'POST',
+        updateEmployee: 'POST',
         profile: 'GET',
         password: ['GET', 'POST']
     ]
 
     def index() {
-        List<User> users = User.list()
-        List employeeList = employeeService.getEmployees()
-        List<Integer> userList = users.employee
-        List employeesNotInUserList = employeeList.findAll { !(it.id in userList) }
-
-        [users: users, employees: employeesNotInUserList]
+        [
+            users: User.list(),
+            roles: Role.list(),
+            coordinations: coordinationService.getCoordinations()
+        ]
     }
 
-    def create(Long employee) {
-        Map<String, String> e = employeeService.getEmployee(employee)
-        User user = new User(
-            username: e.fullName,
-            email: e.institutionalMail,
-            employee: e.id
+    def save() {
+        RestResponse result = employeeService.postEmployee(
+            params.fullName,
+            params.institutionalMail,
+            params.authority,
+            params.identityCard,
+            params.inss,
+            params.list('coordinations')
         )
 
-        if (!user.save()) {
-            user.errors.allErrors.each { error ->
-                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
+        if (result.status >= 400) {
+            flash.message = 'Parametros incorrectos'
+        } else {
+            JSONObject employee = employeeService.getEmployeeByInstitutionalMail(params.institutionalMail)
+
+            User user = new User(
+                username: employee.fullName,
+                email: employee.institutionalMail,
+                employee: employee.id
+            )
+
+            user.save(flush: true)
+
+            params.list('authorities').each { authority ->
+                Role role = Role.findByAuthority(authority)
+
+                UserRole.create user, role, true
             }
+
+            flash.message = 'Usuario creado'
         }
 
-        flash.message = user.hasErrors() ? "A ocurrido un error" : "Tarea completada"
-        redirect action: "index"
+        redirect action: 'index'
     }
 
     def edit(User user) {
         respond user, model: [
-            roles: Role.list()
+            roles: Role.list(),
+            employee: employeeService.getEmployee(user.employee),
+            coordinations: coordinationService.getCoordinations()
         ]
     }
 
@@ -83,6 +104,21 @@ class UserController {
         }
 
         redirect action: 'edit', id: user.id
+    }
+
+    def updateEmployee() {
+        RestResponse result = employeeService.putEmployee(
+            params.int('employeeId'),
+            params.fullName,
+            params.institutionalMail,
+            params.authority,
+            params.identityCard,
+            params.inss,
+            params.list('coordinations')
+        )
+
+        flash.message = result.status >= 400 ? 'Parametros incorrectos' : 'Empleado actualizado'
+        redirect action: 'edit', id: params.int('id')
     }
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR'])
