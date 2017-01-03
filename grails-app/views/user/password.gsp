@@ -11,7 +11,7 @@
                 <div class="col-xs-6">
                     <div class="form-group">
                         <label for="currentPassword">Contrasena actual</label>
-                        <g:passwordField name="currentPassword" class="form-control" autofocus="true"/>
+                        <g:passwordField name="currentPassword" class="form-control"/>
                     </div>
                     
                     <div class="form-group">

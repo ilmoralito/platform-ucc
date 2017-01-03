@@ -22,7 +22,9 @@
                 </tr>
                 <tr>
                     <td>Autoridad</td>
-                    <td><g:formatBoolean boolean="${employee.authority == 'Manager'}" true="Responsable" false="Asistente"/></td>
+                    <td>
+                        <g:formatBoolean boolean="${employee.authority == 'Manager'}" true="Responsable" false="Asistente"/>
+                    </td>
                 </tr>
                 <tr>
                     <td>Cedula</td>
@@ -34,7 +36,15 @@
                 </tr>
                 <tr>
                     <td>Coordinacion</td>
-                    <td><g:join in="${employee.coordinations.name}"/></td>
+                    <td>
+                        <g:join in="${employee.coordinations.name}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Autoridades</td>
+                    <td>
+                        <g:join in="${currentUserAuthorities}"/>
+                    </td>
                 </tr>
             </tbody>
         </table>
