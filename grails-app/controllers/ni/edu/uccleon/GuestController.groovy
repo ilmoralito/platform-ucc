@@ -2,17 +2,24 @@ package ni.edu.uccleon
 
 import grails.plugin.springsecurity.annotation.Secured
 
-@Secured(['ROLE_PROTOCOL_SUPERVISOR'])
+@Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
 class GuestController {
+    GuestService guestService
+
     static allowedMethods = [
-        index: 'GET',
+        index: ['GET', 'POST'],
         create: 'POST',
         show: 'GET',
         update: 'POST'
     ]
 
     def index() {
-        [guests: Guest.list()]
+        List<Boolean> enabled = request.method == 'POST' && params.enabled ? params.list('enabled')*.toBoolean() : [true]
+
+        [
+            guests: guestService.getByEnabled(enabled),
+            enabled: enabled
+        ]
     }
 
     def create() {
@@ -26,7 +33,7 @@ class GuestController {
             flash.bean = guest
         }
 
-        flash.message = guest.hasErrors() ? 'A ocurrido un error' : 'Accion concluida correctamente'
+        flash.message = guest.hasErrors() ? 'Parametros incorrectos' : 'Tarea concluida'
         redirect action: 'index'
     }
 
@@ -51,7 +58,7 @@ class GuestController {
             flash.bean = guest
         }
 
-        flash.message = guest.hasErrors() ? 'A ocurrido un error' : 'Accion concluida correctamente'
+        flash.message = guest.hasErrors() ? 'Parametros incorrectos' : 'Tarea concluida'
         redirect action: 'show', id: id
     }
 }

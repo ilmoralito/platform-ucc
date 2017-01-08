@@ -1,6 +1,7 @@
 package ni.edu.uccleon
 
 import grails.transaction.Transactional
+import grails.gorm.DetachedCriteria
 
 @Transactional
 class GuestService {
@@ -13,7 +14,11 @@ class GuestService {
         Guest.list()
     }
 
-    List<Guest> getAllByEnabled(final Boolean enabled = true) {
-        Guest.findAllByEnabled(enabled)
+    List<Guest> getByEnabled(final List<Boolean> enabledList) {
+        DetachedCriteria query = Guest.where {
+            enabled in enabledList
+        }
+
+        query.list()
     }
 }

@@ -6,13 +6,8 @@
     <content tag="main">
         <g:if test="${guests}">
             <table class="table table-hover">
-                <colgroup>
-                    <col span="1" style="width: 88%;">
-                    <col span="1" style="width: 12%;">
-                </colgroup>
                 <thead>
-                    <th>Lista de invitados</th>
-                    <th>Estado</th>
+                    <th>Visitas</th>
                 </thead>
                 <tbody>
                     <g:each in="${guests}" var="guest">
@@ -21,14 +16,6 @@
                                 <g:link action="show" id="${guest.id}">
                                     <g:fieldValue bean="${guest}" field="fullName"/>
                                 </g:link>
-                            </td>
-                            <td>
-                                <g:if test="${guest.enabled}">
-                                    Habilitado
-                                </g:if>
-                                <g:else>
-                                    No habilitado
-                                </g:else>
                             </td>
                         </tr>
                     </g:each>
@@ -46,6 +33,26 @@
                 <g:render template="form"/>
 
                 <g:submitButton name="createGuest" value="Confirmar" class="btn btn-primary btn-block"/>
+            </g:form>
+        </div>
+
+        <div class="well well-sm">
+            <g:form action="index" autocomplete="off">
+                <div class="checkbox">
+                    <label>
+                        <g:checkBox name="enabled" value="true" checked="${true in enabled}"/>
+                        Habilitados
+                    </label>
+                </div>
+
+                <div class="checkbox">
+                    <label>
+                        <g:checkBox name="enabled" value="false" checked="${false in enabled}"/>
+                        No habilitados
+                    </label>
+                </div>
+
+                <g:submitButton name="filterGuests" value="Filtrar" class="btn btn-primary btn-block"/>
             </g:form>
         </div>
     </content>
