@@ -66,14 +66,14 @@ class VoucherController {
         if (voucherList) {
             Integer total = voucherService.updateVouchersStatus(voucherList*.toLong(), 'notified')
 
-            if (Environment.current == Environment.PRODUCTION) {
-                sendMail {
-                    from 'orlando.gaitan@ucc.edu.ni'
-                    to 'jorge.rojas@ucc.edu.ni'
-                    subject 'Notificacion de vales pendientes de aprobacion'
-                    html view: '/emails/voucher/notification', model: [total: total, url: createLink(controller: 'voucher', action: 'vouchersToApprove', absolute: true), label: 'notificado']
-                }
-            }
+            voucherService.report(
+                from: 'orlando.gaitan@ucc.edu.ni',
+                to: 'jorge.rojas@ucc.edu.ni',
+                subject: 'Notificacion de vales pendientes de aprobacion',
+                total: total,
+                url: createLink(controller: 'voucher', action: 'vouchersToApprove', absolute: true),
+                label: 'notificado'
+            )
 
             flash.message = "${total} vales notificados"
         } else {
@@ -222,18 +222,14 @@ class VoucherController {
         if (voucherList) {
             Integer total = voucherService.updateVouchersStatus(voucherList*.toLong(), 'approved')
 
-            if (Environment.current == Environment.PRODUCTION) {
-                sendMail {
-                    from 'jorge.rojas@ucc.edu.ni'
-                    to 'orlando.gaitan@ucc.edu.ni'
-                    subject 'Notificacion de vales aprobados'
-                    html view: '/emails/voucher/notification', model: [
-                        total: total,
-                        url: createLink(controller: 'voucher', action: 'approved', params: [approvalDate: new Date().format('yyyy-MM-dd')], absolute: true),
-                        label: 'aprobado'
-                    ]
-                }
-            }
+            voucherService.report(
+                from: 'jorge.rojas@ucc.edu.ni',
+                to: 'orlando.gaitan@ucc.edu.ni',
+                subject: 'Notificacion de vales aprobados',
+                total: total,
+                url: createLink(controller: 'voucher', action: 'approved', params: [approvalDate: new Date().format('yyyy-MM-dd')], absolute: true),
+                label: 'aprobado'
+            )
 
             flash.message = "${total} vales aprobados"
         } else {

@@ -1,6 +1,7 @@
 package ni.edu.uccleon
 
 import grails.config.Config
+import grails.util.Environment
 import static java.util.Calendar.*
 import grails.gorm.DetachedCriteria
 import grails.transaction.Transactional
@@ -184,10 +185,23 @@ class VoucherService implements GrailsConfigurationAware {
     }
 
     def getValidUsers(final String type, final String activity, final Date date) {
-        def members = type == 'user' ? userService.getAllByEnabled() : guestService.getAllByEnabled()
+        def members = type == 'user' ? userService.getAllByEnabled() : Guest.findAllByEnabled(true)
         List<Voucher> membersInActivity = this.getVouchersByDateAndActivity(date, activity)[type]
 
         members - membersInActivity
+    }
+
+    void report(Map params) {
+        sendMail {
+            from params.from
+            to Environment.current == Environment.PRODUCTION ? params.to : 'mario.martinez@ucc.edu.ni'
+            subject params.subject
+            html view: '/emails/voucher/notification', model: [
+                total: params.total,
+                url: params.url,
+                label: params.label
+            ]
+        }
     }
 
     @Override
