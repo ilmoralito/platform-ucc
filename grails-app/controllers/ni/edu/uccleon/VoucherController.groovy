@@ -3,9 +3,8 @@ package ni.edu.uccleon
 import com.craigburke.document.builder.PdfDocumentBuilder
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.annotation.Secured
-import grails.util.Environment
 
-@Secured('ROLE_PROTOCOL_SUPERVISOR')
+@Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
 class VoucherController {
     SpringSecurityService springSecurityService
     EmployeeService employeeService
@@ -28,7 +27,10 @@ class VoucherController {
         summary: 'GET',
         printVouchers: 'POST',
         filter: 'POST',
-        batchDelete: 'POST'
+        batchDelete: 'POST',
+        canceled: 'GET',
+        vouchersByYear: 'GET',
+        cancel: ['GET', 'POST']
     ]
 
     def index(String status) {
@@ -41,19 +43,25 @@ class VoucherController {
     }
 
     def approvalDates() {
+        List result = voucherService.getVouchersSummaryByApprovalDate()
+
         [
-            approvalDates: voucherService.getVouchersApprovalDates(),
+            summary: voucherService.collectList(result),
             activities: voucherService.getVoucherActivities()
         ]
     }
 
+    def getApprovedVouchersInTheYear(Integer year) {
+        [summary: voucherService.getVouchersApprovalDateByYear(year)]
+    }
+
     def approved(String approvalDate) {
         Date date = params.date('approvalDate', 'yyyy-MM-dd')
-        List<Voucher> vouchers = voucherService.getVouchersByApprovalDate(date)
         def(users, guests) = voucherService.getMembersInApprovalDate(date)
+        List<Voucher> voucherList = voucherService.getVouchersByApprovalDate(date)
 
         render view: 'approvedList', model: [
-            vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers),
+            vouchers: voucherService.getVouchersGroupedByDateAndActivity(voucherList),
             activities: voucherService.getVoucherActivities(),
             guests: guests,
             users: users
@@ -119,7 +127,8 @@ class VoucherController {
             guest: member instanceof Guest ? member : null,
             date: params.date('date', 'yyyy-MM-dd'),
             activity: params.activity,
-            value: params.double('value')
+            value: params.double('value'),
+            createdBy: springSecurityService.getCurrentUser()
         )
 
         params.list('foods').each { food ->
@@ -139,12 +148,12 @@ class VoucherController {
         redirect action: 'create', params: params
     }
 
-    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
     def show(Voucher voucher) {
         respond voucher
     }
 
-    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
     def edit(Voucher voucher) {
         def member = voucher?.user ?: voucher.guest
         String type = member.class.name.tokenize('.')[-1].toLowerCase()
@@ -157,7 +166,7 @@ class VoucherController {
         ]
     }
 
-    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
     def update() {
         Voucher voucher = Voucher.get(params.int('id'))
         List<String> foodList = params.list('foods')
@@ -171,6 +180,7 @@ class VoucherController {
         voucher.date = params.date('voucherDate', 'yyyy-MM-dd')
         voucher.value = params.double('value')
         voucher.activity = params.activity
+        voucher.lastUpdatedBy = springSecurityService.getCurrentUser()
 
         if (!voucher.save() || !foodList) {
             voucher.errors.allErrors.each { error ->
@@ -193,7 +203,7 @@ class VoucherController {
         redirect action: 'show', id: voucher.id
     }
 
-    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
     def delete(Voucher voucher) {
         User currentUser = springSecurityService.getCurrentUser()
         List<String> currentUserAuthorities = currentUser.authorities.authority
@@ -367,9 +377,9 @@ class VoucherController {
     }
 
     def filter() {
-        Date date = params.date('approvalDate', 'yyyy-MM-dd')
-        List<Voucher> vouchers = voucherService.getVouchersByMemberInApprovalDate(params.type, params.long('id'), date)
-        def(users, guests) = voucherService.getMembersInApprovalDate(date)
+        Date appro = params.date('approvalDate', 'yyyy-MM-dd')
+        List<Voucher> vouchers = voucherService.getVouchersByMemberInApprovalDate([type: params.type, id: params.long('id'), approvalDate: appro])
+        def(users, guests) = voucherService.getMembersInApprovalDate(appro)
 
         render view: 'approvedList', model: [
             vouchers: voucherService.getVouchersGroupedByDateAndActivity(vouchers),
@@ -379,7 +389,7 @@ class VoucherController {
         ]
     }
 
-    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
     def batchDelete() {
         Integer totalAffected = 0
         String returnPlace = params?.returnPlace
@@ -397,6 +407,40 @@ class VoucherController {
             redirect action: 'vouchersToApprove'
         }
     }
+
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
+    def canceled() {
+        List result = voucherService.getVouchersSummaryByStatus('canceled')
+
+        [summary: voucherService.collectList(result)]
+    }
+
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
+    def vouchersByYear(Integer year, String status) {
+        List<Voucher> vouchers = voucherService.getByYearAndStatus([year: year, status: 'canceled'])
+
+        [
+            voucherList: voucherService.groupByMonth(vouchers)
+        ]
+    }
+
+    @Secured(['ROLE_PROTOCOL_SUPERVISOR', 'ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR'])
+    def cancel(Voucher voucher) {
+        if (request.method == 'POST') {
+            voucher.status = 'canceled'
+            voucher.reasonForCancellation = params.reasonForCancellation
+
+            if (!voucher.save()) {
+                respond voucher
+            } else {
+                redirect action: 'show', id: voucher.id
+                flash.message = 'Vale archivado como cancelado'
+                return
+            }
+        }
+
+        respond voucher
+    }
 }
 
 class CreateCommand {
@@ -410,3 +454,4 @@ class CreateCommand {
         type inList: ['user', 'guest']
     }
 }
+

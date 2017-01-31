@@ -12,7 +12,7 @@ class AppTagLib {
     def voucherService
     def guestService
 
-        static defaultEncodeAs = [taglib: 'html']
+    static defaultEncodeAs = [taglib: 'html']
     static namespace = 'ucc'
     static encodeAsForTags = [
         classrooms: 'raw',
@@ -433,6 +433,27 @@ class AppTagLib {
                     }
                 }
             }
+        }
+    }
+
+    def voucherStatusInSpanish = { attrs ->
+        if (attrs.status == 'pending') {
+            out << 'Pendiente'
+        } else if (attrs.status == 'notified') {
+            out << 'Notificado'
+        } else if (attrs.status == 'approved') {
+            out << 'Aprobado'
+        } else if (attrs.status == 'canceled') {
+            out << 'Cancelado'
+        }
+    }
+
+    def slug = { attrs ->
+        String text = attrs.text
+        Integer size = attrs.int('size') ?: 65
+
+        if (text) {
+            out << text.take(size) + '...'
         }
     }
 }

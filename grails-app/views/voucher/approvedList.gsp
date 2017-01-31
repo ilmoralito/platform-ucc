@@ -6,6 +6,10 @@
     <content tag="main">
         <g:render template="nav"/>
 
+        <div class="clearfix">
+            <g:link uri="${request.getHeader('referer')}" class="btn btn-default pull-right">Regresar</g:link>
+        </div>
+
         <g:if test="${vouchers}">
             <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}"/>
 
@@ -21,14 +25,13 @@
     </content>
 
     <content tag="right-column">
+        <g:render template="createVoucher"/>
+
         <div class="well well-sm">
-            <label>Fecha de aprobacion</label>
             <g:link action="approved" params="[approvalDate: params.approvalDate]">
                 ${params.approvalDate}
             </g:link>
         </div>
-
-        <g:render template="createVoucher"/>
 
         <g:render template="filterForm" model="[label: 'Internos', members: users, property: 'username', type: 'user']"/>
 

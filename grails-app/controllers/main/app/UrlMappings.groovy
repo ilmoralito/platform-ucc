@@ -18,7 +18,7 @@ class UrlMappings {
             controller = 'voucher'
             action = 'index'
             constraints {
-                status inList: ['pending', 'notified']
+                status inList: ['pending', 'notified', 'canceled']
             }
         }
 
@@ -30,7 +30,21 @@ class UrlMappings {
             }
         }
 
-        
+        "/vouchers/vouchersApprovedInTheYear/$year" {
+            controller = 'voucher'
+            action = 'getApprovedVouchersInTheYear'
+            constraints {
+                year shared: yearConstraint
+            }
+        }
+
+        "/vouchers/vouchersByYear/$year" {
+            controller = 'voucher'
+            action = 'vouchersByYear'
+            constraints {
+                year shared: yearConstraint
+            }
+        }
 
         '500' view: '/error'
         '404' view: '/notFound'

@@ -8,6 +8,9 @@ class Voucher {
     BigDecimal value
     String status = 'pending'
     Date approvalDate
+    User createdBy
+    User lastUpdatedBy
+    String reasonForCancellation
 
     List<Food> foods
 
@@ -22,10 +25,20 @@ class Voucher {
         date blank: false
         activity blank: false
         value min: 1.0
-        status inList: ['pending', 'notified', 'approved'], maxSize: 100
+        status inList: ['pending', 'notified', 'approved', 'canceled'], maxSize: 100, validator: { status, obj ->
+            if (status == 'canceled' && new Date() > obj.date) {
+                return 'invalid.cancellation.date'
+            }
+        }
         approvalDate nullable: true, validator: { approvalDate, obj ->
             if (obj.status == 'approved') {
                 approvalDate != null
+            }
+        }
+        lastUpdatedBy nullable: true
+        reasonForCancellation nullable: true, maxSize: 1500, validator: { reasonForCancellation, obj ->
+            if (!reasonForCancellation && obj.status == 'canceled') {
+                return 'necessary.data'
             }
         }
         foods nullable: false, minSize: 1
@@ -36,5 +49,6 @@ class Voucher {
     static mapping = {
         version false
         foods cascade: "all-delete-orphan", lazy: false
+        reasonForCancellation sqlType: 'text'
     }
 }

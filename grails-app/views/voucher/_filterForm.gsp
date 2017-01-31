@@ -1,6 +1,5 @@
 <g:if test="${members}">
     <div class="well well-sm">
-        <label style="margin-bottom: 0;">${label}</label>
         <g:form action="filter" autocomplete="off">
             <g:hiddenField name="approvalDate" value="${params.approvalDate}"/>
             <g:hiddenField name="type" value="${type}"/>
@@ -13,7 +12,7 @@
                     </label>
                 </div>
             </g:each>
-            <button type="submit" class="btn btn-primary btn-block">Filtrar</button>
+            <button type="submit" class="btn btn-primary btn-block">Filtrar ${label.toLowerCase()}</button>
         </g:form>
     </div>
 </g:if>

@@ -1,7 +1,7 @@
 <div class="well well-sm">
     <g:form action="create" method="GET" autocomplete="off">
         <div class="form-group">
-            <label for="date">Fecha</label>
+            <label for="date">Fecha de la actividad</label>
             <g:textField name="date" id="voucherDate" value="${params?.date}" class="form-control"/>
         </div>
 

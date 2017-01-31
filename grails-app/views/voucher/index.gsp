@@ -5,7 +5,6 @@
 
     <content tag="main">
         <g:render template="nav"/>
-
         <g:if test="${vouchers}">
             <g:if test="${params.status == 'pending'}">
                 <g:render template="vouchersByDateAndActivity" vouchers="${vouchers}"/>

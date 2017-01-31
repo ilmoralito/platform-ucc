@@ -24,7 +24,7 @@ class VoucherService implements GrailsConfigurationAware {
     }
 
     List<String> getVoucherActivities() {
-        Voucher.executeQuery('SELECT DISTINCT v.activity FROM Voucher as v')
+        Voucher.executeQuery('SELECT DISTINCT v.activity FROM Voucher AS v')
     }
 
     List<String> getFoodInSpanish(List<String> foodList) {
@@ -35,6 +35,7 @@ class VoucherService implements GrailsConfigurationAware {
     List<Date> getVouchersApprovalDates() {
         DetachedCriteria query = Voucher.where {
             approvalDate != null
+            status == 'approved'
         }.projections {
             groupProperty 'approvalDate'
         }
@@ -42,16 +43,44 @@ class VoucherService implements GrailsConfigurationAware {
         query.list()*.clearTime().unique().sort().reverse()
     }
 
-    List<Voucher> getVouchersByApprovalDate(Date approvalDate) {
+    // TODO: Maybe this method replace getVouchersApprovalDates
+    List<Date> getVouchersApprovalDateByYear(final Integer year = 2017) {
+        Date fromDate = new Date().clearTime()
+        Date toDate = fromDate.clone()
+
+        fromDate.set(year: year, month: 0, date: 1)
+        toDate.set(year: year, date: 31, month: 11, hourOfDay: 23, minute: 59, second: 59)
+
+        List result = Voucher.executeQuery( '''
+            SELECT DATE(v.approvalDate) AS approvalDate, count(*) AS count
+            FROM Voucher AS v
+            WHERE v.status = 'approved'
+            AND v.approvalDate BETWEEN :fromDate AND :toDate GROUP BY DATE(v.approvalDate)
+            ''',
+            [fromDate: fromDate, toDate: toDate]
+        )
+
+        result.collect {
+            [date: it[0], count: it[1]]
+        }.groupBy { it.date[MONTH] }.collect {
+            [
+                month: MONTHS.values()[it.key],
+                count: it.value.count.sum(),
+                dates: it.value
+            ]
+        }
+    }
+
+    List<Voucher> getVouchersByApprovalDate(final Date approvalDate) {
         Date fromDate = approvalDate.clearTime()
         Date toDate = fromDate.clone()
 
         toDate.set(hourOfDay: 23, minute: 59, second: 59)
 
-        Voucher.findAll('''
+        Voucher.executeQuery('''
             FROM Voucher as v
-            WHERE v.approvalDate
-            BETWEEN :fromDate AND :toDate''',
+            WHERE v.status = 'approved'
+            AND v.approvalDate BETWEEN :fromDate AND :toDate''',
         [fromDate: fromDate, toDate: toDate])
     }
 
@@ -74,20 +103,26 @@ class VoucherService implements GrailsConfigurationAware {
         [users, guests]
     }
 
-    List<Voucher> getVouchersByMemberInApprovalDate(final String type, final Long id, final Date approvalDate) {
+    List<Voucher> getVouchersByMemberInApprovalDate(final Map params) {
         String query = ''
-        Date fromDate = approvalDate
+        Date fromDate = params.approvalDate
         Date toDate = fromDate.clone()
 
         toDate.set(hourOfDay: 23, minute: 59, second: 59)
 
-        if (type == 'user') {
-            query = 'FROM Voucher as v WHERE v.user.id = :id AND v.approvalDate BETWEEN :fromDate AND :toDate'
+        if (params.type == 'user') {
+            query = '''
+                FROM Voucher AS v
+                WHERE v.user.id = :id
+                AND v.approvalDate BETWEEN :fromDate AND :toDate'''
         } else {
-            query = 'FROM Voucher as v WHERE v.guest.id = :id AND v.approvalDate BETWEEN :fromDate AND :toDate'
+            query = '''
+                FROM Voucher AS v
+                WHERE v.guest.id = :id
+                AND v.approvalDate BETWEEN :fromDate AND :toDate'''
         }
 
-        Voucher.executeQuery(query, [id: id, fromDate: fromDate, toDate: toDate])
+        Voucher.executeQuery(query, [id: params.id, fromDate: fromDate, toDate: toDate])
     }
 
     Integer updateVouchersStatus(List<Long> vouchers, String status) {
@@ -200,6 +235,75 @@ class VoucherService implements GrailsConfigurationAware {
                 total: params.total,
                 url: params.url,
                 label: params.label
+            ]
+        }
+    }
+
+    List getVouchersSummaryByStatus(final String status = 'canceled') {
+        Voucher.executeQuery('''
+            SELECT DISTINCT YEAR(v.date) AS year, count(*) AS count
+            FROM Voucher AS v
+            WHERE v.status = :status
+            GROUP BY YEAR(v.date)
+            ORDER BY YEAR(v.date) DESC''',
+            [status: status]
+        )
+    }
+
+    List getVouchersSummaryByApprovalDate() {
+        Voucher.executeQuery('''
+            SELECT DISTINCT YEAR(v.approvalDate) AS year, count(*) AS count
+            FROM Voucher AS v
+            WHERE v.status = 'approved'
+            GROUP BY YEAR(v.approvalDate)
+            ORDER BY YEAR(v.approvalDate) DESC'''
+        )
+    }
+
+    List<Voucher> getByYearAndStatus(final Map params) {
+        Voucher.executeQuery('''
+            FROM Voucher v
+            WHERE year(v.date) = :year AND v.status = :status''',
+            [year: params.year, status: params.status]
+        )
+    }
+
+    List collectList(List list) {
+        list.collect {
+            [
+                year: it[0],
+                count: it[1]
+            ]
+        }
+    }
+
+    List groupByMonth(List<Voucher> voucherList) {
+        voucherList.groupBy { it.date[MONTH] }.collect { 
+            [
+                month: MONTHS.values()[it.key],
+                count: it.value.size(),
+                vouchers: it.value.collect {
+                    [
+                        id: it.id,
+                        member: it.user ? it.user.username : it.guest.fullName,
+                        reasonForCancellation: it.reasonForCancellation
+                    ]
+                }.sort { it.member }
+            ]
+        }
+    }
+
+    List getStats(List<Voucher> voucherList) {
+        voucherList.groupBy { it.date[MONTH] }.collect {
+            [
+                month: MONTHS.values()[it.key],
+                count: it.value.size(),
+                administrativeAmount: it.value.findAll {
+                    it.user
+                }.size(),
+                academicAmount: it.value.findAll {
+                    it.guest
+                }.size()
             ]
         }
     }

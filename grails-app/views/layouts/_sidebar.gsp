@@ -19,7 +19,7 @@
     </sec:ifAllGranted>
 
     <sec:ifAllGranted roles="ROLE_ADMINISTRATIVE_SUPERVISOR">
-        <li role="presentation" class="${controllerName == 'voucher' && actionName in ['vouchersToApprove', 'summary', 'show'] ? 'active' : ''}">
+        <li role="presentation" class="${controllerName == 'voucher' && actionName in ['vouchersToApprove', 'summary', 'show', 'edit'] ? 'active' : ''}">
             <g:link controller="voucher" action="vouchersToApprove">Vales</g:link>
         </li>
     </sec:ifAllGranted>

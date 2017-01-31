@@ -11,9 +11,14 @@
             Notificados
         </g:link>
     </li>
-    <li role="presentation" class="${actionName in ['approvalDates', 'approved', 'filter'] ? 'active' : ''}">
+    <li role="presentation" class="${actionName in ['approvalDates', 'getApprovedVouchersInTheYear', 'approved', 'filter'] ? 'active' : ''}">
         <g:link action="approvalDates">
             Aprobados
+        </g:link>
+    </li>
+    <li role="presentation" class="${actionName in ['canceled', 'vouchersByYear'] ? 'active' : ''}">
+        <g:link action="canceled">
+            Cancelados
         </g:link>
     </li>
 </ul>

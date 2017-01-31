@@ -1,6 +1,6 @@
 <g:applyLayout name="threeColumns">
     <head>
-        <title>Vales</title>
+        <title>Cancelados</title>
     </head>
 
     <content tag="main">
@@ -15,14 +15,14 @@
                 <thead>
                     <tr>
                         <th>Año</th>
-                        <th>Numero de vales aprobados</th>
+                        <th>Numero de vales cancelados</th>
                     </tr>
                 </thead>
                 <tbody>
                     <g:each in="${summary}" var="data">
                         <tr>
                             <td>
-                                <g:link action="getApprovedVouchersInTheYear" params="[year: data.year]">
+                                <g:link action="vouchersByYear" params="[year: data.year]">
                                     ${data.year}
                                 </g:link>
                             </td>
@@ -33,7 +33,7 @@
             </table>
         </g:if>
         <g:else>
-            <p>No hay vales aprobados que mostrar</p>
+            <p>Sin datos que mostrar</p>
         </g:else>
     </content>
 
