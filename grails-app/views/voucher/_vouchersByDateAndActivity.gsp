@@ -1,8 +1,8 @@
 <table class="table table-hover">
     <colgroup>
         <col span="1" style="width: 5%;">
-        <col span="1" style="width: 25%;">
-        <col span="1" style="width: 65%;">
+        <col span="1" style="width: 35%;">
+        <col span="1" style="width: 55%;">
         <col span="1" style="width: 5%;">
     </colgroup>
     <thead>
@@ -33,14 +33,14 @@
                         </td>
                         <td style="vertical-align: middle;">
                             <g:link action="show" id="${instance.id}">
-                                <g:formatBoolean boolean="${instance.user == null}" true="${instance?.guest?.fullName}" false="${instance?.user?.username}"/>
+                                ${instance.member}
                             </g:link>
                         </td>
                         <td style="vertical-align: middle;">
-                            <ucc:foodInSpanish foods="${instance.foods.name}"/>
+                            <ucc:foodInSpanish foods="${instance.foods}"/>
                         </td>
                         <td style="vertical-align: middle;">
-                            <g:fieldValue bean="${instance}" field="value"/>
+                            ${instance.value}
                         </td>
                     </tr>
                 </g:each>
@@ -49,7 +49,7 @@
         <tr>
             <td colspan="3"></td>
             <td>
-                <b>${vouchers.activities.vouchers.value.flatten().sum()}</b>
+                ${vouchers.activities.vouchers.value.flatten().sum()}
             </td>
         </tr>
     </tbody>

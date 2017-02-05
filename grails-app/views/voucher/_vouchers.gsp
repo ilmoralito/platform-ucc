@@ -1,7 +1,7 @@
 <table class="table table-hover">
     <colgroup>
-        <col span="1" style="width: 25%;">
-        <col span="1" style="width: 70%;">
+        <col span="1" style="width: 40%;">
+        <col span="1" style="width: 55%;">
         <col span="1" style="width: 5%;">
     </colgroup>
     <tbody>
@@ -21,14 +21,14 @@
                     <tr>
                         <td>
                             <g:link action="show" id="${instance.id}">
-                                <g:formatBoolean boolean="${instance.user == null}" true="${instance?.guest?.fullName}" false="${instance?.user?.username}"/>
+                                ${instance.member}
                             </g:link>
                         </td>
                         <td>
-                            <ucc:foodInSpanish foods="${instance.foods.name}"/>
+                            <ucc:foodInSpanish foods="${instance.foods}"/>
                         </td>
                         <td>
-                            <g:fieldValue bean="${instance}" field="value"/>
+                            ${instance.value}
                         </td>
                     </tr>
                 </g:each>

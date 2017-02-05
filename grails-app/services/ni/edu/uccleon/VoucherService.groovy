@@ -145,20 +145,25 @@ class VoucherService implements GrailsConfigurationAware {
         query.count()
     }
 
-    List getVouchersGroupedByDateAndActivity(List<Voucher> vouchers) {
-        List result = vouchers.groupBy { it.date } { it.activity }.collect { a ->
+    List getVouchersGroupedByDateAndActivity(final List<Voucher> vouchers) {
+        vouchers.groupBy { it.date } { it.activity }.collect { a ->
             [
                 date: a.key,
                 activities: a.value.collect { b ->
                     [
                         name: b.key,
-                        vouchers: b.value
+                        vouchers: b.value.collect { voucher ->
+                            [
+                                id: voucher.id,
+                                member: voucher.user ? voucher.user.username : voucher.guest.fullName,
+                                foods: voucher.foods.name,
+                                value: voucher.value
+                            ]
+                        }
                     ]
                 }
             ]
         }.sort { it.date }
-
-        result
     }
 
     List generateSummary() {
