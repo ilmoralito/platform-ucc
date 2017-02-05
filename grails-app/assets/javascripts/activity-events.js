@@ -24,7 +24,7 @@ $(function() {
         }
     }
 
-    $('#location, #externalCustomer').select2({
+    $('#externalCustomer').select2({
         theme: "bootstrap"
     });
 });

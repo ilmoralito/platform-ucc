@@ -3,24 +3,24 @@ package ni.edu.uccleon
 import grails.plugin.springsecurity.annotation.Secured
 import grails.plugins.rest.client.RestResponse
 
-@Secured(["ROLE_ADMIN"])
+@Secured(['ROLE_ADMIN'])
 class ClassroomController {
-    def classroomService
+    ClassroomService classroomService
 
     static allowedMethods = [
-        index: ["GET", "POST"],
-        create: "POST",
-        edit: "GET",
-        update: "POST"
+        index: ['GET', 'POST'],
+        create: 'POST',
+        edit: 'GET',
+        update: 'POST'
     ]
 
     def index() {
         List classrooms = []
 
         if (request.post) {
-            List<Integer> floorList = params.list("floor")*.toInteger()
-            List<String> codeList = params.list("code")
-            List<Boolean> airConditionedList = params.list("airConditioned")*.toBoolean()
+            List<Integer> floorList = params.list('floor')*.toInteger()
+            List<String> codeList = params.list('code')
+            List<Boolean> airConditionedList = params.list('airConditioned')*.toBoolean()
 
             classrooms = classroomService.filter(floorList, codeList, airConditionedList)
         }
@@ -28,20 +28,20 @@ class ClassroomController {
         [classrooms: classroomService.groupClassroomsByCode(classrooms)]
     }
 
-    def create(ClassroomCommand cmd) {
-        if (cmd.hasErrors()) {
-            cmd.errors.allErrors.each { error ->
+    def create(ClassroomCommand command) {
+        if (command.hasErrors()) {
+            command.errors.allErrors.each { error ->
                 log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
             }
 
-            flash.bag = cmd
+            flash.bag = command
         } else {
-            RestResponse result = classroomService.createClassroom(cmd.code, cmd.name, cmd.capacity, cmd.airConditioned)
+            RestResponse result = classroomService.createClassroom(command.code, command.name, command.capacity, command.airConditioned)
 
-            flash.message = result.status >= 400 ? "A ocurrido un error" : "Creado correctamente"
+            flash.message = result.status >= 400 ? 'A ocurrido un error' : 'Creado correctamente'
         }
 
-        redirect action: "index"
+        redirect action: 'index'
     }
 
     def edit(Integer id) {
@@ -51,7 +51,7 @@ class ClassroomController {
     def update(Integer id, ClassroomCommand cmd) {
         Map classroom = classroomService.getClassroom(id)
 
-        if (classroom.containsKey("error")) {
+        if (classroom.containsKey('error')) {
             response.sendError 404
         }
 
@@ -64,10 +64,10 @@ class ClassroomController {
         } else {
             RestResponse result = classroomService.updateClassroom(id, cmd.code, cmd.name, cmd.capacity, cmd.airConditioned)
 
-            flash.message = result.status >= 400 ? "A ocurrido un error" : "Creado correctamente"
+            flash.message = result.status >= 400 ? 'A ocurrido un error' : 'Creado correctamente'
         }
 
-        redirect action: "edit", id: id
+        redirect action: 'edit', id: id
     }
 }
 
@@ -79,20 +79,20 @@ class ClassroomCommand {
 
     static constraints = {
         code blank: false, unique: true, validator: { code ->
-            List<String> buildingCode = ["B", "C", "D", "E", "K"]
+            List<String> buildingCode = ['B', 'C', 'D', 'E', 'K']
             String letter = code[0].toUpperCase()
             String floor = code[1]
 
             if (!(letter in buildingCode)) {
-                return "not.valid.letter.code"
+                return 'not.valid.letter.code'
             }
 
-            if (!(floor in ["1", "2"])) {
-                return "not.valid.floor.number"
+            if (!(floor in ['1', '2'])) {
+                return 'not.valid.floor.number'
             }
 
             if (!(code.size() in [4, 5])) {
-                return "not.valid.code.size"
+                return 'not.valid.code.size'
             }
         }
         name nullable: true
