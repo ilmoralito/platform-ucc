@@ -31,19 +31,6 @@ class VoucherService implements GrailsConfigurationAware {
         foods.findAll { it.english in foodList }.spanish
     }
 
-    // TODO: Improve this code avoid using unqiue etc...
-    List<Date> getVouchersApprovalDates() {
-        DetachedCriteria query = Voucher.where {
-            approvalDate != null
-            status == 'approved'
-        }.projections {
-            groupProperty 'approvalDate'
-        }
-
-        query.list()*.clearTime().unique().sort().reverse()
-    }
-
-    // TODO: Maybe this method replace getVouchersApprovalDates
     List<Date> getVouchersApprovalDateByYear(final Integer year = 2017) {
         Date fromDate = new Date().clearTime()
         Date toDate = fromDate.clone()
@@ -64,11 +51,14 @@ class VoucherService implements GrailsConfigurationAware {
             [date: it[0], count: it[1]]
         }.groupBy { it.date[MONTH] }.collect {
             [
+                monthNumber: it.key,
                 month: MONTHS.values()[it.key],
                 count: it.value.count.sum(),
-                dates: it.value
+                dates: it.value.sort { a, b ->
+                    b.date <=> a.date
+                }
             ]
-        }
+        }.sort { -it.monthNumber }
     }
 
     List<Voucher> getVouchersByApprovalDate(final Date approvalDate) {
