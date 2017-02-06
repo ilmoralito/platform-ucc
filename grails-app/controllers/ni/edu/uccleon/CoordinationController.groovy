@@ -17,10 +17,10 @@ class CoordinationController {
     ]
 
     def index() {
-        List coordinations = coordinationService.getCoordinations()
-        List colors = colorService.getColors()
-
-        [coordinations: coordinations, colors: colors]
+        [
+            coordinationsByLocation: coordinationService.groupCoordinationsByLocation(),
+            colors: colorService.getColors()
+        ]
     }
 
     def save() {

@@ -77,4 +77,21 @@ class CoordinationService {
 
         data
     }
+
+    List groupCoordinationsByLocation() {
+        List coordinations = this.getCoordinations().groupBy { it.location }.collect {
+            [
+                location: it.key,
+                coordinations: it.value.collect {
+                    [ name: it.name ]
+                }.sort { a, b ->
+                    a.name <=> b.name
+                }
+            ]
+        }.sort { a, b ->
+            a.location <=> b.location
+        }
+
+        coordinations
+    }
 }

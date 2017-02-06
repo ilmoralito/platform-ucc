@@ -6,17 +6,24 @@
     <content tag="main">
         <table class="table table-hover">
             <thead>
-                <th>Coordinaciones</th>
+                <th>Coordinaciones por area</th>
             </thead>
             <tbody>
-                <g:each in="${coordinations}" var="coordination">
+                <g:each in="${coordinationsByLocation}" var="location">
                     <tr>
                         <td>
-                            <g:link action="show" params="[name: coordination.name]">
-                                ${coordination.name}
-                            </g:link>
+                            ${location.location}
                         </td>
                     </tr>
+                    <g:each in="${location.coordinations}" var="coordination">
+                        <tr>
+                            <td>
+                                <g:link action="show" params="[name: coordination.name]">
+                                    ${coordination.name}
+                                </g:link>
+                            </td>
+                        </tr>
+                    </g:each>
                 </g:each>
             </tbody>
         </table>
