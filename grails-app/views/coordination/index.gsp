@@ -12,7 +12,7 @@
                 <g:each in="${coordinations}" var="coordination">
                     <tr>
                         <td>
-                            <g:link action="show" id="${coordination.id}">
+                            <g:link action="show" params="[name: coordination.name]">
                                 ${coordination.name}
                             </g:link>
                         </td>
