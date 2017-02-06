@@ -24,13 +24,13 @@ class CoordinationController {
     }
 
     def save() {
-        RestResponse result = coordinationService.postCoordination(
-            params?.name,
-            params?.extensionNumber,
-            params?.location,
-            params.int('printQuota'), 
-            params.list('colors')*.toInteger()
-        )
+        RestResponse result = coordinationService.postCoordination([
+            name: params.name,
+            location: params.location,
+            printQuota: params.printQuota, 
+            extensionNumber: params.extensionNumber,
+            colors: params.list('colors')*.toInteger()
+        ])
 
         flash.message = result.status >= 400 ? 'Parametros incorrectos' : 'Tarea concluida'
         redirect action: 'index'

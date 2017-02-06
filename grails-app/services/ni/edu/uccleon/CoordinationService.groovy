@@ -30,24 +30,24 @@ class CoordinationService {
         }.json
     }
 
-    RestResponse postCoordination(String name, String extensionNumber, String location, Integer printQuota, List<Integer> colors) {
+    RestResponse postCoordination(Map params) {
         RestBuilder restBuilder = new RestBuilder()
         Map data = [
-            name: name,
-            colors: colors,
-            location: location,
-            printQuota: printQuota,
-            extensionNumber: extensionNumber
+            name: params.name,
+            colors: params.colors,
+            location: params.location,
+            printQuota: params.printQuota,
+            extensionNumber: params.extensionNumber
         ]
 
-        RestResponse response = restBuilder.post(coordinationURL) {
+        RestResponse restResponse = restBuilder.post(coordinationURL) {
             contentType MediaType.APPLICATION_JSON_VALUE
-            header('Accept-Language', 'en')
-            header('Accept', MediaType.APPLICATION_JSON_VALUE)
+            header 'Accept-Language', 'en'
+            header 'Accept', MediaType.APPLICATION_JSON_VALUE
             json data
         }
 
-        response
+        restResponse
     }
 
     RestResponse putCoordination(Map params) {
