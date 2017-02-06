@@ -59,7 +59,8 @@ class UserController {
             params.list('authorities').each { authority ->
                 Role role = Role.findByAuthority(authority)
 
-                UserRole.create user, role, true
+                new UserRole(user: user, role: role).save(flush: true)
+
             }
 
             flash.message = 'Usuario creado'
