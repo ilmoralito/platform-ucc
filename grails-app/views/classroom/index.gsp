@@ -12,9 +12,11 @@
                 <tbody>
                     <g:each in="${classrooms}" var="c">
                         <tr>
-                            <td colspan="2">
-                                <strong>${c.name}</strong>
-                            </td>
+                            <td colspan="2">${c.name}</td>
+                        </tr>
+                        <tr>
+                            <td>Codigo</td>
+                            <td>Nombre</td>
                         </tr>
                         <g:each in="${c.classrooms}" var="classroom">
                             <tr>
@@ -41,50 +43,6 @@
                 <g:render template="form"/>
 
                 <button type="submit" class="btn btn-primary btn-block">Agregar aula</button>
-            </g:form>
-        </div>
-
-        <div class="well well-sm">
-            <g:form action="index" name="filterForm" params="[tab: 'filter']" autocomplete="off">
-                <label style="margin-bottom: 0;">Piso</label>
-                <div class="checkbox">
-                    <label>
-                        <g:checkBox name="floor" value="1" checked="${params.list('floor').contains('1')}"/> 1
-                    </label>
-                </div>
-
-                <div class="checkbox">
-                    <label>
-                        <g:checkBox name="floor" value="2" checked="${params.list('floor').contains('2')}"/> 2
-                    </label>
-                </div>
-
-                <label style="margin-bottom: 0;">Codigo</label>
-                <g:each in="${['C', 'B', 'D', 'E', 'K']}" var="code">
-                    <div class="checkbox">
-                        <label>
-                            <g:checkBox name="code" value="${code}" checked="${params.list('code').contains(code)}"/>
-                            ${code}
-                        </label>
-                    </div>
-                </g:each>
-
-                <label style="margin-bottom: 0;">Aire acondicionado</label>
-                <div class="checkbox">
-                    <label>
-                        <g:checkBox name="airConditioned" value="true" checked="${params.list('airConditioned').contains('true')}"/>
-                        Climatizado
-                    </label>
-                </div>
-
-                <div class="checkbox">
-                    <label>
-                        <g:checkBox name="airConditioned" value="false" checked="${params.list('airConditioned').contains('false')}"/>
-                        No climatizado
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-block">Filtrar</button>
             </g:form>
         </div>
     </content>

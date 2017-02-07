@@ -65,7 +65,7 @@ class AppTagLib {
 
     def classrooms = { attrs ->
         MarkupBuilder mb = new MarkupBuilder(out)
-        List classrooms = classroomService.getClassrooms().sort { it.code }
+        List classrooms = classroomService.getAll().sort { it.code }
         Map<String, String> params = [:]
         Integer id = attrs.int("id")
 
@@ -361,7 +361,7 @@ class AppTagLib {
     def getClassroom = { attrs ->
         Integer id = attrs.int("id")
         println attrs.id
-        Map classroom = classroomService.getClassroom(id)
+        Map classroom = classroomService.get(id)
 
         out << classroom?.name ?: classroom.code
     }

@@ -551,7 +551,7 @@ class ActivityController {
                 }
             ) {
                 activity.events.eachWithIndex { event, index ->
-                    Map classroom = classroomService.getClassroom(event.location.toInteger())
+                    Map classroom = classroomService.get(event.location.toInteger())
                     String location = classroom.name ?: classroom.code
 
                     paragraph "$event.activity.name", align: "center"

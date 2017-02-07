@@ -8,99 +8,55 @@ class ClassroomController {
     ClassroomService classroomService
 
     static allowedMethods = [
-        index: ['GET', 'POST'],
+        index: 'GET',
         create: 'POST',
         edit: 'GET',
         update: 'POST'
     ]
 
     def index() {
-        List classrooms = []
-
-        if (request.post) {
-            List<Integer> floorList = params.list('floor')*.toInteger()
-            List<String> codeList = params.list('code')
-            List<Boolean> airConditionedList = params.list('airConditioned')*.toBoolean()
-
-            classrooms = classroomService.filter(floorList, codeList, airConditionedList)
-        }
-
-        [classrooms: classroomService.groupClassroomsByCode(classrooms)]
+        [classrooms: classroomService.groupedByCode()]
     }
 
-    def create(ClassroomCommand command) {
-        if (command.hasErrors()) {
-            command.errors.allErrors.each { error ->
-                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
-            }
+    def create() {
+        RestResponse restResponse = classroomService.post([
+            code: params.code,
+            name: params.name,
+            capacity: params.capacity,
+            airConditioned: params.airConditioned ? true : false
+        ])
 
-            flash.bag = command
-        } else {
-            RestResponse result = classroomService.createClassroom(command.code, command.name, command.capacity, command.airConditioned)
-
-            flash.message = result.status >= 400 ? 'A ocurrido un error' : 'Creado correctamente'
-        }
-
+        flash.message = restResponse.status >= 400 ? 'Parametros incorrectos' : 'Creado correctamente'
         redirect action: 'index'
     }
 
     def edit(Integer id) {
-        [classroom: classroomService.getClassroom(id)]
-    }
+        Map classroom = classroomService.get(id)
 
-    def update(Integer id, ClassroomCommand cmd) {
-        Map classroom = classroomService.getClassroom(id)
-
-        if (classroom.containsKey('error')) {
+        if (classroom.error) {
             response.sendError 404
         }
 
-        if (cmd.hasErrors()) {
-            cmd.errors.allErrors.each { error ->
-                log.error "[field: $error.field, defaultMessage: $error.defaultMessage]"
-            }
+        [classroom: classroom]
+    }
 
-            flash.bag = cmd
-        } else {
-            RestResponse result = classroomService.updateClassroom(id, cmd.code, cmd.name, cmd.capacity, cmd.airConditioned)
+    def update(Integer id) {
+        Map classroom = classroomService.get(id)
 
-            flash.message = result.status >= 400 ? 'A ocurrido un error' : 'Creado correctamente'
+        if (classroom.error) {
+            response.sendError 404
         }
 
+        RestResponse restResponse = classroomService.put([
+            id: id,
+            code: params.code,
+            name: params.name,
+            capacity: params.capacity,
+            airConditioned: params.airConditioned ? true : false
+        ])
+
+        flash.message = restResponse.status >= 400 ? 'A ocurrido un error' : 'Actualizado correctamente'
         redirect action: 'edit', id: id
     }
 }
 
-class ClassroomCommand {
-    String code
-    String name
-    Integer capacity
-    Boolean airConditioned = false
-
-    static constraints = {
-        code blank: false, unique: true, validator: { code ->
-            List<String> buildingCode = ['B', 'C', 'D', 'E', 'K']
-            String letter = code[0].toUpperCase()
-            String floor = code[1]
-
-            if (!(letter in buildingCode)) {
-                return 'not.valid.letter.code'
-            }
-
-            if (!(floor in ['1', '2'])) {
-                return 'not.valid.floor.number'
-            }
-
-            if (!(code.size() in [4, 5])) {
-                return 'not.valid.code.size'
-            }
-        }
-        name nullable: true
-        capacity nullable: true, validator: { capacity ->
-            if (capacity) {
-                capacity > 0
-            }
-        }
-        airConditioned nullable: false
-    }
-}
