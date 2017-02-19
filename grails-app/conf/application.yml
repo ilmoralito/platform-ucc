@@ -40,10 +40,12 @@ environments:
                 employeeURL: 'http://192.168.7.254/uapi/employees'
             colorService:
                 colorURL: 'http://192.168.7.254/uapi/colors'
+            copyService:
+                copyURL: 'http://192.168.7.254/uapi/copies'
 
 ---
 hibernate:
-    format_sql: true
+    # format_sql: true
     cache:
         queries: false
         use_second_level_cache: true
@@ -61,7 +63,7 @@ dataSource:
 environments:
     development:
         dataSource:
-            logSql: true
+            # logSql: true
             dbCreate: update
             url: jdbc:mysql://localhost/development_platform_ucc?autoReconnect=true&useSSL=false
     test:
