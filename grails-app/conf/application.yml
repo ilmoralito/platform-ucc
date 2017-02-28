@@ -16,6 +16,8 @@ environments:
                 employeeURL: 'http://localhost:9090/employees'
             colorService:
                 colorURL: 'http://localhost:9090/colors'
+            copyService:
+                copyURL: 'http://localhost:9090/copies'
     test:
         grails:
             serverURL: http://localhost:8181
@@ -28,6 +30,8 @@ environments:
                 employeeURL: 'http://localhost:9090/employees'
             colorService:
                 colorURL: 'http://localhost:9090/colors'
+            copyService:
+                copyURL: 'http://localhost:9090/copies'
     production:
         grails:
             serverURL: http://192.168.7.254/platform-ucc

@@ -6,7 +6,9 @@
     <content tag="main">
         <table class="table table-hover">
             <thead>
-                <th>Coordinaciones por area</th>
+                <tr>
+                    <th>Coordinaciones</th>
+                </tr>
             </thead>
             <tbody>
                 <g:each in="${coordinationsByLocation}" var="location">

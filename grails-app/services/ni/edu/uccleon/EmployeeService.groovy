@@ -10,70 +10,38 @@ import grails.util.Environment
 @Transactional
 class EmployeeService {
     String employeeURL
+    RestBuilder restBuilder = new RestBuilder()
 
     Map getEmployee(Long id) {
-        RestBuilder restBuilder = new RestBuilder()
-        def json = restBuilder.get("$employeeURL/$id").json
-
-        json
+        restBuilder.get("$employeeURL/$id").json
     }
 
     List getEmployees(Integer max = 200) {
-        RestBuilder restBuilder = new RestBuilder()
-        def json = restBuilder.get("$employeeURL?max=$max").json
-
-        json
+        restBuilder.get("$employeeURL?max=$max").json
     }
 
     Map getEmployeeByInstitutionalMail(final String institutionalMail) {
-        RestBuilder restBuilder = new RestBuilder()
-        def response = restBuilder.get("${employeeURL}/getEmployeeByInstitutionalMail?institutionalMail={institutionalMail}") {
+        restBuilder.get("$employeeURL/getEmployeeByInstitutionalMail?institutionalMail={institutionalMail}") {
             urlVariables institutionalMail: institutionalMail
         }.json
-
-        response
     }
 
-    RestResponse postEmployee(final String fullName, final String institutionalMail, final String authority, final String identityCard, final String inss, final List<String> coordinations) {
-        RestBuilder restBuilder = new RestBuilder()
-        final Map data = [
-            fullName: fullName,
-            institutionalMail: institutionalMail,
-            authority: authority,
-            identityCard: identityCard,
-            inss: inss,
-            coordinations: coordinations
-        ]
-
-        RestResponse response = restBuilder.post(employeeURL) {
+    RestResponse post(Map params) {
+        restBuilder.post(employeeURL) {
             contentType MediaType.APPLICATION_JSON_VALUE
             header 'Accept-Language', 'en'
             header 'Accept', MediaType.APPLICATION_JSON_VALUE
-            json data
+            json params
         }
-
-        response
     }
 
-    RestResponse putEmployee(final Integer id, final String fullName, final String institutionalMail, final String authority, final String identityCard, final String inss, final List<String> coordinations) {
-        RestBuilder restBuilder = new RestBuilder()
-        Map jsonMap = [
-            id: id,
-            fullName: fullName,
-            institutionalMail: institutionalMail,
-            authority: authority,
-            identityCard: identityCard,
-            inss: inss,
-            coordinations: coordinations
-        ]
-        RestResponse response = restBuilder.put("$employeeURL/$id") {
+    RestResponse put(Map params) {
+        restBuilder.put("$employeeURL/$params.id") {
             contentType MediaType.APPLICATION_JSON_VALUE
             header('Accept-Language', 'en')
             header('Accept', MediaType.APPLICATION_JSON_VALUE)
-            json jsonMap
+            json params
         }
-
-        response
     }
 
     String getManagerMail(String location) {
@@ -97,18 +65,16 @@ class EmployeeService {
         getEmployee(id).coordinations
     }
 
+    // TODO: improve this code
     Integer countEmployeesByCoordinationLocation(List<Integer> employeeList, String location) {
         this.getEmployees().findAll {
             it.id in employeeList && location in it.coordinations.location
         }.size()
     }
 
-    List<Map> getEmployeeCoordinationsPrintQuota(Long id) {
-        List coordinations = this.getEmployeeCoordinations(id).collect {
-            [
-                coordination: it.name,
-                printQuota: it.printQuota
-            ]
-        }
+    List<Map> getCoordinationsPrintQuota(final Integer employeeID) {
+        restBuilder.get("$employeeURL/coordinationsPrintQuota?employeeID={employeeID}") {
+            urlVariables employeeID: employeeID
+        }.json
     }
 }

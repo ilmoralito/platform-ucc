@@ -4,30 +4,13 @@
     </head>
 
     <content tag="main">
-        <section>
-            <div class="clearfix">
-                <g:link action="index" class="btn btn-sm btn-default pull-right">
-                    <i class="fa fa-cog" aria-hidden="true"></i>
-                </g:link>
-            </div>
-        </section>
-
         <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         Cuota de impresiones
                     </div>
-                    <table class="table">
-                        <tbody>
-                            <g:each in="${printQuota}" var="c">
-                                <tr>
-                                    <td>${c.coordination}</td>
-                                    <td>${c.printQuota}</td>
-                                </tr>
-                            </g:each>
-                        </tbody>
-                    </table>
+                    <g:render template="/shared/copyStatusWidget" model="[copyStatus: copyStatus]"/>
                 </div>
             </div>
 

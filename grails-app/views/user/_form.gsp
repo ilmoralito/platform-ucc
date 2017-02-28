@@ -39,7 +39,7 @@
 <div class="form-group">
     <label style="margin-bottom: 0;">Coordinaciones</label>
 
-    <g:each in="${coordinations}" var="coordination">
+    <g:each in="${coordinationList}" var="coordination">
         <div class="checkbox">
             <label>
                 <g:checkBox name="coordinations" value="${coordination.name}" checked="${coordination.name in employee?.coordinations?.name}"/>
@@ -49,17 +49,16 @@
     </g:each>
 </div>
 
-<g:if test="${actionName == 'index'}">
-    <div class="form-group">
-        <label style="margin-bottom: 0;">Roles</label>
+<div class="form-group">
+    <label style="margin-bottom: 0;">Roles</label>
 
-        <g:each in="${roles}" var="role">
-            <div class="checkbox">
-                <label>
-                    <g:checkBox name="authorities" value="${role.authority}" checked="false"/>
-                    ${role.authority.toLowerCase().tokenize('_')[1..-1].join(' ').capitalize()}
-                </label>
-            </div>
-        </g:each>
-    </div>
-</g:if>
+    <g:each in="${roleList}" var="role">
+        <div class="checkbox">
+            <label>
+                <g:checkBox name="authorities" value="${role.authority}" checked="${user?.authorities?.authority?.contains(role.authority)}"/>
+                ${role.authority.toLowerCase().tokenize('_')[1..-1].join(' ').capitalize()}
+            </label>
+        </div>
+    </g:each>
+</div>
+

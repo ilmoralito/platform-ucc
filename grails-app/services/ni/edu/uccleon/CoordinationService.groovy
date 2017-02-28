@@ -8,78 +8,48 @@ import grails.transaction.Transactional
 @Transactional
 class CoordinationService {
     String coordinationURL
+    RestBuilder restBuilder = new RestBuilder()
 
     Map getCoordination(Integer id) {
-        RestBuilder restBuilder = new RestBuilder()
-        def json = restBuilder.get("$coordinationURL/$id").json
-
-        json
+        restBuilder.get("$coordinationURL/$id").json
     }
 
     List getCoordinations(Integer max = 100) {
-        RestBuilder restBuilder = new RestBuilder()
-        def json = restBuilder.get("$coordinationURL?max=$max").json
-
-        json
+        restBuilder.get("$coordinationURL?max=$max").json
     }
 
     Map getCoordinationsByCoordinationName(final String name) {
-        RestBuilder restBuilder = new RestBuilder()
         restBuilder.get("${coordinationURL}/searchByName?name={name}") {
             urlVariables name: name
         }.json
     }
 
     RestResponse postCoordination(Map params) {
-        RestBuilder restBuilder = new RestBuilder()
-        Map data = [
-            name: params.name,
-            colors: params.colors,
-            location: params.location,
-            printQuota: params.printQuota,
-            extensionNumber: params.extensionNumber
-        ]
-
-        RestResponse restResponse = restBuilder.post(coordinationURL) {
+        restBuilder.post(coordinationURL) {
             contentType MediaType.APPLICATION_JSON_VALUE
             header 'Accept-Language', 'en'
             header 'Accept', MediaType.APPLICATION_JSON_VALUE
-            json data
+            json params
         }
-
-        restResponse
     }
 
     RestResponse putCoordination(Map params) {
-        RestBuilder restBuilder = new RestBuilder()
-        Map data = [
-            id: params.id,
-            name: params.name,
-            colors: params.colors,
-            location: params.location,
-            printQuota: params.printQuota,
-            extensionNumber: params.extensionNumber
-        ]
-
-        RestResponse restResponse = restBuilder.put("$coordinationURL/$params.id") {
+        restBuilder.put("$coordinationURL/$params.id") {
             contentType MediaType.APPLICATION_JSON_VALUE
             header 'Accept-Language', 'en'
             header 'Accept', MediaType.APPLICATION_JSON_VALUE
-            json data
+            json params
         }
-
-        restResponse
     }
 
     Map getCoordinationByName(String coordination) {
         List coordinations = getCoordinations().toList()
-        Map data = coordinations.find { it.name == coordination }
 
-        data
+        coordinations.find { it.name == coordination }
     }
 
     List groupCoordinationsByLocation() {
-        List coordinations = this.getCoordinations().groupBy { it.location }.collect {
+        this.getCoordinations().groupBy { it.location }.collect {
             [
                 location: it.key,
                 coordinations: it.value.collect {
@@ -91,7 +61,9 @@ class CoordinationService {
         }.sort { a, b ->
             a.location <=> b.location
         }
+    }
 
-        coordinations
+    List employeesGroupedByCoordination() {
+        restBuilder.get("$coordinationURL/employeesGroupedByCoordination").json
     }
 }

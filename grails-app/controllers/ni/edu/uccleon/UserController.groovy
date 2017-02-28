@@ -18,30 +18,22 @@ class UserController {
     static allowedMethods = [
         index: 'GET',
         save: 'POST',
+        show: 'GET',
         edit: 'GET',
         update: 'POST',
-        updateEmployee: 'POST',
         profile: 'GET',
         password: ['GET', 'POST']
     ]
 
     def index() {
         [
-            users: User.list(),
-            roles: Role.list(),
-            coordinations: coordinationService.getCoordinations()
+            userList: coordinationService.employeesGroupedByCoordination(),
+            employeeWidget: createEmployee()
         ]
     }
 
     def save() {
-        RestResponse result = employeeService.postEmployee(
-            params.fullName,
-            params.institutionalMail,
-            params.authority,
-            params.identityCard,
-            params.inss,
-            params.list('coordinations')
-        )
+        RestResponse result = employeeService.post(params)
 
         if (result.status >= 400) {
             flash.message = 'Parametros incorrectos'
@@ -60,7 +52,6 @@ class UserController {
                 Role role = Role.findByAuthority(authority)
 
                 new UserRole(user: user, role: role).save(flush: true)
-
             }
 
             flash.message = 'Usuario creado'
@@ -69,57 +60,38 @@ class UserController {
         redirect action: 'index'
     }
 
-    def edit(User user) {
-        respond user, model: [
-            roles: Role.list(),
-            employee: employeeService.getEmployee(user.employee),
-            coordinations: coordinationService.getCoordinations()
+    def show(Long id) {
+        [employee: employeeService.getEmployee(id), user: User.findByEmployee(id)]
+    }
+
+    def edit(Long id) {
+        [
+            employee: employeeService.getEmployee(id),
+            employeeWidget: createEmployee(),
+            user: User.findByEmployee(id)
         ]
     }
 
-    def update(User user) {
-        List<String> authorities = params.list('authorities')
+    def update() {
+        RestResponse result = employeeService.put(params)
 
-        if (!user) {
-            render status: NOT_FOUND
+        if (result.status == 200) {
+            User user = User.findByEmployee(params.id)
+
+            UserRole.removeAll user, true
+            user.username = params.fullName
+            user.email = params.institutionalMail
+            params.list('authorities').each { authority ->
+                UserRole.create user, Role.findByAuthority(authority), true
+            }
+
+            user.save flush: true
+            flash.message = 'Datos actualziados'
+        } else {
+            flash.message = 'Datos incorrectos'
         }
 
-        if (!authorities) {
-            flash.message = 'Parametros incorrectos'
-
-            redirect action: 'edit', id: user.id
-            return
-        }
-
-        if (user.hasErrors()) {
-            flash.message = 'A ocurrido un error'
-
-            respond user.errors, view: 'edit', model: [roles: Role.list()]
-        }
-
-        user.save()
-        UserRole.removeAll(user, true)
-
-        authorities.each { authority ->
-            UserRole.create(user, Role.findByAuthority(authority), true)
-        }
-
-        redirect action: 'edit', id: user.id
-    }
-
-    def updateEmployee() {
-        RestResponse result = employeeService.putEmployee(
-            params.int('employeeId'),
-            params.fullName,
-            params.institutionalMail,
-            params.authority,
-            params.identityCard,
-            params.inss,
-            params.list('coordinations')
-        )
-
-        flash.message = result.status >= 400 ? 'Parametros incorrectos' : 'Empleado actualizado'
-        redirect action: 'edit', id: params.int('id')
+        redirect action: 'edit', id: params.id
     }
 
     @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR'])
@@ -155,6 +127,13 @@ class UserController {
             flash.message = 'Clave actualizada'
         }
     }
+
+    private CreateEmployee createEmployee() {
+        new CreateEmployee(
+            coordinationList: coordinationService.getCoordinations(),
+            roleList: Role.list()
+        )
+    }
 }
 
 class PasswordCommand {
@@ -176,3 +155,9 @@ class PasswordCommand {
         }
     }
 }
+
+class CreateEmployee {
+    List coordinationList = []
+    List<Role> roleList = []
+}
+

@@ -1,9 +1,6 @@
 /*
 *= require /bootstrap/dist/css/bootstrap.min.css
 *= require /eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css
-*= require /select2/dist/css/select2.min.css
-*= require /select2-bootstrap-theme/dist/select2-bootstrap.min.css
-*= require /sweetalert/dist/sweetaler.css
 *= require /font-awesome/css/font-awesome.min.css
 *= require_tree .
 *= require_self
@@ -29,5 +26,17 @@ textarea {
     border: 0;
     box-shadow: none;
     margin-bottom: 5px;
+    background: #FFFFFF;
+    border:  1px solid #DDD;
 }
+
+.table-borderless tbody tr td,
+.table-borderless tbody tr th,
+.table-borderless thead tr th,
+.table-borderless thead tr td,
+.table-borderless tfoot tr th,
+.table-borderless tfoot tr td {
+    border: none;
+}
+
 

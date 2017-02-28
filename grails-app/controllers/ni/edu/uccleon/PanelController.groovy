@@ -5,20 +5,25 @@ import grails.plugin.springsecurity.SpringSecurityService
 
 @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR'])
 class PanelController {
-    SpringSecurityService springSecurityService
-    EmployeeService employeeService
+    CopyService copyService
     BirthdayService birthdayService
+    SpringSecurityService springSecurityService
 
     static allowedMethods = [
         index: 'GET'
     ]
 
     def index() {
-        User currentUser = springSecurityService.getCurrentUser()
-
         [
-            printQuota: employeeService.getEmployeeCoordinationsPrintQuota(currentUser.employee),
+            copyStatus: createCopyStatus(),
             birthdaysMonth: birthdayService.getBirthdaysMonth()
         ]
     }
+
+    private CopyStatus createCopyStatus() {
+        new CopyStatus(
+            status: copyService.copieStatus(springSecurityService.currentUser.employee)
+        )
+    }
 }
+

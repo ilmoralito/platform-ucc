@@ -6,17 +6,22 @@
     <content tag="main">
         <table class="table table-hover">
             <thead>
-                <th>Usuarios</th>
+                <th>Empleados</th>
             </thead>
             <tbody>
-                <g:each in="${users}" var="user">
+                <g:each in="${userList}" var="coordination">
                     <tr>
-                        <td>
-                            <g:link action="edit" id="${user.id}">
-                                <g:fieldValue bean="${user}" field="username"/>
-                            </g:link>
-                        </td>
+                        <td>${coordination.coordination}</td>
                     </tr>
+                    <g:each in="${coordination.employees}" var="employee">
+                        <tr>
+                            <td>
+                                <g:link action="show" id="${employee.id}">
+                                    ${employee.fullName}
+                                </g:link>
+                            </td>
+                        </tr>
+                    </g:each>
                 </g:each>
             </tbody>
         </table>
@@ -25,7 +30,7 @@
     <content tag="right-column">
         <div class="well well-sm">
             <g:form action="save" autocomplete="off">
-                <g:render template="form"/>
+                <g:render template="form" model="[coordinationList: employeeWidget.coordinationList, roleList: employeeWidget.roleList]"/>
 
                 <g:submitButton name="send" value="Confirmar" class="btn btn-primary btn-block"/>
             </g:form>

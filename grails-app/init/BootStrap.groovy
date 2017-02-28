@@ -1,13 +1,13 @@
-import grails.core.*
-import ni.edu.uccleon.*
-import grails.util.Environment
-import grails.util.DomainBuilder
 import static java.util.Calendar.*
+import grails.util.DomainBuilder
+import grails.util.Environment
+import ni.edu.uccleon.*
+import grails.core.*
 
 class BootStrap {
-    EmployeeService employeeService
-    ClassroomService classroomService
     GrailsApplication grailsApplication
+    ClassroomService classroomService
+    EmployeeService employeeService
 
     def init = { servletContext ->
         grailsApplication.config.ni.edu.uccleon.activityList
@@ -38,6 +38,9 @@ class BootStrap {
         Map administrator = employeeService.getEmployee(3)
         Map sportManager = employeeService.getEmployee(4)
         Map assistantAdministration = employeeService.getEmployee(5)
+        Map assistantAgronomyAndArchitecture = employeeService.getEmployee(6)
+        Map coordinatorOfAgronomy = employeeService.getEmployee(7)
+        Map architecturalAndCivilCoordinator = employeeService.getEmployee(8)
 
         // Users
         User orlandoGaitan = User.findByEmail(protocolManager.institutionalMail)
@@ -79,13 +82,40 @@ class BootStrap {
         User cristinaRojas = User.findByEmail(assistantAdministration.institutionalMail)
         if (!cristinaRojas) {
             cristinaRojas = new User(
+                employee: assistantAdministration.id,
                 username: assistantAdministration.fullName,
-                email: assistantAdministration.institutionalMail,
-                employee: assistantAdministration.id
+                email: assistantAdministration.institutionalMail
             ).save failOnError: true
         }
 
-        // UserRoles
+        User assistantAgronomyAndArchitectureUser = User.findByEmail(assistantAgronomyAndArchitecture.institutionalMail)
+        if (!assistantAgronomyAndArchitectureUser) {
+            assistantAgronomyAndArchitectureUser = new User(
+                employee: assistantAgronomyAndArchitecture.id,
+                username: assistantAgronomyAndArchitecture.fullName,
+                email: assistantAgronomyAndArchitecture.institutionalMail
+            ).save failOnError: true
+        }
+
+        User coordinatorOfAgronomyUser = User.findByEmail(coordinatorOfAgronomy.institutionalMail)
+        if (!coordinatorOfAgronomyUser) {
+            coordinatorOfAgronomyUser = new User(
+                employee: coordinatorOfAgronomy.id,
+                username: coordinatorOfAgronomy.fullName,
+                email: coordinatorOfAgronomy.institutionalMail
+            ).save failOnError: true
+        }
+
+        User architecturalAndCivilCoordinatorUser = User.findByEmail(architecturalAndCivilCoordinator.institutionalMail)
+        if (!architecturalAndCivilCoordinatorUser) {
+            architecturalAndCivilCoordinatorUser = new User(
+                employee: architecturalAndCivilCoordinator.id,
+                username: architecturalAndCivilCoordinator.fullName,
+                email: architecturalAndCivilCoordinator.institutionalMail
+            ).save failOnError: true
+        }
+
+        // USERROLES
         if (!UserRole.exists(orlandoGaitan.id, protocolSupervisorRole.id)) {
             UserRole.create orlandoGaitan, protocolSupervisorRole, true
         }
@@ -108,6 +138,18 @@ class BootStrap {
 
         if (!UserRole.exists(cristinaRojas.id, assistantAdministrativeSupervisorRole.id)) {
             UserRole.create cristinaRojas, assistantAdministrativeSupervisorRole, true
+        }
+
+        if (!UserRole.exists(assistantAgronomyAndArchitectureUser.id, userRole.id)) {
+            UserRole.create assistantAgronomyAndArchitectureUser, userRole, true
+        }
+
+        if (!UserRole.exists(coordinatorOfAgronomyUser.id, userRole.id)) {
+            UserRole.create coordinatorOfAgronomyUser, userRole, true
+        }
+
+        if (!UserRole.exists(architecturalAndCivilCoordinatorUser.id, userRole.id)) {
+            UserRole.create architecturalAndCivilCoordinatorUser, userRole, true
         }
 
         UserRole.withSession {

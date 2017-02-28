@@ -23,7 +23,7 @@
                             <td colspan="2">${data.month}</td>
                         </tr>
                         <tr>
-                            <td>Dias</td>
+                            <td>Dia de aprobacion</td>
                             <td>Numero de vales aprobados</td>
                         </tr>
                         <g:each in="${data.dates}" var="approvalDate">

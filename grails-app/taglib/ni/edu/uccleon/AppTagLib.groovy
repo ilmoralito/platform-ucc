@@ -191,54 +191,6 @@ class AppTagLib {
         }
     }
 
-    def tableclothColor = { attrs ->
-        MarkupBuilder mb = new MarkupBuilder(out)
-        Integer currentUserId = springSecurityService.loadCurrentUser().id
-        List colors = coordinationService.getCoordinationByName(attrs.coordination).colors
-        List tableclothColorList = attrs.list("tableclothColorList")
-        Map params = [name: "tableclothColors", type: "checkbox"]
-
-        mb.div {
-            label "Colores de manteles"
-
-            // if (coordinationColors.size() == 1) {
-            //     String color = coordinationColors[0].name
-
-            //     params.value = color
-
-            //     div(class: "checkbox") {
-            //         label {
-            //             if (color in tableclothColorList) {
-            //                 params.checked = true
-            //             } else {
-            //                 params.remove("checked")
-            //             }
-
-            //             input(params)
-            //             mkp.yield coordinationColors[0].name
-            //         }
-            //     }
-            // } else {
-            //     coordinationColors.each { tableclothColor ->
-            //         params.value = tableclothColor.name
-
-            //         div(class: "checkbox") {
-            //             label {
-            //                 if (tableclothColor.name in tableclothColorList) {
-            //                     params.checked = true
-            //                 } else {
-            //                     params.remove("checked")
-            //                 }
-
-            //                 input(params)
-            //                 mkp.yield tableclothColor.name
-            //             }
-            //         }
-            //     }
-            // }
-        }
-    }
-
     def externalCustomers = { attrs ->
         List<ExternalCustomer> externalCustomers = externalCustomerService.getAll()
         Integer externalCustomer = attrs.externalCustomer
@@ -456,4 +408,38 @@ class AppTagLib {
             out << text.take(size) + '...'
         }
     }
+
+    def copyStatus = { attrs ->
+        String status = attrs.status
+
+        switch(status) {
+            case 'PENDING':
+                out << 'PENDIENTE'
+            break
+            case 'NOTIFIED':
+                out << 'NOTIFICADO'
+            break
+            case 'CANCELED':
+                out << 'CANCELADO'
+            break
+            case 'APPROVED':
+                out << 'APROVADO'
+            break
+            case 'AUTHORIZED':
+                out << 'AUTORIZADO'
+            break
+            case 'ATTENDED':
+                out << 'ATENDIDO'
+            break
+        }
+    }
+
+    def coordinationLocation = { attrs ->
+        if (attrs.location == 'Administrative') {
+            out << 'Administrativo'
+        } else {
+            out << 'Academico'
+        }
+    }
 }
+

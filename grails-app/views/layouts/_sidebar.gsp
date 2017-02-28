@@ -38,4 +38,8 @@
             <g:link controller="externalCustomer">Clientes externos</g:link>
         </li>
     </sec:ifAllGranted>
+
+    <li role="presentation" class="${controllerName == 'copy' ? 'active' : ''}">
+        <g:link controller="copy">Copias</g:link>
+    </li>
 </ul>

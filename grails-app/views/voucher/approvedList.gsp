@@ -29,7 +29,7 @@
 
         <div class="well well-sm">
             <g:link action="approved" params="[approvalDate: params.approvalDate]">
-                ${params.approvalDate}
+                <i class="fa fa-calendar" aria-hidden="true"></i> ${params.approvalDate}
             </g:link>
         </div>
 
