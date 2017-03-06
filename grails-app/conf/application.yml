@@ -18,6 +18,8 @@ environments:
                 colorURL: 'http://localhost:9090/colors'
             copyService:
                 copyURL: 'http://localhost:9090/copies'
+            thirdPartyService:
+              thirdPartyURL: 'http://localhost:9090/thirdparties'
     test:
         grails:
             serverURL: http://localhost:8181
@@ -32,6 +34,8 @@ environments:
                 colorURL: 'http://localhost:9090/colors'
             copyService:
                 copyURL: 'http://localhost:9090/copies'
+            thirdPartyService:
+              thirdPartyURL: 'http://localhost:9090/thirdparties'
     production:
         grails:
             serverURL: http://192.168.7.254/platform-ucc
@@ -46,6 +50,8 @@ environments:
                 colorURL: 'http://192.168.7.254/uapi/colors'
             copyService:
                 copyURL: 'http://192.168.7.254/uapi/copies'
+            thirdPartyService:
+              thirdPartyURL: 'http://192.168.7.254/uapi/thirdparties'
 
 ---
 hibernate:

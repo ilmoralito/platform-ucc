@@ -23,12 +23,12 @@
     </content>
 
     <content tag="right-column">
-        <div class="well well-sm">
+        <section>
             <g:form action="save" autocomplete="off">
                 <g:render template="form"/>
 
                 <g:submitButton name="send" value="Confirmar" class="btn btn-primary btn-block"/>
             </g:form>
-        </div>
+        </section>
     </content>
 </g:applyLayout>

@@ -39,4 +39,8 @@ textarea {
     border: none;
 }
 
+.list-group-item.active a {
+    color: #FFF;
+}
+
 

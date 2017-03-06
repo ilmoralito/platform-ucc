@@ -4,10 +4,9 @@
     </head>
 
     <content tag="main">
+        <g:render template="/layouts/employeeTabs"/>
+
         <table class="table table-hover">
-            <thead>
-                <th>Empleados</th>
-            </thead>
             <tbody>
                 <g:each in="${userList}" var="coordination">
                     <tr>
@@ -28,12 +27,12 @@
     </content>
 
     <content tag="right-column">
-        <div class="well well-sm">
+        <section>
             <g:form action="save" autocomplete="off">
                 <g:render template="form" model="[coordinationList: employeeWidget.coordinationList, roleList: employeeWidget.roleList]"/>
 
                 <g:submitButton name="send" value="Confirmar" class="btn btn-primary btn-block"/>
             </g:form>
-        </div>
+        </section>
     </content>
 </g:applyLayout>

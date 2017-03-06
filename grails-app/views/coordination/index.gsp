@@ -32,12 +32,12 @@
     </content>
 
     <content tag="right-column">
-        <div class="well well-sm">
+        <section>
             <g:form action="save" autocomplete="off">
                 <g:render template="form"/>
 
                 <button type="submit" class="btn btn-primary btn-block">Confirmar</button>
             </g:form>
-        </div>
+        </section>
     </content>
 </g:applyLayout>

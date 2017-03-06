@@ -38,12 +38,12 @@
     </content>
 
     <content tag="right-column">
-        <div class="well well-sm">
+        <section>
             <g:form action="create" name="createClassroomForm" autocomplete="off">
                 <g:render template="form"/>
 
                 <button type="submit" class="btn btn-primary btn-block">Agregar aula</button>
             </g:form>
-        </div>
+        </section>
     </content>
 </g:applyLayout>

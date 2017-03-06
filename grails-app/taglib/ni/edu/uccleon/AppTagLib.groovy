@@ -441,5 +441,13 @@ class AppTagLib {
             out << 'Academico'
         }
     }
+
+    def enabled = { attrs ->
+        if (attrs.enabled == true) {
+            out << 'Habilitado'
+        } else {
+            out << 'No habilitado'
+        }
+    }
 }
 
