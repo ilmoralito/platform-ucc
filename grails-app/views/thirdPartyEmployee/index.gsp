@@ -9,14 +9,13 @@
         <g:if test="${thirdPartyList}">
             <table class="table table-hover">
                 <colgroup>
-                    <col span="1" style="width: 45%;">
-                    <col span="1" style="width: 43%;">
+                    <col span="1" style="width: 88%;">
                     <col span="1" style="width: 12%;">
                 </colgroup>
                 <tbody>
                     <g:each in="${thirdPartyList}" var="thirdParty">
                         <tr>
-                            <td colspan="3">${thirdParty.name}</td>
+                            <td colspan="3" style="border-top: 0;">${thirdParty.name}</td>
                         </tr>
                         <g:if test="${thirdParty.thirdPartyEmployees}">
                             <g:each in="${thirdParty.thirdPartyEmployees}" var="${thirdPartyEmployee}">
@@ -26,7 +25,6 @@
                                             ${thirdPartyEmployee.fullName}
                                         </g:link>
                                     </td>
-                                    <td>${thirdPartyEmployee.email}</td>
                                     <td>
                                         <ucc:enabled enabled="${thirdPartyEmployee.enabled}"/>
                                     </td>

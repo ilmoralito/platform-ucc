@@ -1,3 +1,5 @@
+import ni.edu.uccleon.thirdparty.ThirdPartyService
+import org.grails.web.json.JSONObject
 import static java.util.Calendar.*
 import grails.util.DomainBuilder
 import grails.util.Environment
@@ -6,6 +8,7 @@ import grails.core.*
 
 class BootStrap {
     GrailsApplication grailsApplication
+    ThirdPartyService thirdPartyService
     ClassroomService classroomService
     EmployeeService employeeService
 
@@ -31,6 +34,8 @@ class BootStrap {
         Role protocolSupervisorRole = Role.findOrSaveByAuthority('ROLE_PROTOCOL_SUPERVISOR')
         Role adminRole = Role.findOrSaveByAuthority('ROLE_ADMIN')
         Role userRole = Role.findOrSaveByAuthority('ROLE_USER')
+        Role roleCopyManager = Role.findOrSaveByAuthority('ROLE_COPY_MANAGER')
+        Role roleCopyAssistant = Role.findOrSaveByAuthority('ROLE_COPY_ASSISTANT')
 
         // Employees
         Map protocolManager = employeeService.getEmployee(1)
@@ -41,6 +46,10 @@ class BootStrap {
         Map assistantAgronomyAndArchitecture = employeeService.getEmployee(6)
         Map coordinatorOfAgronomy = employeeService.getEmployee(7)
         Map architecturalAndCivilCoordinator = employeeService.getEmployee(8)
+
+        // Third party employees
+        JSONObject copyManager = thirdPartyService.getThirdPartyEmployee([thirdPartyId: 1, thirdPartyEmployeeId: 1])
+        JSONObject copyAssistant = thirdPartyService.getThirdPartyEmployee([thirdPartyId: 1, thirdPartyEmployeeId: 2])
 
         // Users
         User orlandoGaitan = User.findByEmail(protocolManager.institutionalMail)
@@ -115,6 +124,25 @@ class BootStrap {
             ).save failOnError: true
         }
 
+        // Third party employee user
+        User copyManagerUser = User.findByEmail(copyManager.email)
+        if (!copyManagerUser) {
+            copyManagerUser = new User(
+                thirdPartyEmployee: copyManager.id,
+                username: copyManager.fullName,
+                email: copyManager.email
+            ).save failOnError: true
+        }
+
+        User copyAssistantUser = User.findByEmail(copyAssistant.email)
+        if (!copyAssistantUser) {
+            copyAssistantUser = new User(
+                thirdPartyEmployee: copyAssistant.id,
+                username: copyAssistant.fullName,
+                email: copyAssistant.email
+            ).save failOnError: true
+        }
+
         // USERROLES
         if (!UserRole.exists(orlandoGaitan.id, protocolSupervisorRole.id)) {
             UserRole.create orlandoGaitan, protocolSupervisorRole, true
@@ -152,14 +180,22 @@ class BootStrap {
             UserRole.create architecturalAndCivilCoordinatorUser, userRole, true
         }
 
+        if (!UserRole.exists(copyManagerUser.id, roleCopyManager.id)) {
+            UserRole.create copyManagerUser, roleCopyManager, true
+        }
+
+        if (!UserRole.exists(copyAssistantUser.id, roleCopyAssistant.id)) {
+            UserRole.create copyAssistantUser, roleCopyAssistant, true
+        }
+
         UserRole.withSession {
             it.flush()
             it.clear()
         }
 
         // Guests
-        Guest guest1 = Guest.findOrSaveByFullName('John Doe')
-        Guest guest2 = Guest.findOrSaveByFullName('Juan Perez')
+        Guest guest1 = Guest.findOrSaveByFullName('Kenny Omega')
+        Guest guest2 = Guest.findOrSaveByFullName('Naito Tetsuya')
         Guest guest4 = Guest.findOrSaveByFullName('Donald Trump')
         Guest guest3 = Guest.findOrSaveByFullName('Miguel de Cervantes')
 

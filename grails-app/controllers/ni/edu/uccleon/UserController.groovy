@@ -2,6 +2,7 @@ package ni.edu.uccleon
 
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.annotation.Secured
+import ni.edu.uccleon.thirdparty.ThirdPartyService
 import static org.springframework.http.HttpMethod.*
 import static org.springframework.http.HttpStatus.*
 import grails.plugins.rest.client.RestResponse
@@ -13,6 +14,7 @@ import grails.transaction.*
 class UserController {
     SpringSecurityService springSecurityService
     CoordinationService coordinationService
+    ThirdPartyService thirdPartyService
     EmployeeService employeeService
 
     static allowedMethods = [
@@ -94,10 +96,10 @@ class UserController {
         redirect action: 'edit', id: params.id
     }
 
-    @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR'])
+    @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR', 'ROLE_COPY_MANAGER', 'ROLE_COPY_ASSISTANT'])
     def profile() {
         User currentUser = springSecurityService.getCurrentUser()
-        Map employee = employeeService.getEmployee(currentUser.employee)
+        JSONObject employee = currentUser.employee ? employeeService.getEmployee(currentUser.employee) : thirdPartyService.getThirdPartyEmployee([thirdPartId: 1, thirdPartyEmployeeId: currentUser.thirdPartyEmployee])
 
         [
             employee: employee,
@@ -107,7 +109,7 @@ class UserController {
         ]
     }
 
-    @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR'])
+    @Secured(['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ADMINISTRATIVE_SUPERVISOR', 'ROLE_ACADEMIC_SUPERVISOR', 'ROLE_PROTOCOL_SUPERVISOR', 'ROLE_COPY_MANAGER', 'ROLE_COPY_ASSISTANT'])
     def password(PasswordCommand command) {
         if (request.post) {
             if (command.hasErrors()) {
@@ -115,16 +117,18 @@ class UserController {
                     log.error "$error.field: $error.defaultMessage"
                 }
 
-                flash.message = 'Datos incorrectos'
-                return
+                flash.errors = command.errors
+                flash.message = 'Parametros incorrectos'
+            } else {
+                User user = springSecurityService.currentUser
+
+                user.password = command.newPassword
+                user.save()
+
+                flash.message = 'Clave actualizada'
             }
 
-            User user = springSecurityService.currentUser
-
-            user.password = command.newPassword
-            user.save()
-
-            flash.message = 'Clave actualizada'
+            return
         }
     }
 

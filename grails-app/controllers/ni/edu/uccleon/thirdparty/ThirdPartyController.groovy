@@ -22,7 +22,7 @@ class ThirdPartyController {
     def save() {
         RestResponse restResponse = thirdPartyService.post(params.subMap(['name']))
 
-        flash.message = restResponse.status == 201 ? 'Tercero agregado' : 'Parametros incorrectos'
+        flash.message = restResponse.status == 201 ? 'Empleado agregado' : 'Parametros incorrectos'
         redirect action: 'index'
     }
 

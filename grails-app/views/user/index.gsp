@@ -10,7 +10,7 @@
             <tbody>
                 <g:each in="${userList}" var="coordination">
                     <tr>
-                        <td>${coordination.coordination}</td>
+                        <td style="border-top: 0;">${coordination.coordination}</td>
                     </tr>
                     <g:each in="${coordination.employees}" var="employee">
                         <tr>

@@ -1,3 +1,13 @@
+<sec:ifAllGranted roles="ROLE_COPY_MANAGER, ROLE_COPY_ASSISTANT">
+    <ul class="list-group">
+        <li class="list-group-item">
+            <g:link>
+                Copias
+            </g:link>
+        </li>
+    </ul>
+</sec:ifAllGranted>
+
 <ul class="list-group">
     <li role="presentation" class="${controllerName == 'panel' ? 'active' : ''} list-group-item">
         <g:link controller="panel">Panel</g:link>
