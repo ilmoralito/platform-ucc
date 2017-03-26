@@ -1,5 +1,7 @@
 package ni.edu.uccleon
 
+import static java.util.Calendar.*
+import org.grails.web.json.JSONObject
 import grails.transaction.Transactional
 import org.springframework.http.MediaType
 import grails.plugins.rest.client.RestBuilder
@@ -10,11 +12,11 @@ class CopyService {
     RestBuilder restBuilder = new RestBuilder()
     String copyURL
 
-    Map get(Integer id) {
+    JSONObject get(Integer id) {
         restBuilder.get("$copyURL/$id").json
     }
 
-    List<RestResponse> getAll(Integer max = 100) {
+    List<JSONObject> getAll(Integer max = 100) {
         restBuilder.get("$copyURL?max=$max").json
     }
 
@@ -50,13 +52,17 @@ class CopyService {
             contentType MediaType.APPLICATION_JSON_VALUE
             header 'Accept-Language', 'en'
             header 'Accept', MediaType.APPLICATION_JSON_VALUE
-        }.json
+        }
     }
 
-    List copieStatus(final Integer employeeID) {
+    RestResponse copieStatus(final Integer employeeID) {
         restBuilder.get("$copyURL/copyStatus?employeeID={employeeID}") {
             urlVariables employeeID: employeeID
-        }.json
+        }
+    }
+
+    RestResponse generalCopyStatus() {
+        restBuilder.get("$copyURL/generalCopyStatus")
     }
 
     List copiesToDateByEmployee(final Integer employeeID) {
@@ -68,6 +74,63 @@ class CopyService {
     Long totalCopiesByCoordination(final Integer coordinationID) {
         restBuilder.get("$copyURL/totalCopiesByCoordination?coordinationID={coordinationID}") {
             urlVariables coordinationID: coordinationID
+        }
+    }
+
+    List<JSONObject> getAllNotifiedOrAuthorized() {
+        restBuilder.get("$copyURL/getAllNotifiedOrAuthorized").json
+    }
+
+    List<JSONObject> getAllRequestingAuthorization() {
+        restBuilder.get("$copyURL/getAllRequestingAuthorization").json
+    }
+
+    List<JSONObject> filterNotifiedOrAuthorized(final List<Integer> coordinationList = [], final List<Integer> employeeList = []) {
+        restBuilder.get("$copyURL/filterNotifiedOrAuthorized?coordinationList={coordinationList}&employeeList={employeeList}") {
+            urlVariables coordinationList: coordinationList, employeeList: employeeList
+        }.json
+    }
+
+    RestResponse filter(List<Integer> coordinationList, List<Integer> employeeList) {
+        restBuilder.post("$copyURL/filterNotifiedOrAuthorized") {
+            header 'Accept-Language', 'en'
+            header 'Accept', MediaType.APPLICATION_JSON_VALUE
+            json {
+                delegate.coordinationList = coordinationList
+                delegate.employeeList = employeeList
+            }
+        }
+    }
+
+    RestResponse filter(List<Integer> coordinationList, List<Integer> employeeList, List<String> copyStatusList) {
+        restBuilder.post("$copyURL/filter") {
+            header 'Accept-Language', 'en'
+            header 'Accept', MediaType.APPLICATION_JSON_VALUE
+            json {
+                delegate.coordinationList = coordinationList
+                delegate.employeeList = employeeList
+                delegate.copyStatusList = copyStatusList
+            }
+        }
+    }
+
+    List yearList() {
+        restBuilder.get("$copyURL/yearList").json
+    }
+
+    List<JSONObject> report(final Integer year, final Integer month) {
+        restBuilder.get("$copyURL/report?year={year}&month={month}") {
+            urlVariables year: year ?: new Date()[YEAR], month: month ?: new Date()[MONTH]
+        }.json
+    }
+
+    def reportCopiesOutOfRange() {
+        restBuilder.post("$copyURL/getAllOutOfRange") {
+            header 'Accept-Language', 'en'
+            header 'Accept', MediaType.APPLICATION_JSON_VALUE
+            json {
+                statusList = ['NOTIFIED', 'AUTHORIZED', 'REQUEST_AUTHORIZATION']
+            }
         }
     }
 }

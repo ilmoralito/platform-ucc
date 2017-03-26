@@ -10,15 +10,15 @@
             <table class="table table-hover">
                 <colgroup>
                     <col span="1" style="width: 65%;">
-                    <col span="1" style="width: 10%;">
-                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 25%;">
+                    <col span="1" style="width: 5%;">
                     <col span="1" style="width: 5%;">
                 </colgroup>
                 <thead>
                     <tr>
                         <th>Nombre del documento</th>
-                        <th>Copias</th>
                         <th>Estado</th>
+                        <th>Copias</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -29,32 +29,16 @@
                         </tr>
                         <g:each in="${copy.copies}" var="copyInstance">
                             <tr>
-                                <td style="vertical-align: middle;">
+                                <td>
                                     <g:link action="show" id="${copyInstance.id}">
                                         ${copyInstance.documentDescription}
                                     </g:link>
                                 </td>
-                                <td style="vertical-align: middle;">${copyInstance.copies}</td>
                                 <td>
-                                    <g:if test="${copyInstance.status == 'PENDING'}">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <ucc:copyStatus status="${copyInstance.status}"/> <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <g:link action="updateStatus" params="[id: copyInstance.id, status: 'NOTIFIED']">
-                                                        Notificar
-                                                    </g:link>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </g:if>
-                                    <g:else>
-                                        <ucc:copyStatus status="${copyInstance.status}"/>
-                                    </g:else>
+                                    <ucc:copyStatus status="${copyInstance.status}"/>
                                 </td>
-                                <td style="vertical-align: middle;">
+                                <td>${copyInstance.copies}</td>
+                                <td>
                                     <g:if test="${copyInstance.copyType == 'extraCopy'}">
                                         <span class="label label-primary">Extra</span>
                                     </g:if>
@@ -72,12 +56,11 @@
 
     <content tag="right-column">
         <section>
-            <g:render template="/shared/copyStatusWidget" model="[copyStatus: copyStatus]"/>
+            <g:render template="/shared/copyStatusWidget" model="[copyStatusList: copyStatus.statusList]"/>
         </section>
 
-        <section class="well well-sm">
-            <g:render template="copyOptionWidget" model="[coordinationList: copyOption.coordinationList]"/>
+        <section>
+            <g:render template="createCopyWidget" model="[coordinationList: createCopy.coordinationList, copyTypeList: createCopy.copyTypeList]"/>
         </section>
     </content>
 </g:applyLayout>
-

@@ -1,13 +1,3 @@
-<sec:ifAllGranted roles="ROLE_COPY_MANAGER, ROLE_COPY_ASSISTANT">
-    <ul class="list-group">
-        <li class="list-group-item">
-            <g:link>
-                Copias
-            </g:link>
-        </li>
-    </ul>
-</sec:ifAllGranted>
-
 <ul class="list-group">
     <li role="presentation" class="${controllerName == 'panel' ? 'active' : ''} list-group-item">
         <g:link controller="panel">Panel</g:link>
@@ -53,6 +43,11 @@
     </sec:ifAllGranted>
 
     <li role="presentation" class="${controllerName == 'copy' ? 'active' : ''} list-group-item">
-        <g:link controller="copy">Copias</g:link>
+        <sec:ifAnyGranted roles="ROLE_COPY_MANAGER, ROLE_COPY_ASSISTANT">
+            <g:link controller="copy" action="status">Copias</g:link>
+        </sec:ifAnyGranted>
+        <sec:ifAnyGranted roles="ROLE_ASSISTANT_ADMINISTRATIVE_SUPERVISOR, ROLE_ADMINISTRATIVE_SUPERVISOR, ROLE_ACADEMIC_SUPERVISOR, ROLE_PROTOCOL_SUPERVISOR, ROLE_ADMIN, ROLE_USER">
+            <g:link controller="copy">Copias</g:link>
+        </sec:ifAnyGranted>
     </li>
 </ul>

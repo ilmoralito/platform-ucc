@@ -4,10 +4,6 @@
     </head>
 
     <content tag="main">
-        <section class="clearfix">
-            <g:link action="index" class="btn btn-default">Regresar</g:link>
-        </section>
-
         <g:form action="${params.copyType == 'copy' ? 'post' : 'postExtraCopy'}" autocomplete="off">
             <g:hiddenField name="coordination" value="${params.coordination}"/>
             <g:render template="form"/>

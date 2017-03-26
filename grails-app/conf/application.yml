@@ -73,8 +73,8 @@ dataSource:
 environments:
     development:
         dataSource:
-            # logSql: true
-            dbCreate: update
+            # dbCreate: update
+            dbCreate: create-drop
             url: jdbc:mysql://localhost/development_platform_ucc?autoReconnect=true&useSSL=false
     test:
         dataSource:

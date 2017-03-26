@@ -6,20 +6,16 @@
     <content tag="main">
         <div class="row">
             <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Cuota de impresiones
-                    </div>
-                    <g:render template="/shared/copyStatusWidget" model="[copyStatus: copyStatus]"/>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Copias</div>
+                    <g:render template="/shared/copyStatusWidget" model="[copyStatusList: copyStatusList.statusList]"/>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Feriados
-                    </div>
-                    <table class="table table-bordered">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Feriados</div>
+                    <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
                                 <th>Mes</th>
@@ -45,10 +41,8 @@
             </div>
 
             <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Cumpleañeros del mes
-                    </div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Cumpleañeros del mes</div>
                     <g:render template="/shared/birthdays" model="[birthdaysMonth: birthdaysMonth]"/>
                 </div>
             </div>

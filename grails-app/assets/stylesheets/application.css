@@ -8,7 +8,7 @@
 
 body { padding-top: 70px; }
 
-section, .clearfix { margin-bottom: 5px; }
+section, .clearfix { margin-top: 5px; margin-bottom: 5px; }
 
 label, table th { font-weight: normal; }
 
@@ -41,6 +41,10 @@ textarea {
 
 .list-group-item.active a {
     color: #FFF;
+}
+
+.table tbody > tr > td.vertical-align{
+    vertical-align: middle;
 }
 
 

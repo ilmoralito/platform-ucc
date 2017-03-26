@@ -14,10 +14,9 @@
             <g:pageProperty name="page.main"/>
 
             <g:if test="${flash.message}">
-                <br>
-                <div class="alert alert-info">
-                    ${flash.message}
-                </div>
+                <section>
+                    <div class="alert alert-info">${flash.message}</div>
+                </section>
             </g:if>
         </div>
     </body>

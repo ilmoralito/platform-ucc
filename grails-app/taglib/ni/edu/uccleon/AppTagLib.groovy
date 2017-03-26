@@ -413,17 +413,14 @@ class AppTagLib {
         String status = attrs.status
 
         switch(status) {
-            case 'PENDING':
-                out << 'PENDIENTE'
-            break
             case 'NOTIFIED':
                 out << 'NOTIFICADO'
             break
             case 'CANCELED':
                 out << 'CANCELADO'
             break
-            case 'APPROVED':
-                out << 'APROVADO'
+            case 'REQUEST_AUTHORIZATION':
+                out << 'REQUIERE AUTORIZACION'
             break
             case 'AUTHORIZED':
                 out << 'AUTORIZADO'

@@ -1,6 +1,6 @@
-<table class="table table-bordered">
+<table class="table table-hover table-bordered">
     <tbody>
-        <g:each in="${copyStatus.status}" var="status">
+        <g:each in="${copyStatusList}" var="status">
             <tr>
                 <td colspan="2">${status.name}</td>
             </tr>
@@ -19,4 +19,3 @@
         </g:each>
     </tbody>
 </table>
-

@@ -61,7 +61,9 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li class="${controllerName == 'user' && actionName == 'profile' ? 'active' : ''}">
-                                <g:link controller="user" action="profile">Perfil</g:link>
+                                <g:link controller="user" action="profile">
+                                    <i class="fa fa-user-circle-o" aria-hidden="true"></i> Perfil
+                                </g:link>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li><g:link controller="logout">Salir</g:link></li>
