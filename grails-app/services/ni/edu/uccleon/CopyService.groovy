@@ -133,4 +133,10 @@ class CopyService {
             }
         }
     }
+
+    List<String> getDocumentDescriptionByCoordination(final Integer coordinationID) {
+        restBuilder.get("$copyURL/getDocumentDescriptionByCoordination?coordinationID={coordinationID}") {
+            urlVariables coordinationID: coordinationID
+        }.json
+    }
 }

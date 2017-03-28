@@ -15,16 +15,21 @@
     </g:else>
 
     <div class="form-group">
+        <label for="documentDescription">Descripcion del documento</label>
+        <g:field name="documentDescription" list="documentDescriptionList" class="form-control"/>
+        <datalist id="documentDescriptionList">
+            <g:each in="${documentDescriptionList}" var="documentDescription">
+                <option value="${documentDescription}"></option>
+            </g:each>
+        </datalist>
+    </div>
+
+    <div class="form-group">
         <label for="copies">Copias</label>
         <g:field type="number" name="copies" min="1" class="form-control"/>
     </div>
 
-    <div class="form-group">
-        <label for="documentDescription">Descripcion del documento</label>
-        <g:textArea name="documentDescription" class="form-control"/>
-    </div>
-
-    <div class="form-group">
+    <div class="form-group hide">
         <label for="description">Descripcion</label>
         <g:textArea name="description" class="form-control"/>
     </div>

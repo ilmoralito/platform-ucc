@@ -60,7 +60,9 @@
         </section>
 
         <section>
-            <g:render template="createCopyWidget" model="[coordinationList: createCopy.coordinationList, copyTypeList: createCopy.copyTypeList]"/>
+            <g:render
+                template="createCopyWidget"
+                model="[coordinationList: createCopy.coordinationList, copyTypeList: createCopy.copyTypeList, documentDescriptionList: createCopy.documentDescriptionList]"/>
         </section>
     </content>
 </g:applyLayout>

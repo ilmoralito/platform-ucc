@@ -6,4 +6,5 @@ class CreateCopy {
         [key: 'extraCopy', value: 'Extra']
     ]
     List<Integer> coordinationList
+    List<String> documentDescriptionList = []
 }

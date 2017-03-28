@@ -182,8 +182,14 @@ class CopyController {
     }
 
     private CreateCopy createCopy() {
+        User currentUser = springSecurityService.currentUser
+        List coordinationList = employeeService.getEmployee(currentUser.employee).coordinations.sort { a, b ->
+            a.name <=> b.name
+        } as List
+
         new CreateCopy(
-            coordinationList: employeeService.getEmployee(springSecurityService.currentUser.employee).coordinations
+            coordinationList: coordinationList,
+            documentDescriptionList: copyService.getDocumentDescriptionByCoordination(coordinationList[0].id)
         )
     }
 
