@@ -18,7 +18,7 @@ class CopyController {
         show: 'GET',
         delete: 'GET',
         status: ['GET', 'POST'],
-        summary: ['GET', 'POST'],
+        summary: 'GET',
         changeToAttended: 'POST',
         requestingAuthorization: 'GET',
         requestAuthorizationDetail: 'GET',
@@ -79,21 +79,16 @@ class CopyController {
         [copyList: copyList, copyFilter: createCopyFilter()]
     }
 
-    @Secured(['ROLE_COPY_MANAGER', 'ROLE_COPY_ASSISTANT', 'ROLE_ADMINISTRATIVE_SUPERVISOR'])
     def summary() {
-        if (request.post) {
-            [
-                copyFilter: createCopyFilter(),
-                copyList: copyService.filter(params.list('coordinationList'), params.list('employeeList'), params.list('copyStatusList')).json
-            ]
-        } else {
-            [copyFilter: createCopyFilter()]
-        }
+        [summary: copyService.summaryByEmployee(springSecurityService.currentUser.employee).json]
     }
 
-    @Secured('ROLE_ADMINISTRATIVE_SUPERVISOR')
-    def summaryDetail(Integer id) {
-        [copy: copyService.get(id)]
+    def summaryByCoordinationAndYear(Integer coordinationID, Integer year) {
+        [summary: copyService.summaryByCoordinationAndYear(coordinationID, year).json]
+    }
+
+    def summaryByCoordinationAndYearAndMonth(Integer coordinationID, Integer year, Integer month) {
+        [summary: copyService.summaryByCoordinationAndYearAndMonth(coordinationID, year, month).json]
     }
 
     @Secured(['ROLE_COPY_MANAGER', 'ROLE_COPY_ASSISTANT'])

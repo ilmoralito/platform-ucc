@@ -1,4 +1,4 @@
-<g:applyLayout name="threeColumns">
+<g:applyLayout name="twoColumns">
     <head>
         <title>Resumen</title>
     </head>
@@ -6,53 +6,48 @@
     <content tag="main">
         <g:render template="nav"/>
 
-        <g:if test="${copyList}">
-            <table class="table table-hover">
-                <colgroup>
-                    <col span="1" style="width: 1%;">
-                    <col span="1" style="width: 30%;">
-                    <col span="1" style="width: 20%;">
-                    <col span="1" style="width: 45%;">
-                    <col span="1" style="width: 4%;">
-                </colgroup>
-                <thead>
+        <table class="table table-hover">
+            <colgroup>
+                <col span="1" style="width: 25.5%;">
+                <col span="1" style="width: 25.5%;">
+                <col span="1" style="width: 25.5%;">
+                <col span="1" style="width: 25.5%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Año</th>
+                    <th>Copias atendidas</th>
+                    <th>Copias canceladas</th>
+                    <th>Total copias</th>
+                </tr>
+            </thead>
+            <tbody>
+                <g:each in="${summary}" var="s">
                     <tr>
-                        <th></th>
-                        <th>Cordinacion</th>
-                        <th>Empleado</th>
-                        <th>Descripcion del documento</th>
-                        <th>Copias</th>
+                        <td colspan="4">${s.coordination.name}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    <g:each in="${copyList}" var="copy">
+                    <g:each in="${s.summary}" var="context">
                         <tr>
                             <td>
-                                <g:link action="summaryDetail" id="${copy.id}">
-                                    <i class="fa fa-plus"></i>
+                                <g:link action="summaryByCoordinationAndYear" params="[coordinationID: s.coordination.id, year: context.year]">
+                                    ${context.year}
                                 </g:link>
                             </td>
-                            <td>${copy.coordination.name}</td>
-                            <td>${copy.employee.fullName}</td>
-                            <td>${copy.documentDescription}</td>
-                            <td>${copy.copies}</td>
+                            <td>${context.attended}</td>
+                            <td>${context.canceled}</td>
+                            <td>${context.total}</td>
                         </tr>
                     </g:each>
-                    <tr>
-                        <td colspan="4"></td>
-                        <td colspan="1">${copyList.copies.sum()}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </g:if>
-        <g:else>
-            <p>Sin copies que mostrar</p>
-        </g:else>
-    </content>
-
-    <content tag="right-column">
-        <section>
-            <g:render template="filterWidget" model="[coordinationList: copyFilter.coordinationList, employeeList: copyFilter.employeeList, authorizedByList: copyFilter.authorizedByList, canceledByList: copyFilter.canceledByList, copyStatusList: copyFilter.copyStatusList]"/>
-        </section>
+                    <g:if test="${s.summary.size() > 1}">
+                        <tr>
+                            <td>TOTAL</td>
+                            <td>${s.summary.attended.sum()}</td>
+                            <td>${s.summary.canceled.sum()}</td>
+                            <td>${s.summary.total.sum()}</td>
+                        </tr>
+                    </g:if>
+                </g:each>
+            </tbody>
+        </table>
     </content>
 </g:applyLayout>

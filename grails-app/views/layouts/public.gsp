@@ -18,7 +18,5 @@
             <g:layoutBody/>
         </div>
     </div>
-
-    <asset:javascript src="app.js"/>
 </body>
 </html>

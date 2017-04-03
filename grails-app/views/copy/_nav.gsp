@@ -18,6 +18,11 @@
                 Estado
             </g:link>
         </li>
+        <li role="presentation" class="${actionName.startsWith('summary') ? 'active' : ''}">
+            <g:link action="summary">
+                Resumen
+            </g:link>
+        </li>
         <li role="presentation" class="${actionName == 'requestingAuthorization' || actionName == 'requestAuthorizationDetail' ? 'active' : ''}">
             <g:link action="requestingAuthorization">
                 Requiere autorizacion
@@ -34,6 +39,11 @@
         <li role="presentation" class="${actionName == 'index' ? 'active' : ''}">
             <g:link action="index">
                 Estado
+            </g:link>
+        </li>
+        <li role="presentation" class="${actionName.startsWith('summary') ? 'active' : ''}">
+            <g:link action="summary">
+                Resumen
             </g:link>
         </li>
     </sec:ifAnyGranted>

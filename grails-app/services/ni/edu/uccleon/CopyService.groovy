@@ -124,7 +124,7 @@ class CopyService {
         }.json
     }
 
-    def reportCopiesOutOfRange() {
+    RestResponse reportCopiesOutOfRange() {
         restBuilder.post("$copyURL/getAllOutOfRange") {
             header 'Accept-Language', 'en'
             header 'Accept', MediaType.APPLICATION_JSON_VALUE
@@ -138,5 +138,23 @@ class CopyService {
         restBuilder.get("$copyURL/getDocumentDescriptionByCoordination?coordinationID={coordinationID}") {
             urlVariables coordinationID: coordinationID
         }.json
+    }
+
+    RestResponse summaryByEmployee(final Integer employeeID) {
+        restBuilder.get("$copyURL/summaryByEmployee?employeeID={employeeID}") {
+            urlVariables employeeID: employeeID
+        }
+    }
+
+    RestResponse summaryByCoordinationAndYear(final Integer coordinationID, final Integer year) {
+        restBuilder.get("$copyURL/summaryByCoordinationAndYear?coordinationID={coordinationID}&year={year}") {
+            urlVariables coordinationID: coordinationID, year: year
+        }
+    }
+
+    RestResponse summaryByCoordinationAndYearAndMonth(final Integer coordinationID, final Integer year, final Integer month) {
+        restBuilder.get("$copyURL/summaryByCoordinationAndYearAndMonth?coordinationID={coordinationID}&year={year}&month={month}") {
+            urlVariables coordinationID: coordinationID, year: year, month: month
+        }
     }
 }
